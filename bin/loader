@@ -14,6 +14,18 @@ bin_dir="/data/code/vidhop/shell/linux/bin"
 . "$bin_dir/sync"  # from workstation to phone
 . "$bin_dir/debug"
 
+function uninstallvidhop() {
+  echo "This is the uninstallation program for VidHop."
+  echo "Uninstall removes all program files."
+  echo "It does not delete your downloads in the VidHop directory"
+  echo -n 'Are you sure you want to uninstall VidHop? y/N: ' && read -r answer
+  answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
+  [ "$answer" = "n" ] || [ -z "$answer" ] && echo "aborted uninstall" && return
+  [ "$answer" = "y" ] &&
+    sudo rm "/usr/local/bin/vidhop" &&
+    rm -rf "/opt/vidhop"
+}
+
 function vidhophelp() {
   dlv_help && echo
   fvid_help && echo
