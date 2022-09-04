@@ -1,0 +1,23 @@
+#!/bin/bash
+
+bin_dir="/data/code/vidhop/shell/linux/bin"
+
+. "$bin_dir/vars"
+. "$bin_dir/common"
+. "$bin_dir/logger"
+. "$bin_dir/history"
+. "$bin_dir/files"
+
+. "$bin_dir/dlv"
+. "$bin_dir/fvid"
+. "$bin_dir/batch"
+. "$bin_dir/sync"  # from workstation to phone
+. "$bin_dir/debug"
+
+function vidhophelp() {
+  dlv_help && echo
+  fvid_help && echo
+  files_help && echo
+  history_help && echo
+  sync_help && return
+}
