@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
 BLUE='\e[34m'
 GREEN='\e[32m'
