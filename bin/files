@@ -18,8 +18,8 @@ function files_help() {
 }
 
 function play() {
-  search_text="$1"
-  [ -z "$media_file" ] && [ -z "$search_text" ] && echo "no media file and no search text" && return
+  [ -z "$media_file" ] && [ -z "$1" ] && echo "no media file available and no user input received" && return
+  [ -f "$1" ] && media_file="$1" || search_text="$1"
 
   if [ -n "$search_text" ]; then
     files=$(find "$vidhop_dir" -iname "*$1*mp4")
