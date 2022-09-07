@@ -27,7 +27,6 @@ function extract_platform_name() {
       return
     fi
   done
-
   echo could not determine platform for "$url"
   return 1
 }
@@ -51,7 +50,7 @@ function sanitize_filename() {  # echo '"*/<>?\|_: ..ok`' | sanitize_filename
 }
 
 function channel_url_from_file() {
-  [ -z "$1" ] && echo "usage: channel_url_from_file PARTIAL_CHANNEL_NAME [PLATFORM]" && return 1
+  [ -z "$1" ] && echo "usage: channel_url_from_file <PARTIAL_CHANNEL_NAME> [<PLATFORM>]" && return 1
   json_file="$1"
   jq 'if .channel_url != null then .channel_url
       elif .webpage_url != null then .webpage_url
@@ -62,7 +61,7 @@ function channel_url_from_file() {
 
 function channel_url_from_obj() {
   [ -z "$json" ] && [ -z "$1" ] && echo -e "no \$json was not found as a set variable, nor as argument" &&
-    echo -e "usage: channel_url_from_file PARTIAL_CHANNEL_NAME [PLATFORM]" && return 1
+    echo -e "usage: channel_url_from_file <PARTIAL_CHANNEL_NAME> [<PLATFORM>]" && return 1
   [ -n "$1" ] && json="$1"
   jq 'if .channel_url != null then .channel_url
       elif .webpage_url != null then .webpage_url
@@ -124,8 +123,4 @@ function sort_playlist_index_asc() {
   [ -z "$json" ] && echo no json variable availble, abort sort && return 1
   entries=$(jq ".entries | sort_by(.playlist_index) " <<<"$json")
   json=$(jq -s '.[0].entries = .[1] | .[0]' <<<"$json" <<<"$entries")
-}
-
-function updateytdlp() {
-  pip install yt-dlp -U
 }

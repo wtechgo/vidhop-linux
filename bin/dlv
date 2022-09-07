@@ -25,9 +25,10 @@ function clear_vars_dlv() {
 }
 
 check_valid_platform() {
-  [ -n "$1" ] && url="$1" && unset valid
+  [ -n "$1" ] && url="$1"; unset valid
+  domain=$(echo "$url" | awk -F/ '{print $3}')
   for platform in "${platform_names[@]}"; do
-    [[ "$url" == *$platform* ]] && valid=true && break
+    [[ "$domain" == *$platform* ]] && valid=true && break
   done
   [ -z "$valid" ] &&
     logInfo "url '$url' is invalid, unknown platform" &&
