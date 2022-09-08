@@ -120,6 +120,21 @@ function fetch_sanitized_title() {
     --verbose "$url"
 }
 
+function fetch_song_filename() {
+  yt-dlp --print "%(artist)s - %(title)s" \
+    --replace-in-metadata "artist,title" '"' "'" \
+    --replace-in-metadata "artist,title" '\*' '' \
+    --replace-in-metadata "artist,title" '/' '' \
+    --replace-in-metadata "artist,title" ':' ' -' \
+    --replace-in-metadata "artist,title" '<' '' \
+    --replace-in-metadata "artist,title" '>' '' \
+    --replace-in-metadata "artist,title" '\?' '' \
+    --replace-in-metadata "artist,title" '\\' '' \
+    --replace-in-metadata "artist,title" '\|' '-' \
+    --replace-in-metadata "artist,title" '\`' "'" \
+    --verbose "$url"
+}
+
 # Download video information. Video metadata and thumbnail.
 function dlvi() {
   local standalone="$2"
@@ -543,7 +558,7 @@ function dla() {
   check_valid_platform "$url" || return 1
   mkdir -p "$music_meta_dir" 2>/dev/null
 
-  name="$(fetch_sanitized_title)"
+  name="$(fetch_song_filename)"
   fetch_video_metadata "$url" # populates json
   jq <<<"$json" >"$music_meta_dir/$name.json"
   add_to_ahistory
@@ -559,6 +574,7 @@ function dla() {
   jq <<<"$json"
   cd "$music_dir" || return
 }
+
 # Download video playlist information (similar to dlci).
 function dlapli() {
   local url="$1"
