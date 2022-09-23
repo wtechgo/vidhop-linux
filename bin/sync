@@ -8,8 +8,8 @@
 
 
 # PHONE
-IP_PHONE="192.168.0.200" # run `ifconfig` in Termux and find the IP under 'wlan0', install if
-USER_PHONE="u0_a482"     # run `echo $USER` in Termux to find yours
+IP_PHONE="FILL_IN_IP_ADDRESS_FROM_PHONE"   # run `ifconfig` in Termux and find the IP under 'wlan0', install if
+USER_PHONE="FILL_IN_USER_FROM_PHONE"       # run `echo $USER` in Termux to find yours
 SHELL_PHONE="bash"       # FILL IN YOUR SHELL ON PHONE. You can also leave the default: bash.
 SSH_PORT_TERMUX=8022
 
@@ -21,12 +21,12 @@ BASHRC_PHONE="/data/data/com.termux/files/usr/etc/$SHELL_PHONE.bashrc"
 
 # WORKSTATION
 SSH_PRIVATE_KEY_WS="$HOME/.ssh/id_vidhop"
-HOME_WS="/data/Users/krist"
+HOME_WS="$HOME"
 VIDHOP_DIR_WS="$HOME_WS/Videos/VidHop"
 DOWNLOADS_WS="$HOME_WS/Downloads"
-VIDHOP_BIN_DIR_WS="/data/code/vidhop/shell/termux/bin"
-BASHRC_WS="/data/code/vidhop/shell/termux/bash.bashrc"
-TOR_DOWNLOADS_WS="/home/freetalk/.local/share/torbrowser/tbb/x86_64/tor-browser_en-US/Browser/Downloads"
+VIDHOP_BIN_DIR_WS="/opt/vidhop/bin"
+BASHRC_WS="/opt/vidhop/bash.bashrc"
+TOR_DOWNLOADS_WS="$HOME/.local/share/torbrowser/tbb/x86_64/tor-browser_en-US/Browser/Downloads"
 
 function sshphone() {
   [ -n "$1" ] && local IP_PHONE="$1"
