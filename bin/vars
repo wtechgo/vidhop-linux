@@ -1,8 +1,9 @@
 #!/bin/bash
 
-vidhop_dir="$HOME/Videos/VidHop"
-vidhop_app_dir="/data/code/vidhop/shell/linux"
-bin_dir="$vidhop_app_dir/bin" # Overwrites loader.bin_dir (though this value is identical to loader.bin_dir).
+shared="/data/data/com.termux/files/home/storage/shared"
+vidhop_dir="$shared/VidHop"
+vidhop_app_dir="/data/data/com.termux/files/usr/opt/vidhop"  # already defined in loader
+bin_dir="/data/data/com.termux/files/usr/opt/vidhop/bin"  # already defined in loader
 scrape_channel_avatar_img_py="$bin_dir/scrape_channel_avatar_img.py"
 
 # media
@@ -35,16 +36,18 @@ export_dir="$vidhop_dir/export"
 fvid_export_dir="$export_dir/fvid"
 wp_export_dir="$export_dir/wp"
 
-# workstation applications
-video_app="vlc"
-audio_app="vlc"
-picture_app="ristretto"
-picture_app_alt="gimp" # supports webp
-text_app="code"
+# default applications
+video_app="termux-open"
+audio_app="termux-open"
+picture_app="termux-open"
+picture_app_alt="termux-open"
+text_app="termux-open"
 
-workstation_screen_char_count=120
+termux_screen_char_count=53
 
+# .bashrc shortkeys
 alias cdvidhop='cd $vidhop_dir'
+alias cdappdir='cd $vidhop_app_dir'
 alias cdvidhopbin='cd $bin_dir'
 alias cdvbin='cd $bin_dir'
 alias cdvid='cd $vids_dir'
@@ -53,9 +56,9 @@ alias cdmeta='cd $meta_dir'
 alias cdvidmeta='cd $vids_meta_dir'
 alias cdchanmeta='cd $channels_meta_dir'
 alias cdmusic='cd $music_dir'
-alias cdpods='cd $podcasts_dir'
 alias cdthumbs='cd $thumbnails_dir'
-alias cddownloaded='cd $downloaded'
+alias cdpods='cd $podcasts_dir'
+alias cddownloaded='cd $downloaded_dir'
 alias cdlogs='cd $log_dir'
 
 alias llvidhop='ls -l $vidhop_dir'
@@ -64,20 +67,19 @@ alias llchan='ls -l $channels_dir'
 alias llmeta='ls -l $meta_dir'
 alias llvidmeta='ls -l $vids_meta_dir'
 alias llchanmeta='ls -l $channels_meta_dir'
-alias llmusic='ls -l $music_dir'
-alias llpods='ls -l $podcasts_dir'
 alias llthumbs='ls -l $thumbnails_dir'
-alias lldownloaded='ls -l $downloaded'
+alias llpods='ls -l $podcasts_dir'
+alias lldownloaded='ls -l $downloaded_dir'
 alias lllogs='ls -l $log_dir'
 
-alias nanoloader='nano $bin_dir/loader'
-alias nanovars='nano $bin_dir/vars'
-alias nanocommon='nano $bin_dir/common'
 alias nanodlv='nano $bin_dir/dlv'
 alias nanofvid='nano $bin_dir/fvid'
-alias nanofiles='nano $bin_dir/files'
 alias nanosync='nano $bin_dir/sync'
+alias nanofiles='nano $bin_dir/files'
+alias nanovars='nano $bin_dir/vars'
+alias nanocommon='nano $bin_dir/common'
 alias nanohistory='nano $bin_dir/history'
+alias nanoloader='nano $bin_dir/loader'
 
 # color codes
 BLACK='\e[30m'
@@ -91,6 +93,7 @@ LIGHTGRAY='\e[37m'
 DARKGRAY='\e[30m'
 YELLOW='\e[33m'
 NC='\033[0m' # No Color
+
 
 platform_names=(
   archive
@@ -164,7 +167,6 @@ platform_names=(
   bandaichannel
   bandcamp
   bannedvideo
-  banned.video
   bbc
   beatport
   beeg

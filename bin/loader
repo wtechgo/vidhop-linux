@@ -11,32 +11,42 @@ bin_dir="/opt/vidhop/bin"
 . "$bin_dir/dlv"
 . "$bin_dir/fvid"
 . "$bin_dir/batch"
-. "$bin_dir/sync"  # from workstation to phone
+. "$bin_dir/sync" # from workstation to phone
 . "$bin_dir/debug"
 
+[ -f "$vidhop_app_dir/config.ini" ] && . "$vidhop_app_dir/config.ini"
+
 function updateytdlp() {
+  echo "> Updating YT-DLP via Python package manager..." && sleep 1
   python -m pip install yt-dlp -U
 }
 
-function updatevidhop() {
-  pwd=$(pwd)
-  cd "$app_dir"
+function install_loader() {
+  echo "> Installing VidHop loader to /usr/bin/vidhop..." && sleep 1
+  chmod +x "$PREFIX/opt/vidhop/bin/loader"
+  sudo cp "/opt/vidhop/bin/loader" "/usr/local/bin/vidhop"
+  . vidhop
+}
 
-  echo "updating VidHop binaries at $bin_dir..."
+function fetch_github() {
+  echo "> Updating VidHop code at $vidhop_app_dir..."
+  echo "> Fetching from GitHub..." && sleep 1
   git fetch --all
   git reset --hard origin/master
+}
 
-  echo "updating yt-dlp..."
+function updatevidhop() {
+  pwd=$(pwd) && cd "$vidhop_app_dir"
+  fetch_github
+  install_loader
   updateytdlp
-
-  cd "$pwd"
-  echo "VidHop updated."
+  cd "$pwd" && echo "VidHop updated."
 }
 
 function uninstallvidhop() {
   echo "This is the uninstallation program for VidHop."
   echo "Uninstall removes all program files."
-  echo "It does not delete your downloads in the VidHop directory"
+  echo "It does not delete your downloads in the VidHop directory."
   echo -n 'Are you sure you want to uninstall VidHop? y/N: ' && read -r answer
   answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
   [ "$answer" = "n" ] || [ -z "$answer" ] && echo "aborted uninstall" && return
