@@ -7,16 +7,16 @@
 # Don't forget to start sshd on the workstation.
 
 # PHONE
-IP_PHONE="FILL_IN_IP_ADDRESS_FROM_PHONE"
-USER_PHONE="FILL_IN_USER_FROM_PHONE"
+IP_PHONE="FILL_IN_IP_ADDRESS_FROM_PHONE_IN_CONFIG.INI"
+USER_PHONE="FILL_IN_USER_FROM_PHONE_IN_CONFIG.INI"
 VIDHOP_DIR_PHONE="/data/data/com.termux/files/home/storage/shared/VidHop"
 VIDHOP_BIN_DIR_PHONE="/data/data/com.termux/files/usr/opt/vidhop/bin"
 SHELL_RC_PHONE="/data/data/com.termux/files/usr/etc/bash.bashrc"
 SSH_PORT_TERMUX=8022
 
 # WORKSTATION
-USER_WS="freetalk"                # User input required.
-USER_HOME_WS="/data/Users/krist"  # User input required.`
+USER_WS="FILL_IN_USER_FROM_WORKSTATION_IN_CONFIG.INI"
+USER_HOME_WS="FILL_IN_USER_HOMEDIRECTORY_FROM_WORKSTATION_IN_CONFIG.INI"
 VIDHOP_DIR_WS="$USER_HOME_WS/Videos/VidHop"
 DOWNLOADS_WS="$USER_HOME_WS/Downloads"
 VIDHOP_BIN_DIR_WS="/data/code/vidhop/shell/termux/bin"

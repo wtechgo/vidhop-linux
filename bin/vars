@@ -1,9 +1,8 @@
 #!/bin/bash
 
-shared="/data/data/com.termux/files/home/storage/shared"
-vidhop_dir="$shared/VidHop"
-vidhop_app_dir="/data/data/com.termux/files/usr/opt/vidhop"  # already defined in loader
-bin_dir="/data/data/com.termux/files/usr/opt/vidhop/bin"  # already defined in loader
+vidhop_dir="$HOME/Videos/VidHop"
+vidhop_app_dir="/opt/bin/vidhop"
+bin_dir="$vidhop_app_dir/bin" # Overwrites loader.bin_dir (though this value is identical to loader.bin_dir).
 scrape_channel_avatar_img_py="$bin_dir/scrape_channel_avatar_img.py"
 
 # media

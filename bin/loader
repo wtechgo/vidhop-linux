@@ -1,6 +1,8 @@
 #!/bin/bash
 
-bin_dir="/opt/vidhop/bin"
+bin_dir="/data/code/vidhop/shell/linux/bin"
+
+[ -f "$vidhop_app_dir/config.ini" ] && . "$vidhop_app_dir/config.ini"   # overwrites $bin_dir with value from config (if needed)
 
 . "$bin_dir/vars"
 . "$bin_dir/common"

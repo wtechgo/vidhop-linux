@@ -140,7 +140,7 @@ function fetch_video_subs(){
   subs_dir="$vids_meta_dir/$platform/${name}.subs"
   subsauto_dir="$vids_meta_dir/$platform/${name}.subs/auto-generated"
 
-  # subs provided by the uploader
+  # subs provided by the uploader. https://www.science.co.il/language/Codes.php
   yt-dlp --write-subs --sub-langs "en,nl,fr,de,gr,es,it,tr,af,ar,ru,ch" \
     -P "$subs_dir" -o "$name.%(ext)s" \
     --no-download "$url"
