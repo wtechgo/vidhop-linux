@@ -1,10 +1,12 @@
 #!/bin/bash
 
-bin_dir="/data/code/vidhop/shell/linux/bin"
+vidhop_app_dir="$(dirname "$(dirname "$(realpath "$0")")")"
+bin_dir="$vidhop_app_dir/bin"
 
-[ -f "$vidhop_app_dir/config.ini" ] && . "$vidhop_app_dir/config.ini"   # overwrites $bin_dir with value from config (if needed)
+# overwrites $bin_dir with values from config (if needed).
+[ -f "$vidhop_app_dir/config.ini" ] && . "$vidhop_app_dir/config.ini"
 
-. "$bin_dir/vars"
+. "$bin_dir/vars" # Will overwrite all vars from config.ini
 . "$bin_dir/common"
 . "$bin_dir/logger"
 . "$bin_dir/history"

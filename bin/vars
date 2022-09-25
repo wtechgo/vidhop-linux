@@ -1,9 +1,10 @@
 #!/bin/bash
 
-vidhop_dir="$HOME/Videos/VidHop"
-vidhop_app_dir="/opt/bin/vidhop"
-bin_dir="$vidhop_app_dir/bin" # Overwrites loader.bin_dir (though this value is identical to loader.bin_dir).
+[ -z "$vidhop_dir" ] && vidhop_dir="$HOME/Videos/VidHop"
+[ -z "$vidhop_app_dir" ] && vidhop_app_dir="/opt/bin/vidhop"
+[ -z "$bin_dir" ] && bin_dir="$vidhop_app_dir/bin" # Overwrites loader.bin_dir (though this value is identical to loader.bin_dir).
 scrape_channel_avatar_img_py="$bin_dir/scrape_channel_avatar_img.py"
+config_ini="$vidhop_app_dir/config.ini"
 
 # media
 vids_dir="$vidhop_dir/videos"
@@ -79,6 +80,7 @@ alias nanovars='nano $bin_dir/vars'
 alias nanocommon='nano $bin_dir/common'
 alias nanohistory='nano $bin_dir/history'
 alias nanoloader='nano $bin_dir/loader'
+alias nanoconfigini='nano $vidhop_app_dir/config.ini'
 
 # color codes
 BLACK='\e[30m'
