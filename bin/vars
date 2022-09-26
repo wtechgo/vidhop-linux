@@ -37,14 +37,7 @@ export_dir="$vidhop_dir/export"
 fvid_export_dir="$export_dir/fvid"
 wp_export_dir="$export_dir/wp"
 
-# default applications
-video_app="termux-open"
-audio_app="termux-open"
-picture_app="termux-open"
-picture_app_alt="termux-open"
-text_app="termux-open"
-
-termux_screen_char_count=53
+workstation_screen_char_count=120
 
 # .bashrc shortkeys
 alias cdvidhop='cd $vidhop_dir'
