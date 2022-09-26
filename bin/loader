@@ -28,7 +28,7 @@ function updateytdlp() {
 
 function install_loader() {
   echo "> Installing VidHop loader to /usr/bin/vidhop..." && sleep 1
-  cd "$HOME"  # make sure we have write permissions
+  cd "$HOME" # make sure we have write permissions
   loader_bin="/usr/local/bin/vidhop"
   loader_tmp="loader_tmp"
   echo '#!/bin/bash' >"$loader_tmp"
@@ -51,7 +51,7 @@ function updatevidhop() {
   fetch_github
   updateytdlp
   install_loader
-  echo -e "\n${GREEN}VidHop was updated \!${NC}\n\nReload VidHop by choosing one of these two options:"
+  echo -e "\n${GREEN}VidHop updated ! ${NC}\n\nReload VidHop by choosing one of these two options:"
   echo -e "  1. Close Termux and reopen Termux.\n  2. Execute '. vidhop'"
   cd "$pwd"
 }
@@ -61,7 +61,7 @@ function updatevidhopbin() {
   fetch_github
   updateytdlp
   install_loader
-  echo -e "\n${GREEN}VidHop was updated \!${NC}\n\nReload VidHop by choosing one of these two options:"
+  echo -e "\n${GREEN}VidHop updated ! ${NC}\n\nReload VidHop by choosing one of these two options:"
   echo -e "  1. Close Termux and reopen Termux.\n  2. Execute '. vidhop'"
   cd "$pwd"
 }
