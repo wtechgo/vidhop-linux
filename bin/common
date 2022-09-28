@@ -50,6 +50,11 @@ function sanitize_filename() { # echo '"*/<>?\|_: ..ok`' | sanitize_filename
   # sed 's/\.\{2,\}//g' removes 2 or more dots
 }
 
+function is_single_download() {
+  [[ "$function" == dlv* ]] || [[ "$function" == dla* ]] || [[ "$function" == dlpod* ]] &&
+    echo "true" || echo "false"
+}
+
 # shellcheck disable=SC2120
 function channel_url_from_obj() {
   [ -n "$json" ] &&

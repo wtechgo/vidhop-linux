@@ -8,7 +8,7 @@
 
 # PHONE
 IP_PHONE="FILL_IN_IP_ADDRESS_FROM_PHONE_IN_CONFIG.INI"
-USER_PHONE="FILL_IN_USER_FROM_PHONE_IN_CONFIG.INI"
+USER_PHONE="FILL_IN_USER_FROM_PHONE_IN_CONFIG.INI" && [ -f "$config_ini" ] && . "$config_ini"
 VIDHOP_DIR_PHONE="/data/data/com.termux/files/home/storage/shared/VidHop"
 VIDHOP_APP_DIR_PHONE="/data/data/com.termux/files/usr/opt/vidhop"
 VIDHOP_BIN_DIR_PHONE="$VIDHOP_APP_DIR_PHONE/bin"
