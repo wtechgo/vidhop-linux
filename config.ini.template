@@ -1,25 +1,27 @@
 ## Copy or rename config.ini.template to config.ini and VidHop will read it.
 ## Fill in your personal information inside the double quotes.
 
-
-## VidHop directories.
-## -------------------
+## App dirs.
+## ---------
 #vidhop_dir=""   # Where VidHop stores downloaded media and metadata.
 #vidhop_app_dir=""   # Where VidHop's code resides.
-#bin_dir=""  # Overwrites loader.bin_dir before the loader loads in all other binarires.
+#bin_dir=""  # Overwrites loader.bin_dir before the loader loads in all other binaries.
 
 ## SSH settings.
 ### PHONE.
 ### ------
 #IP_PHONE=""
 #USER_PHONE=""
+#VIDHOP_DIR_PHONE=""
+#VIDHOP_APP_DIR_PHONE=""
 
 ### WORKSTATION (WS).
 ### -----------------
 #IP_WS=""
 #USER_WS=""
 #USER_HOME_WS=""
-#SHELL_WS=""
+#VIDHOP_DIR_WS=""
+#VIDHOP_APP_DIR_WS=""
 
 ## default applications
 #video_app="vlc"
