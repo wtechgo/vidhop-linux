@@ -19,9 +19,9 @@ SSH_PORT_TERMUX=8022
 USER_WS="FILL_IN_USER_FROM_WORKSTATION_IN_CONFIG.INI"
 USER_HOME_WS="/home/$USER_WS"
 [ -f "$config_ini" ] && . "$config_ini" # overwrite $VIDHOP_APP_DIR_WS and $VIDHOP_BIN_DIR_WS
+VIDHOP_APP_DIR_WS="/opt/vidhop"
 VIDHOP_DIR_WS="$USER_HOME_WS/Videos/VidHop"
 DOWNLOADS_WS="$USER_HOME_WS/Downloads"
-VIDHOP_APP_DIR_WS="/opt/vidhop"
 TERMUX_RC_WS="/data/code/vidhop/shell/termux/bash.bashrc"
 TOR_DOWNLOADS_WS="/home/$USER_WS/.local/share/torbrowser/tbb/x86_64/tor-browser_en-US/Browser/Downloads"
 SSH_PRIVATE_KEY_WS="$HOME/.ssh/id_vidhop"
@@ -192,7 +192,7 @@ function sendvidhopbin() {
     --exclude=".git/" \
     --exclude=".gitignore" \
     --exclude=".idea/" \
-    "$VIDHOP_APP_DIR_WS/" "$USER_PHONE@$IP_PHONE:$VIDHOP_APP_DIR_PHONE"
+    "$VIDHOP_DEV_DIR_WS/"* "$USER_PHONE@$IP_PHONE:$VIDHOP_APP_DIR_PHONE"
 }
 
 function fetchvidhopbin() {
@@ -200,7 +200,7 @@ function fetchvidhopbin() {
     --exclude=".git/" \
     --exclude=".gitignore" \
     --exclude=".idea/" \
-    "$USER_PHONE@$IP_PHONE:$VIDHOP_APP_DIR_PHONE/" "$VIDHOP_APP_DIR_WS"
+    "$USER_PHONE@$IP_PHONE:$VIDHOP_APP_DIR_PHONE"/* "$VIDHOP_DEV_DIR_WS"
 }
 
 function sendbashrc() {
