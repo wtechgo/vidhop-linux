@@ -39,7 +39,16 @@ wp_export_dir="$export_dir/wp"
 
 workstation_screen_char_count=120
 
+# default applications
+video_app="SET_YOUR_APP_EG_VLC_IN_CONFIG_INI"
+audio_app="SET_YOUR_APP_EG_VLC_IN_CONFIG_INI"
+picture_app="SET_YOUR_APP_EG_RISTRETTO_IN_CONFIG_INI"
+picture_app_alt="SET_YOUR_APP_EG_GIMP_IN_CONFIG_INI"
+text_app="SET_YOUR_APP_EG_CODE_IN_CONFIG_INI"
+
 # .bashrc shortkeys
+alias loadconfigurator='. "$bin_dir/config'
+
 alias cdvidhop='cd $vidhop_dir'
 alias cdappdir='cd $vidhop_app_dir'
 alias cdvidhopbin='cd $bin_dir'

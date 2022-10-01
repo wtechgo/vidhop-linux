@@ -33,7 +33,7 @@ function sshphone() {
 }
 
 function sync_help() {
-  echo " Title: history"
+  echo " Title: sync"
   echo " Description: Sync files between phone and workstation."
   echo " Commands:"
   echo "    syncvidhop  => fetch VidHop files from phone to workstation and send files from workstation to phone"
