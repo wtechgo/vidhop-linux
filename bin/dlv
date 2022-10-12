@@ -825,6 +825,7 @@ function dlfbpost() {
   username=$(jq .username <<<"$json" | tr -d '"')
   timestamp=$(date +'%d-%m-%Y_%Hh%Mm%Ss')
   json_file="${social_media_dir}/facebook/${username}/${shortened_text}_${timestamp}.json"
+  [ -z "$shortened_text" ] && json_file="${social_media_dir}/facebook/${username}/${timestamp}.json"
   mkdir -p "${social_media_dir}/facebook/${username}" 2>/dev/null
   jq . <<<"$json" > "$json_file"
   cd "${social_media_dir}/facebook/${username}"
@@ -839,6 +840,7 @@ function dltweet() {
   username=$(jq .username <<<"$json" | tr -d '"')
   timestamp=$(date +'%d-%m-%Y_%Hh%Mm%Ss')
   json_file="${social_media_dir}/twitter/${username}/${shortened_text}_${timestamp}.json"
+  [ -z "$shortened_text" ] && json_file="${social_media_dir}/twitter/${username}/${timestamp}.json"
   mkdir -p "${social_media_dir}/twitter/${username}" 2>/dev/null
   jq . <<<"$json" > "$json_file"
   cd "${social_media_dir}/twitter/${username}"
