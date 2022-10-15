@@ -1,7 +1,8 @@
 #!/bin/bash
 
 vidhop_dir="$HOME/Videos/VidHop"
-vidhop_app_dir="$(dirname "$(dirname "$(realpath "$0")")")"
+vidhop_app_dir="/data/code/vidhop/shell/linux"
+#vidhop_app_dir="$(dirname "$(dirname "$(realpath "$0")")")"
 bin_dir="$vidhop_app_dir/bin"
 
 # overwrites $vidhop_dir, $vidhop_app_dir and $bin_dir with values from config.ini (if needed).
@@ -29,10 +30,10 @@ function updateytdlp() {
 }
 
 function install_loader() {
-  echo "> Installing VidHop loader to /usr/bin/vidhop..." && sleep 1
-  cd "$HOME" # make sure we have write permissions
   loader_bin="/usr/local/bin/vidhop"
   loader_tmp="loader_tmp"
+  echo "> Installing VidHop loader to $loader_bin..." && sleep 1
+  cd "$HOME" # make sure we have write permissions
   echo '#!/bin/bash' >"$loader_tmp"
   echo >>"$loader_tmp"
   echo ". $bin_dir/loader" >>"$loader_tmp"

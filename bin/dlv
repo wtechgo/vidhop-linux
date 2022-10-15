@@ -820,29 +820,43 @@ function dlt() {
 function dlfbpost() {
   url="$1" && [ -z "$url" ] && echo "usage: dlfbpost <URL>" && return
   json="$(python "$facebook_scraper" --url "$url")"
+
   text="$(jq '.text' <<<"$json")"
-  shortened_text="$(echo "$text" | tr -dc '[:alnum:] ' | tr '[:upper:]' '[:lower:]' | cut -c -80)"
+  shortened_text="$(echo "$text" | tr -dc '[:alnum:] ' | tr '[:upper:]' '[:lower:]' | cut -c -80 | xargs)"
   username=$(jq .username <<<"$json" | tr -d '"')
   timestamp=$(date +'%d-%m-%Y_%Hh%Mm%Ss')
-  json_file="${social_media_dir}/facebook/${username}/${shortened_text}_${timestamp}.json"
-  [ -z "$shortened_text" ] && json_file="${social_media_dir}/facebook/${username}/${timestamp}.json"
-  mkdir -p "${social_media_dir}/facebook/${username}" 2>/dev/null
+
+  post_name="$shortened_text"
+  [ -z "$shortened_text" ] && post_name="$timestamp"
+  post_dir="$social_media_dir/facebook/$username/$post_name"
+  mkdir -p "$post_dir" 2>/dev/null
+  json_file="$post_dir/metadata.json"
+
   jq . <<<"$json" > "$json_file"
-  cd "${social_media_dir}/facebook/${username}"
+  # TODO: Download images to "$post_dir".
+
+  cd "$social_media_dir/facebook/${username}"
   jq . <<<"$json"
 }
 
 function dltweet() {
   url="$1" && [ -z "$url" ] && echo "usage: dltweet <URL>" && return
   json=$(python "$twitter_scraper" --url "$url")
+
   text="$(jq '.content' <<<"$json")"
-  shortened_text="$(echo "$text" | tr -dc '[:alnum:] ' | tr '[:upper:]' '[:lower:]' | cut -c -80)"
+  shortened_text="$(echo "$text" | tr -dc '[:alnum:] ' | tr '[:upper:]' '[:lower:]' | cut -c -80 | xargs)"
   username=$(jq .username <<<"$json" | tr -d '"')
   timestamp=$(date +'%d-%m-%Y_%Hh%Mm%Ss')
-  json_file="${social_media_dir}/twitter/${username}/${shortened_text}_${timestamp}.json"
-  [ -z "$shortened_text" ] && json_file="${social_media_dir}/twitter/${username}/${timestamp}.json"
-  mkdir -p "${social_media_dir}/twitter/${username}" 2>/dev/null
+
+  tweet_name="$shortened_text"
+  [ -z "$shortened_text" ] && tweet_name="$timestamp"
+  tweet_dir="${social_media_dir}/twitter/${username}/${tweet_name}"
+  mkdir -p "$tweet_dir" 2>/dev/null
+  json_file="$tweet_dir/metadata.json"
+
   jq . <<<"$json" > "$json_file"
-  cd "${social_media_dir}/twitter/${username}"
+  # TODO: Download images to "$tweet_dir".
+
+  cd "$tweet_dir"
   jq . <<<"$json"
 }
