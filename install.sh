@@ -38,6 +38,9 @@ pip install -U selenium
 pip install -U beautifulsoup4
 pip install -U image
 pip install -U pillow
+pip install -U facebook-scraper
+pip install -U snscrape
+pip install -U pywebcopy
 
 echo "installing VidHop..."
 vidhop_app_dir="/opt/vidhop"        # $PREFIX points to /data/data/com.termux/files/usr

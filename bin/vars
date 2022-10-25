@@ -1,13 +1,14 @@
 #!/bin/bash
 
 [ -z "$vidhop_dir" ] && vidhop_dir="$HOME/Videos/VidHop"
-[ -z "$vidhop_app_dir" ] && vidhop_app_dir="/opt/bin/vidhop"
+[ -z "$vidhop_app_dir" ] && vidhop_app_dir="/opt/vidhop"
 [ -z "$bin_dir" ] && bin_dir="$vidhop_app_dir/bin" # Overwrites loader.bin_dir (though this value is identical to loader.bin_dir).
 config_ini="$vidhop_app_dir/config.ini"
 config_ini_template="$vidhop_app_dir/config.ini.template"
 scrape_channel_avatar_img_py="$bin_dir/scrape_channel_avatar_img.py"
 facebook_scraper="$bin_dir/facebookscraper.py"
 twitter_scraper="$bin_dir/twitterscraper.py"
+website_scraper="$bin_dir/websitescraper.py"
 
 # media
 vids_dir="$vidhop_dir/videos"
@@ -15,6 +16,7 @@ channels_dir="$vidhop_dir/channels"
 music_dir="$vidhop_dir/music"
 podcasts_dir="$vidhop_dir/podcasts"
 thumbnails_dir="$vidhop_dir/thumbnails"
+websites_dir="$vidhop_dir/website"
 # metadata
 meta_dir="$vidhop_dir/metadata"
 vids_meta_dir="$meta_dir/videos"

@@ -212,7 +212,7 @@ function dlvi() {
 
   if [ "$standalone" = "true" ]; then
     print_metadata
-    cd "$vids_meta_dir/$platform" || return
+    cd "$vids_meta_dir/$platform/$name" || return
   fi
 }
 
@@ -967,4 +967,14 @@ function dltweet() {
   jq . <<<"$json" >"$json_file"
   cd "${social_media_dir}/twitter/${username}"
   jq . <<<"$json"
+}
+
+function dlwebsite() {
+  [ -z "$1" ] || [ "$(is_url "$1")" = false ] && echo "not a valid url" && return
+  url="$1"
+  python "$website_scraper" "$url" "$websites_dir"
+}
+
+function dlw() {
+  dlwebsite "$1"
 }
