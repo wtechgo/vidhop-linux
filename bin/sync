@@ -392,6 +392,7 @@ function sendmusictousb() {
   echo "==================================================="
 
   if [ -d "$usb_music_dir" ]; then
+    find "$src_music_dir" -exec id3convert --strip {} \;  # strip all id-tags as some choke the car radio
     rsync -avh "$src_music_dir/" "$usb_music_dir" --delete
     echo "removing .Trash-1000 from usb..."
     rm -rf "$usb_music_dir/.Trash-1000"
