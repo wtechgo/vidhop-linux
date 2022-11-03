@@ -11,7 +11,8 @@ VidHop is like a Swiss knife for anyone interested in saving audiovisual content
 VidHop for Linux also exists. Sync functionality is built-in on both Linux and Android versions of VidHop though that 
 requires a working SSH connection between laptop and phone.
 
-A port for Windows is another idea.
+Windows users can head over to [VidHop for Docker](https://github.com/wtechgo/vidhop-docker). This repo gets updated less 
+frequently though.
 
 ### Videos
 
