@@ -6,6 +6,25 @@
 # No permissions error was solved by disabling the firewall on computer.
 # Don't forget to start sshd on the workstation.
 
+function sync_help() {
+  echo " Title: sync"
+  echo " Description: Sync files between phone and workstation."
+  echo " Commands:"
+  echo "   syncvidhop  => fetch VidHop files from phone to workstation and send files from workstation to phone"
+  echo "               => syncvidhop executes sendvidhop and fetchvidhop"
+  echo "   sendvidhop  => send files from workstation to phone"
+  echo "   fetchvidhop => fetch VidHop files from phone to workstation"
+  echo " Prerequisites:"
+  echo "   1. the IP-address and user have to be known in the 'sync' file, optionally via config.ini"
+  echo "   2. passwordless public SSH keys should be configured on phone and workstation (or you'll have to type passwords)"
+  echo "   3. start sshd on workstation and phone (Termux)"
+  echo " Notes:"
+  echo "   sendvidhop sends all VidHop files, keeps the metadata files and deletes media files to not clog up the phone"
+  echo "   fetchvidhop fetches only metadata files to enable video searches in Termux via the fvid command"
+  echo " Troubleshoot:"
+  echo "   No permissions error was solved by disabling the firewall on the workstation."
+}
+
 # PHONE
 IP_PHONE="FILL_IN_IP_ADDRESS_FROM_PHONE_IN_CONFIG.INI"
 USER_PHONE="FILL_IN_USER_FROM_PHONE_IN_CONFIG.INI"
@@ -30,16 +49,6 @@ SSH_PRIVATE_KEY_WS="$HOME/.ssh/id_vidhop"
 function sshphone() {
   [ -n "$1" ] && local IP_PHONE="$1"
   ssh -4 -p 8022 -i "$SSH_PRIVATE_KEY_WS" "$USER_PHONE@$IP_PHONE"
-}
-
-function sync_help() {
-  echo " Title: sync"
-  echo " Description: Sync files between phone and workstation."
-  echo " Commands:"
-  echo "    syncvidhop  => fetch VidHop files from phone to workstation and send files from workstation to phone"
-  echo "    sendvidhop  => send files from workstation to phone"
-  echo "    fetchvidhop => fetch VidHop files from phone to workstation"
-  return 0
 }
 
 # sendvidhop
