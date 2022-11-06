@@ -120,6 +120,7 @@ function real_fetchvidhop() {
   rsync -Pauv --remove-source-files -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     --exclude=".git/" \
     --exclude=".gitignore" \
+    --exclude="metadata/.nomedia" \
     --exclude="bin/" \
     --exclude="log/" \
     --exclude="import/" \
@@ -147,6 +148,7 @@ function dry_fetchvidhop() {
   rsync -Pauvn --remove-source-files -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     --exclude=".git/" \
     --exclude=".gitignore" \
+    --exclude="metadata/.nomedia" \
     --exclude="bin/" \
     --exclude="log/" \
     --exclude="import/" \
