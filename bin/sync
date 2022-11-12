@@ -375,11 +375,8 @@ function dry_fetchdownloads() {
 }
 
 function fetchdownloads() {
-  if [ "$1" = "-exec" ]; then
-    real_fetchdownloads
-  else # dry run, files identical to previous block
+  if [ "$1" = "-dry" ] || [ "$1" = "-d" ]; then
     dry_fetchdownloads
-
     echo "---"
     echo "this was a dry run"
     echo "execute 'senddownloads -exec' to do a real run"
@@ -388,6 +385,8 @@ function fetchdownloads() {
     [ "$answer" = "n" ] && return
     [ "$answer" = "y" ] || [ -z "$answer" ] && fetchdownloads -exec && return
     echo "unknown answer '$answer', abort"
+  else # dry run, files identical to previous block
+    real_fetchdownloads
   fi
 }
 
