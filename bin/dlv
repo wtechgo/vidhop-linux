@@ -995,3 +995,40 @@ function dlwebsite() {
 function dlw() {
   dlwebsite "$1"
 }
+
+function dlcensored() {
+  [ ! "$(command -v tor)" ] && echo tor not installed, abort && return
+  [ ! "$(command -v torsocks)" ] && echo torsocks not installed, abort && return
+  [ -z "$1" ] && echo "usage: dlcensored <URL>" && return || url="$1"
+  echo "fetching public IP address via https://api.ipify.org..."
+  echo "your IP-address is $(myip)" && sleep 2
+
+  if [ "$(command -v systemctl)" ]; then
+    echo "starting Tor..." && sleep 3
+    systemctl start tor
+
+    echo "fetching anonymous IP address via https://api.ipify.org..."
+    ip_tor="$(torsocks bash -c "curl 'https://api.ipify.org?format=text'")"
+    echo "your anonymous IP-address is $ip_tor (inside the Tor network)" && sleep 1
+
+    echo "starting video download..."
+    torsocks bash -c ". vidhop; dlv $url"
+
+    echo "stopping Tor..." && sleep 2
+    systemctl stop tor
+  else
+    echo "starting Tor..." && sleep 3
+    service tor start
+
+    echo "fetching anonymous IP address via https://api.ipify.org..."
+    ip_tor="$(torsocks bash -c "curl 'https://api.ipify.org?format=text'")"
+    echo "your anonymous IP-address is $ip_tor (inside the Tor network)" && sleep 3
+
+    echo "starting video download..."
+    torsocks bash -c ". vidhop; dlv $url"
+
+    echo "stopping Tor..." && sleep 2
+    service tor stop
+  fi
+  echo download finished
+}
