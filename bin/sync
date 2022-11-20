@@ -202,6 +202,7 @@ function sendvidhopbin() {
     --exclude=".git/" \
     --exclude=".gitignore" \
     --exclude=".idea/" \
+    --exclude="bash.bashrc" \
     "$VIDHOP_DEV_DIR_WS/"* "$USER_PHONE@$IP_PHONE:$VIDHOP_APP_DIR_PHONE"
 }
 

@@ -24,9 +24,20 @@ bin_dir="$vidhop_app_dir/bin"
 
 [ -f "$vidhop_app_dir/config.ini" ] && . "$vidhop_app_dir/config.ini" # overwrites sync vars with values from config.ini
 
-function updateytdlp() {
-  echo "> Updating YT-DLP via Python package manager..." && sleep 1
-  python -m pip install yt-dlp -U
+function update_python_packages() {
+  echo "> Updating Python packages..." && sleep 1
+  pkg install python
+  pip install -U pip
+  pip install -U wheel
+  pip install -U yt-dlp
+  pip install -U requests
+  pip install -U selenium
+  pip install -U beautifulsoup4
+  pip install -U image
+  pip install -U pillow
+  pip install -U facebook-scraper
+  pip install -U snscrape
+  pip install -U pywebcopy
 }
 
 function install_loader() {
@@ -49,6 +60,7 @@ function installloader() { # alias for phone hand typing
 function fetch_github() {
   echo "> Updating VidHop code at $vidhop_app_dir..."
   echo "> Fetching from GitHub..." && sleep 1
+  cd "$vidhop_app_dir"
   git fetch --all
   git reset --hard origin/master && sleep 1
   . "$bin_dir/loader"
@@ -57,17 +69,7 @@ function fetch_github() {
 function updatevidhop() {
   pwd=$(pwd) && cd "$vidhop_app_dir"
   fetch_github
-  updateytdlp
-  install_loader
-  echo -e "\n${GREEN}VidHop updated ! ${NC}\n\nReload VidHop by choosing one of these two options:"
-  echo -e "  1. Close Termux and reopen Termux.\n  2. Execute '. vidhop'"
-  cd "$pwd"
-}
-
-function updatevidhopbin() {
-  pwd=$(pwd) && cd "$vidhop_app_dir"
-  fetch_github
-  updateytdlp
+  update_python_packages
   install_loader
   echo -e "\n${GREEN}VidHop updated ! ${NC}\n\nReload VidHop by choosing one of these two options:"
   echo -e "  1. Close Termux and reopen Termux.\n  2. Execute '. vidhop'"
@@ -90,13 +92,12 @@ function loader_help() {
   echo " Title: loader"
   echo " Description: VidHop management functions."
   echo " Commands:"
-  echo "    updateytdlp => Updates YT-DLP with pip (Python package manager)."
-  echo "    install_loader => Enables users to reload with '. vidhop'"
-  echo "    installloader => Alias for the previous for Termux."
-  echo "    fetch_github => Download the newest VidHop code from GitHub."
-  echo "    updatevidhop => Default update."
-  echo "    updatevidhopbin => Update only files in vidhop/bin."
-  echo "    uninstallvidhop => Remove all VidHop executables, downloaded data in the VidHop directory will NOT be deleted."
+  echo "    updatevidhop    => default update"
+  echo "    uninstallvidhop => remove all VidHop executables, downloaded data in the VidHop directory will NOT be deleted"
+  echo "    installloader   => alias for install_loader"
+  echo "    install_loader  => enables users to reload with '. vidhop"
+  echo "    fetch_github    => download the newest VidHop code from GitHub"
+  echo "    update_python_packages => updates Python packages with pip (package manager)"
 }
 
 function vidhophelp() {
@@ -105,6 +106,30 @@ function vidhophelp() {
   files_help && echo
   metadata_help && echo
   history_help && echo
-  sync_help && return
+  sync_help && echo
   loader_help && return
+}
+
+function install_odysee_workaround() {
+  sed 's;https://api.lbry.tv/api/v1/proxy;https://api.na-backend.odysee.com/api/v1/proxy;' \
+    "/home/$USER/.local/lib/python3.10/site-packages/yt_dlp/extractor/lbry.py" \
+    > "/home/$USER/.local/lib/python3.10/site-packages/yt_dlp/extractor/lbry.py.temp"
+
+  cat "/home/$USER/.local/lib/python3.10/site-packages/yt_dlp/extractor/lbry.py.temp" \
+    > "/home/$USER/.local/lib/python3.10/site-packages/yt_dlp/extractor/lbry.py"
+
+  rm "/home/$USER/.local/lib/python3.10/site-packages/yt_dlp/extractor/lbry.py.temp"
+  echo "Odysee 405 HTTP error fixed"
+}
+
+function restore_odysee_workaround() {
+  sed 's;https://api.na-backend.odysee.com/api/v1/proxy;https://api.lbry.tv/api/v1/proxy;' \
+    "/home/$USER/.local/lib/python3.10/site-packages/yt_dlp/extractor/lbry.py" \
+    > "/home/$USER/.local/lib/python3.10/site-packages/yt_dlp/extractor/lbry.py.temp"
+
+  cat "/home/$USER/.local/lib/python3.10/site-packages/yt_dlp/extractor/lbry.py.temp" \
+    > "/home/$USER/.local/lib/python3.10/site-packages/yt_dlp/extractor/lbry.py"
+
+  rm "/home/$USER/.local/lib/python3.10/site-packages/yt_dlp/extractor/lbry.py.temp"
+  echo "Odysee 405 HTTP error fix reverted"
 }
