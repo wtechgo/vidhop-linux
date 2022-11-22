@@ -127,6 +127,7 @@ function real_fetchvidhop() {
     --exclude="export/" \
     --include="*/" \
     --include="*.mp4" \
+    --include="*.webm" \
     --include="*.jpg" \
     --include="*.jpeg" \
     --include="*.png" \
@@ -155,6 +156,7 @@ function dry_fetchvidhop() {
     --exclude="export/" \
     --include="*/" \
     --include="*.mp4" \
+    --include="*.webm" \
     --include="*.jpg" \
     --include="*.jpeg" \
     --include="*.png" \
@@ -297,7 +299,7 @@ screen_rec="$shared/Movies/Screen Recorder"
 doc_exts=(doc docx xls xlsx pdf txt md)
 img_exts=(jpg png webp jpeg)
 audio_exts=(mp3 m4a wav flacc aac)
-mov_exts=(mp4 mkv mov avi)
+mov_exts=(mp4 webm mkv mov avi)
 
 function real_fetchdownloads() {
   for ext in "${audio_exts[@]}"; do
