@@ -64,7 +64,6 @@ function real_sendvidhop() {
     --exclude="export/" \
     --include="*/" \
     --include="*.json" \
-    --include="music/*.mp3" \
     --exclude="*" \
     "$VIDHOP_DIR_WS/" "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE"
 }
@@ -81,7 +80,6 @@ function dry_sendvidhop() {
     --exclude="export/" \
     --include="*/" \
     --include="*.json" \
-    --include="music/*.mp3" \
     --exclude="*" \
     "$VIDHOP_DIR_WS/" "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE"
 }
@@ -113,6 +111,7 @@ function real_fetchvidhop() {
     --include="*/" \
     --include="*.json" \
     --include="*.mp3" \
+    --include="*.m4a" \
     --exclude="*" \
     "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE/metadata/" "$VIDHOP_DIR_WS/metadata"
 
@@ -142,6 +141,7 @@ function dry_fetchvidhop() {
     --include="*/" \
     --include="*.json" \
     --include="*.mp3" \
+    --include="*.m4a" \
     --exclude="*" \
     "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE/metadata/" "$VIDHOP_DIR_WS/metadata"
 
@@ -428,7 +428,7 @@ function sendmusictophone() {
 function mvmedia() {
   img=(jpg png webp jpeg psd)
   vid=(mp4 mkv mov avi webm)
-  audio=(mp3 wav flacc aac m4a)
+  audio=(mp3 m4a wav flacc aac m4a)
   doc=(doc docx xls lsx pdf txt md epub)
   keepdoc=(notes law finance offgrid videos)
 
