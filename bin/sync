@@ -268,8 +268,14 @@ function senddir() {
 }
 
 function fetchdir() {
-  dir_phone="$1"
-  dir_ws="$2"
+  [ -z "$1" ] &&
+    echo "usage: fetchdir <PHONE_DIR_RELATIVE_SHARED_STORAGE> <WS_DIR_ABS_PATH>" &&
+    echo "       fetchdir <PHONE_DIR_RELATIVE_SHARED_STORAGE>" &&
+    echo "       => Empty second argument puts the fetched directory in $import_dir." && return
+
+  dir_phone="$shared/$1"
+  [ -z "$2" ] && dir_ws="$import_dir" || dir_ws="$2"
+
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     "$USER_PHONE@$IP_PHONE:$dir_phone" "$dir_ws"
 }
@@ -405,7 +411,7 @@ function sendmusictousb() {
   echo "==================================================="
 
   if [ -d "$usb_music_dir" ]; then
-    find "$src_music_dir" -exec id3convert --strip {} \;  # strip all id-tags as some choke the car radio
+    find "$src_music_dir" -exec id3convert --strip {} \; # strip all id-tags as some choke the car radio
     rsync -avh "$src_music_dir/" "$usb_music_dir" --delete
     echo "removing .Trash-1000 from usb..."
     rm -rf "$usb_music_dir/.Trash-1000"

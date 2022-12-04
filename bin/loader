@@ -20,6 +20,7 @@ bin_dir="$vidhop_app_dir/bin"
 . "$bin_dir/fvid"
 . "$bin_dir/batch"
 . "$bin_dir/sync" # from workstation to phone
+. "$bin_dir/ffmpeg"
 . "$bin_dir/debug"
 
 [ -f "$vidhop_app_dir/config.ini" ] && . "$vidhop_app_dir/config.ini" # overwrites sync vars with values from config.ini
