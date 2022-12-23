@@ -280,6 +280,24 @@ function fetchdir() {
     "$USER_PHONE@$IP_PHONE:$dir_phone" "$dir_ws"
 }
 
+function fetch-usb-microphone-recordings() {
+  phone_usb_microscope_dir="$shared/DCIM/USBCamera/Videos"
+  ws_usb_microscope_dir="$record_dir/usb microscope/Videos"
+  mkdir -p "$ws_usb_microscope_dir" 2>/dev/null
+
+  rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+    "$USER_PHONE@$IP_PHONE:$phone_usb_microscope_dir" "$ws_usb_microscope_dir"
+}
+
+function fetch-screen-recordings() {
+  phone_dir="$shared/Movies/Screen Recorder"
+  ws_dir="$record_dir/phone"
+  mkdir -p "$ws_dir" 2>/dev/null
+
+  rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+    "$USER_PHONE@$IP_PHONE:$phone_dir/" "$ws_dir"
+}
+
 function sshconfig() {
   echo "User on this phone      : $(whoami)"
   echo "IP-address of this phone: $(ifdata -pa wlan0)"
