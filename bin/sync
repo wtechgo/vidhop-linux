@@ -479,3 +479,20 @@ function mvmedia() {
 
   [ "$SHELL" = "/bin/zsh" ] && setopt -o nomatch
 }
+
+function create-backup-vidhop() {
+  [ "$1" = -h ] || [ "$1" = --help ] &&
+    echo "usage: create-backup-vidhop" &&
+    echo " info: copy files from \$vidhop_dir to \$vidhop_backup_dir, both defined in vars and optionally config.ini" &&
+    echo &&
+    echo "usage: create-backup-vidhop <VIDHOP_BACKUP_DIR>" &&
+    echo " info: copy files from \$vidhop_dir to \$vidhop_backup_dir, both defined in vars and optionally config.ini" &&
+    echo " info: your path to backup dir should be /your/path and not /your/path/VidHop " &&
+    echo && return
+  backup_dir="/run/media/freetalk/data_backup/Users/krist/Videos"
+  rsync -av "$vidhop_dir" "$backup_dir" --exclude=".git/" --exclude=".idea"
+}
+
+function restore-backup-vidhop() {
+  true
+}

@@ -20,6 +20,7 @@ record_dir="$vidhop_dir/record"
 websites_dir="$vidhop_dir/website"
 # user device media
 music_dir_ws="/home/$USER/Music"
+vidhop_backup_dir="FILL_IN_YOUR"
 # metadata
 meta_dir="$vidhop_dir/metadata"
 vids_meta_dir="$meta_dir/videos"
@@ -96,7 +97,6 @@ alias nanohistory='nano $bin_dir/history; . vidhop'
 alias nanoffmpeg='nano $bin_dir/ffmpeg; . vidhop'
 alias nanofix='nano $bin_dir/fix; . vidhop'
 alias nanocommon='nano $bin_dir/common; . vidhop'
-alias nanohistory='nano $bin_dir/history; . vidhop'
 alias nanovars='nano $bin_dir/vars; . vidhop'
 alias nanoloader='nano $bin_dir/loader; . vidhop'
 alias nanoconfigini='nano $vidhop_app_dir/config.ini; . vidhop'
