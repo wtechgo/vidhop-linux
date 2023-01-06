@@ -259,7 +259,8 @@ function fvidf() { # find video files (on disk)
     echo -e "> Channel downloads in VidHop directory search result:" && echo -e "$result" &&
     unset result && found_something="true"
 
-  result=$(find -L "$HOME/Videos" -not \( -path "$HOME/Videos/VidHop" -prune \) -not -path "*.srt" \
+  result=$(find -L "$HOME/Videos" -not \( -path "$HOME/Videos/VidHop" -prune \) \
+    -not \( -path "$HOME/Videos/production" -prune \) -not -path "*.srt" \
     -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort)
   [ "$(wc --words <<<"$result")" -gt 0 ] &&
     echo -e "> Videos in user home directory result:" && echo -e "$result" &&
