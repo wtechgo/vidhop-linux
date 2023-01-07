@@ -5,6 +5,7 @@
 ## ---------
 ## Where VidHop stores downloaded media and metadata.
 #vidhop_dir=""
+#vidhop_backup_dir=""
 ## Where VidHop's code resides.
 #vidhop_app_dir=""
 ## Overwrites loader.bin_dir before the loader loads in all other binaries.

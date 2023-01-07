@@ -2,7 +2,6 @@
 
 vidhop_dir="$HOME/Videos/VidHop"
 vidhop_app_dir="/opt/vidhop"
-#vidhop_app_dir="$(dirname "$(dirname "$(realpath "$0")")")"
 bin_dir="$vidhop_app_dir/bin"
 
 # overwrites $vidhop_dir, $vidhop_app_dir and $bin_dir with values from config.ini (if needed).

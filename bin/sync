@@ -41,7 +41,7 @@ USER_HOME_WS="/home/$USER_WS"
 VIDHOP_APP_DIR_WS="/opt/vidhop"
 VIDHOP_DIR_WS="$USER_HOME_WS/Videos/VidHop"
 DOWNLOADS_WS="$USER_HOME_WS/Downloads"
-TERMUX_RC_WS="/data/code/vidhop/shell/termux/bash.bashrc"
+TERMUX_RC_WS="SET_IN_CONFIG_INI"
 TOR_DOWNLOADS_WS="/home/$USER_WS/.local/share/torbrowser/tbb/x86_64/tor-browser_en-US/Browser/Downloads"
 SSH_PRIVATE_KEY_WS="$HOME/.ssh/id_vidhop"
 [ -f "$config_ini" ] && . "$config_ini"
@@ -483,16 +483,23 @@ function mvmedia() {
 function create-backup-vidhop() {
   [ "$1" = -h ] || [ "$1" = --help ] &&
     echo "usage: create-backup-vidhop" &&
-    echo " info: copy files from \$vidhop_dir to \$vidhop_backup_dir, both defined in vars and optionally config.ini" &&
+    echo " info: copy files from \$vidhop_dir to \$vidhop_backup_dir (ideally set in config.ini)" &&
     echo &&
     echo "usage: create-backup-vidhop <VIDHOP_BACKUP_DIR>" &&
-    echo " info: copy files from \$vidhop_dir to \$vidhop_backup_dir, both defined in vars and optionally config.ini" &&
-    echo " info: your path to backup dir should be /your/path and not /your/path/VidHop " &&
+    echo " info: copy files from \$vidhop_dir to \$vidhop_backup_dir (ideally set in config.ini)" &&
     echo && return
-  backup_dir="/run/media/freetalk/data_backup/Users/krist/Videos"
-  rsync -av "$vidhop_dir" "$backup_dir" --exclude=".git/" --exclude=".idea"
+  [ -n "$1" ] && vidhop_backup_dir="$1"
+  rsync -av "$vidhop_dir"/* "$vidhop_backup_dir" --exclude=".git/" --exclude=".idea"
 }
 
 function restore-backup-vidhop() {
-  true
+  [ "$1" = -h ] || [ "$1" = --help ] &&
+    echo "usage: restore-backup-vidhop" &&
+    echo " info: copy files from \$vidhop_backup_dir to \$vidhop_dir (ideally set in config.ini)" &&
+    echo &&
+    echo "usage: restore-backup-vidhop <VIDHOP_BACKUP_DIR>" &&
+    echo " info: copy files from \$vidhop_backup_dir to \$vidhop_dir (ideally set in config.ini)" &&
+    echo && return
+  [ -n "$1" ] && vidhop_backup_dir="$1"
+  rsync -av "$vidhop_backup_dir"/* "$vidhop_dir" --exclude=".git/" --exclude=".idea"
 }
