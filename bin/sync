@@ -269,8 +269,21 @@ function senddir() {
 
 function fetchdir() {
   [ -z "$1" ] &&
-    echo "usage: fetchdir <PHONE_DIR_RELATIVE_SHARED_STORAGE> <WS_DIR_ABS_PATH>" &&
-    echo "       fetchdir <PHONE_DIR_RELATIVE_SHARED_STORAGE>" &&
+    echo "usage: fetchdir <PHONE_DIR_ABS_PATH> <WS_DIR_ABS_PATH>" &&
+    echo "       fetchdir <PHONE_DIR_ABS_PATH>" &&
+    echo "       => Empty second argument puts the fetched dir in the current dir." && return
+
+  dir_phone="$1"
+  [ -z "$2" ] && dir_ws="$PWD" || dir_ws="$2"
+
+  rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+    "$USER_PHONE@$IP_PHONE:$dir_phone" "$dir_ws"
+}
+
+function fetchdir-sdcard() {
+  [ -z "$1" ] &&
+    echo "usage: fetchdir-sdcard <PHONE_DIR_RELATIVE_SHARED_STORAGE> <WS_DIR_ABS_PATH>" &&
+    echo "       fetchdir-sdcard <PHONE_DIR_RELATIVE_SHARED_STORAGE>" &&
     echo "       => Empty second argument puts the fetched directory in $import_dir." && return
 
   dir_phone="$shared/$1"
