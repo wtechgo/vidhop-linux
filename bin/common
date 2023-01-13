@@ -21,6 +21,7 @@ function create_app_dirs() {
 create_app_dirs
 
 function create_import_files() {
+  mkdir -p "$vidhop_dir/import/list" 2>/dev/null
   touch "$vidhop_dir/import/list/dlac.list" 2>/dev/null
   touch "$vidhop_dir/import/list/dlaci.list" 2>/dev/null
   touch "$vidhop_dir/import/list/dlalbum.list" 2>/dev/null
