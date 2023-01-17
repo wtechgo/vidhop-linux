@@ -48,8 +48,9 @@ function oneliner_channel_entries() {
   channel_name_fallback="$(url_to_channel_name "$(jq .webpage_url <<<"$json" | tr -d '"')")"
   chani_entries=$(
     jq --arg 'channel_name_fallback' "$channel_name_fallback" '.entries | unique_by(.webpage_url) | sort_by(.upload_date) | .[]
-          | "> " + .title + " | " + .webpage_url + " | " + .upload_date' <<<"$json" | tr -d '"'
+          | "> " + .title + " | " + .webpage_url + " | " + .upload_date' <<<"$json" | tail -c +2 | head -c -2
   )
+  #  '| tail -c +2 | head -c -2' removes the leading and trailing quote. tr -d '"' lead to a bug stopping echo of strings with a quote.
   echo -e "${GREEN}$chani_entries"
 }
 
@@ -361,11 +362,16 @@ function chani() { # channel info
   init_vars "$@" || return
   [ -z "$text" ] && echo navigated to channels metadata directory so you can tab autocomplete && return 0
 
-  json_files=$(json_files_for_channel_name "$text" "$platform")
-  [ -z "$json_files" ] && echo no match found && return 0
-  [[ "$json_files" == *$'\n'* ]] && msg_multiple_channels_found "chani" && return 0
-  json_file="$json_files" && unset json_files # only one entry in json_files
-  json=$(jq '.' "$json_file")
+  if [ -f "$1" ]; then
+    json_file="$1"
+    json=$(jq '.' "$1")
+  else
+    json_files=$(json_files_for_channel_name "$text" "$platform")
+    [ -z "$json_files" ] && echo no match found && return 0
+    [[ "$json_files" == *$'\n'* ]] && msg_multiple_channels_found "chani" && return 0
+    json_file="$json_files" && unset json_files # only one entry in json_files
+    json=$(jq '.' "$json_file")
+  fi
 
   print_channel_label
   oneliner_channel_entries
