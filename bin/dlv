@@ -289,6 +289,32 @@ function fetch_channel_metadata() {
       jq 'del(.entries[] | .automatic_captions)' |
       jq 'del(.entries[] | nulls)'
   )
+  #  # not working, attempt to delete entries.entries.thumbnails etc. which happens when a channel has shorts and live streams.
+  #  # .entries [
+  #  #    {shorts .entries},
+  #  #    {videos .entries},
+  #  #    {livestreams .entries},
+  #  # ]
+  #
+  #  json=$(
+  #    jq '
+  #      del(.thumbnails) |
+  #      del(.entries[] | .formats) |
+  #      del(.entries[] | select(.ie_key)) |
+  #      del(.entries[] | .thumbnails) |
+  #      del(.entries[] | .requested_downloads) |
+  #      del(.entries[] | .requested_formats) |
+  #      del(.entries[] | .subtitles) |
+  #      del(.entries[] | .automatic_captions) |
+  #      (if .entries[].entries != null then (del(.entries[] | .entries[] | .formats)) else empty end) |
+  #      (if .entries[].entries != null then (del(.entries[] | .entries[] | select(.ie_key))) else empty end) |
+  #      (if .entries[].entries != null then (del(.entries[] | .entries[] | .thumbnails)) else empty end) |
+  #      (if .entries[].entries != null then (del(.entries[] | .entries[] | .requested_downloads)) else empty end) |
+  #      (if .entries[].entries != null then (del(.entries[] | .entries[] | .requested_formats)) else empty end) |
+  #      (if .entries[].entries != null then (del(.entries[] | .entries[] | .subtitles)) else empty end) |
+  #      (if .entries[].entries != null then (del(.entries[] | .entries[] | .automatic_captions)) else empty end)
+  #      ' <<<"$json"
+  #  )
 }
 
 # With --downloaded-archive, only new videos are downloaded.
@@ -335,7 +361,7 @@ function dlci() {
   platform=$(extract_platform_name "$url") # yields youtube or bitchute etc.
 
   mkdir -p "$channels_meta_dir/$name/$platform" 2>/dev/null
-  json_file="$channels_meta_dir/$name/$platform/$name.json"
+  json_file="$channels_meta_dir/$name/$platform/metadata.json"
 
   # Merge scraped json with previous json on disk.
   if [ -f "$json_file" ]; then

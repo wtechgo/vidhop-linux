@@ -48,9 +48,9 @@ function oneliner_channel_entries() {
   channel_name_fallback="$(url_to_channel_name "$(jq .webpage_url <<<"$json" | tr -d '"')")"
   chani_entries=$(
     jq --arg 'channel_name_fallback' "$channel_name_fallback" '.entries | unique_by(.webpage_url) | sort_by(.upload_date) | .[]
-          | "> " + .title + " | " + .webpage_url + " | " + .upload_date' <<<"$json" | tail -c +2 | head -c -2
+          | "> " + .title + " | " + .webpage_url + " | " + .upload_date' <<<"$json" | sed 's/\\"/'\''/g' | tr -d '"'
   )
-  #  '| tail -c +2 | head -c -2' removes the leading and trailing quote. tr -d '"' lead to a bug stopping echo of strings with a quote.
+  #   | sed 's/\\"/'\''/g' | tr -d '"' removes the leading and trailing double quotes from each entry
   echo -e "${GREEN}$chani_entries"
 }
 
@@ -244,30 +244,142 @@ function fvidcv() {
   opinionated_print
 }
 
+function fvidfc() {
+  [ -z "$1" ] || [ -z "$2" ] &&
+    echo "  usage: fvidfc <TITLE_SEARCH_TEXT> <CHANNEL_SEARCH_TEXT>" && return
+  title_search_text="$(echo "$1" | tr '[:upper:]' '[:lower:]')"
+  channel_search_text="$(echo "$2" | tr '[:upper:]' '[:lower:]')"
+
+  echo "searching through video files..."
+  results="$(
+    find "$vids_meta_dir" -type f -iwholename "*$title_search_text*metadata.json" |
+      while read -r json; do
+        jq -r --arg title_search_text "$title_search_text" --arg channel_search_text "$channel_search_text" '
+          if .vh_downloaded == "true"
+            and .title != null
+            and (if .uploader != null then .uploader | ascii_downcase | contains($channel_search_text) else empty end)
+          then .uploader + ": " + .title + "\n" + .webpage_url + "\n" + .vh_media_file + "\n"
+          elif .vh_downloaded == "true"
+            and .title != null
+            and (if .channel != null then .channel | ascii_downcase | contains($channel_search_text) else empty end)
+          then .channel + ": " + .title + "\n" + .webpage_url + "\n" + .vh_media_file + "\n"
+          else empty end' "$json"
+      done
+  )"
+  echo -e "${GREEN}$results${NC}"
+  echo "search completed"
+}
+
 # Output all video files whose name match your query.
 function fvidf() { # find video files (on disk)
+  [ -z "$1" ] && echo "  usage: fvidf <SEARCH_TEXT>" && echo "returns: absolute paths of videos files on disk that match <SEARCH_TERM>" && return
   text="$1"
   unset result
   found_something="false"
 
   result=$(find "$vids_dir" -not -path "*.srt" -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort) # sed adds quotes for filenames with spaces
   [ "$(wc --words <<<"$result")" -gt 0 ] &&
-    echo -e "> Single video downloads in VidHop directory search result:" && echo -e "$result" &&
+    echo -e "> Single video downloads in VidHop directory search result:" && echo -e "${GREEN}$result${NC}" &&
     unset result && found_something="true"
 
   result=$(find "$channels_dir" -not -path "*.srt" -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort)
   [ "$(wc --words <<<"$result")" -gt 0 ] &&
-    echo -e "> Channel downloads in VidHop directory search result:" && echo -e "$result" &&
+    echo -e "> Channel downloads in VidHop directory search result:" && echo -e "${GREEN}$result${NC}" &&
     unset result && found_something="true"
 
   result=$(find -L "$HOME/Videos" -not \( -path "$HOME/Videos/VidHop" -prune \) \
     -not \( -path "$HOME/Videos/production" -prune \) -not -path "*.srt" \
     -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort)
   [ "$(wc --words <<<"$result")" -gt 0 ] &&
-    echo -e "> Videos in user home directory result:" && echo -e "$result" &&
+    echo -e "> Videos in user home directory result:" && echo -e "${GREEN}$result${NC}" &&
     unset result && found_something="true"
 
   [ "$found_something" = "false" ] && echo "found nothing"
+}
+
+# Plays fvidf results one after the other.
+function fvidf-play() {
+  [ -z "$1" ] && echo "usage: fvidf <SEARCH_TEXT>" && echo " info: returns absolute paths of videos files on disk that match <SEARCH_TERM>" && return
+  text="$1"
+  unset result
+  found_something="false"
+
+  result_vids=$(find "$vids_dir" -not -path "*.srt" -type f -iname "*$text*" | sed 's/^/'"$video_app"' "/;s/$/"/' | sort) # sed adds quotes for filenames with spaces
+  result_channels=$(find "$channels_dir" -not -path "*.srt" -type f -iname "*$text*" | sed 's/^/'"$video_app"' "/;s/$/"/' | sort)
+  result_user_vids=$(find -L "$HOME/Videos" -not \( -path "$HOME/Videos/VidHop" -prune \) \
+    -not \( -path "$HOME/Videos/production" -prune \) -not -path "*.srt" \
+    -type f -iname "*$text*" | sed 's/^/'"$video_app"' "/;s/$/"/' | sort)
+
+  [ "$(wc -w <<<"$result_vids")" -gt 0 ] && result+="$result_vids\n" && found_something="true"
+  [ "$(wc -w <<<"$result_channels")" -gt 0 ] && result+="$result_channels\n" && found_something="true"
+  [ "$(wc -w <<<"$result_user_vids")" -gt 0 ] && result+="$result_user_vids" && found_something="true"
+
+  [ "$found_something" = "false" ] && echo "found nothing" && return
+
+  script_file="$export_dir/$video_app/$text.sh"
+  echo "#!/bin/bash" >"$script_file"
+  echo "$result" >>"$script_file"
+  chmod +x "$script_file"
+  echo "VLC script written to '$script_file'" && sleep 1
+  echo "Copy-paste the command below to VIEW the script:" && echo -e "cat \"$script_file\""
+  echo "Copy-paste the command below to RUN the script:" && echo -e "\"$script_file\""
+
+  unset answer
+  echo -n "Run VLC script now? Y/n: " && read -r answer # question
+  answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
+  [ "$answer" = "n" ] || [ "$answer" = "no" ] && return
+
+  echo "Stop the script before it has finished by closing the terminal." && sleep 2
+  echo "Executing script file..." && sleep 1
+  while read -r command; do
+    [ -n "$command" ] && eval "$command"
+  done < <(echo -e "$result")
+}
+
+# Creates symlinks from fvidf results in the project directory of the video editor (defined in config.ini or 2nd arg).
+function fvidf-veditor-symlinks() { # find video files (on disk)
+  [ -z "$1" ] && echo "usage: fvidf-veditor-symlinks <SEARCH_TEXT> <VEDITOR_PROJECTS_DIR>" &&
+    echo " info: returns absolute paths of videos files on disk that match <SEARCH_TERM>" && return
+  text="$1"
+  if [ -n "$2" ]; then clips_dir="$2"; else clips_dir="$video_editor_projects_dir"; fi
+  [ ! -d "$clips_dir" ] && echo "directory '$clips_dir' doesn't exist, abort" && return
+  clips_dir="$clips_dir/$text"
+
+  unset result
+  found_something="false"
+
+  result_vids=$(find "$vids_dir" -not -path "*.srt" -type f -iname "*$text*") # sed adds quotes for filenames with spaces
+  result_channels=$(find "$channels_dir" -not -path "*.srt" -type f -iname "*$text*")
+  result_user_vids=$(find -L "$HOME/Videos" -not \( -path "$HOME/Videos/VidHop" -prune \) \
+    -not \( -path "$HOME/Videos/production" -prune \) -not -path "*.srt" \
+    -type f -iname "*$text*")
+
+  [ "$(wc -w <<<"$result_vids")" -gt 0 ] && result+="$result_vids\n" && found_something="true"
+  [ "$(wc -w <<<"$result_channels")" -gt 0 ] && result+="$result_channels\n" && found_something="true"
+  [ "$(wc -w <<<"$result_user_vids")" -gt 0 ] && result+="$result_user_vids" && found_something="true"
+
+  [ "$found_something" = "false" ] && echo "found nothing" && return
+
+  list_file="$export_dir/$video_app/$text.files"
+  echo "$result" >"$list_file"
+  echo "Saved paths to file '$list_file'" && sleep 1
+  echo -e "$result"
+
+  unset answer
+  echo -en "Create symlinks of these files in '$clips_dir'?" && echo "Y/n: " && read -r answer
+  answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
+  [ "$answer" = "n" ] || [ "$answer" = "no" ] && return
+
+  mkdir -p "$clips_dir"
+  cd "$clips_dir"
+  while read -r file; do
+    if [ -f "$file" ]; then
+      ln -s "$file" "$(basename "$file")"
+    else
+      echo "file error for '$path'"
+    fi
+  done < <(echo -e "$result")
+  echo "done creating symlink files in '$clips_dir'"
 }
 
 function format_usermeta() {

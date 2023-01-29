@@ -62,6 +62,8 @@ picture_app="SET_YOUR_APP_EG_RISTRETTO_IN_CONFIG_INI"
 picture_app_alt="SET_YOUR_APP_EG_GIMP_IN_CONFIG_INI"
 text_app="SET_YOUR_APP_EG_CODE_IN_CONFIG_INI"
 
+video_editor_projects_dir=""  # SET_YOUR_APP_EG_VLC_IN_CONFIG_INI
+
 # .bashrc shortkeys
 alias loadconfig='. "$bin_dir/config'
 
@@ -72,8 +74,8 @@ alias cdvbin='cd $bin_dir'
 alias cdvid='cd $vids_dir'
 alias cdchan='cd $channels_dir'
 alias cdmeta='cd $meta_dir'
-alias cdvidmeta='cd $vids_meta_dir'
-alias cdchanmeta='cd $channels_meta_dir'
+alias cdvmeta='cd $vids_meta_dir'
+alias cdcmeta='cd $channels_meta_dir'
 alias cdmusic='cd $music_dir'
 alias cdthumbs='cd $thumbnails_dir'
 alias cdpods='cd $podcasts_dir'

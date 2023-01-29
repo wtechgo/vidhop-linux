@@ -11,7 +11,7 @@ function create_app_dirs() {
     "$music_meta_dir" \
     "$podcasts_meta_dir" \
     "$import_dir" \
-    "$export_dir" \
+    "$export_dir/$video_app" \
     "$log_dir" \
     "$downloaded_dir" \
     "$social_media_dir" \
@@ -21,21 +21,21 @@ function create_app_dirs() {
 create_app_dirs
 
 function create_import_files() {
-  mkdir -p "$vidhop_dir/import/list" 2>/dev/null
-  touch "$vidhop_dir/import/list/dlac.list" 2>/dev/null
-  touch "$vidhop_dir/import/list/dlaci.list" 2>/dev/null
-  touch "$vidhop_dir/import/list/dlalbum.list" 2>/dev/null
-  touch "$vidhop_dir/import/list/dlapl.list" 2>/dev/null
-  touch "$vidhop_dir/import/list/dlapli.list" 2>/dev/null
-  touch "$vidhop_dir/import/list/dlc.list" 2>/dev/null
-  touch "$vidhop_dir/import/list/dlci.list" 2>/dev/null
-  touch "$vidhop_dir/import/list/dlpod.list" 2>/dev/null
-  touch "$vidhop_dir/import/list/dlt.list" 2>/dev/null
-  touch "$vidhop_dir/import/list/dlv.list" 2>/dev/null
-  touch "$vidhop_dir/import/list/dlvi.list" 2>/dev/null
-  touch "$vidhop_dir/import/list/dlvpl.list" 2>/dev/null
-  touch "$vidhop_dir/import/list/dlvpli.list" 2>/dev/null
-  touch "$vidhop_dir/import/list/dla.list" 2>/dev/null
+  mkdir -p "$import_list_dir/log/custom" 2>/dev/null
+  touch "$import_list_dir/dlac.list" 2>/dev/null
+  touch "$import_list_dir/dlaci.list" 2>/dev/null
+  touch "$import_list_dir/dlalbum.list" 2>/dev/null
+  touch "$import_list_dir/dlapl.list" 2>/dev/null
+  touch "$import_list_dir/dlapli.list" 2>/dev/null
+  touch "$import_list_dir/dlc.list" 2>/dev/null
+  touch "$import_list_dir/dlci.list" 2>/dev/null
+  touch "$import_list_dir/dlpod.list" 2>/dev/null
+  touch "$import_list_dir/dlt.list" 2>/dev/null
+  touch "$import_list_dir/dlv.list" 2>/dev/null
+  touch "$import_list_dir/dlvi.list" 2>/dev/null
+  touch "$import_list_dir/dlvpl.list" 2>/dev/null
+  touch "$import_list_dir/dlvpli.list" 2>/dev/null
+  touch "$import_list_dir/dla.list" 2>/dev/null
 }
 create_import_files
 
@@ -49,27 +49,6 @@ function is_dir_empty() {
 function extract_platform_name() {
   [ -n "$1" ] && input="$1" || input="$url"
   python -c 'print("'"$input"'".split("/")[2].replace("www.", ""))'
-}
-
-# shellcheck disable=SC2120
-function sanitize_filename() { # echo '"*/<>?\|_: ..ok`' | sanitize_filename
-  [ -n "$1" ] && echo "$1" | sanitize_filename && return
-  tr '"' "'" |
-    tr -d '\*' |
-    tr -d '/' |
-    tr -d '<' |
-    tr -d '>' |
-    tr -d '\?' |
-    tr -d '\\' |
-    tr '\|' '-' |
-    tr '\`' "'" |
-    sed 's/:/ -/g' |
-    sed 's/\.\{2,\}/./g' |
-    sed 's/ - Topic//' |
-    sed 's/ - Videos//' |
-    xargs -0 | # removes leading and trailing single spaces
-    xargs # removes leading and trailing single quotes
-  # sed 's/\.\{2,\}//g' removes 2 or more dots
 }
 
 function is_single_download() {
@@ -158,6 +137,40 @@ function is_url() {
   [[ "$1" == *http* ]] && echo true || echo false
 }
 
+# NTFS forbidden chars.
+#  * (asterisk)
+#  / (forward slash)
+#  < (less than)
+#  > (greater than)
+#  ? (question mark)
+#  " (double quote)
+#  \ (backslash)
+#  | (vertical bar or pipe)
+#  : (colon - sometimes works, but is actually NTFS Alternate Data Streams)
+
+# shellcheck disable=SC2120
+function sanitize_filename() { # echo '"*/<>?\|_: ..ok`' | sanitize_filename
+  [ -n "$1" ] && echo "$1" | sanitize_filename && return
+  tr '"' "'" |
+    tr -d '\*' |
+    tr -d '/' |
+    tr -d '<' |
+    tr -d '>' |
+    tr -d '\?' |
+    tr -d '\\' |
+    tr '"' "'" |
+    tr '\|' '-' |
+    tr '$' 'S' |
+    sed 's/:/ -/g' |
+    tr '\`' "'" |
+    sed 's/\.\{2,\}/./g' |
+    sed 's/ - Topic//' |
+    sed 's/ - Videos//' |
+    xargs -0 | # removes leading and trailing single spaces
+    xargs # removes leading and trailing single quotes
+  # sed 's/\.\{2,\}//g' removes 2 or more dots
+}
+
 # Create name for downloaded archive file.
 function url_to_filename() {
   echo "$1" |
@@ -182,13 +195,13 @@ function url_to_channel_name() {
   echo "$url" |
     cut -d/ -f 4 |
     tr -d '@' |
-    tr -d '$' |
     tr -d '%' |
     tr -d '?' |
     tr -d '"' |
     tr -d "'" |
     tr -d '\\' |
     tr '=' '_' |
+    tr '$' 'S' |
     tr ':' '-' |
     tr '/' '-' |
     tr '.' '_'
