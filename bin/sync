@@ -53,6 +53,7 @@ function sshphone() {
 
 # sendvidhop
 function real_sendvidhop() {
+  set -x
   echo -e ">> SENDING METADATA (JSON files)$([ "$1" = "--delete" ] && echo " and DELETE JSON FILES on phone that don't exist on workstation")..."
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     --exclude=".git/" \
@@ -65,7 +66,7 @@ function real_sendvidhop() {
     --include="*/" \
     --include="*.json" \
     --exclude="*" \
-    "$VIDHOP_DIR_WS/" "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE""$([ "$1" = "--delete" ] && echo " --delete")"
+    "$VIDHOP_DIR_WS/" "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE" "$([ "$1" = "--delete" ] && echo "--delete")"
 }
 
 function dry_sendvidhop() {
