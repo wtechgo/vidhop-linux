@@ -1,5 +1,7 @@
 ## Copy or rename config.ini.template to config.ini and VidHop will read it.
 ## Fill in your personal information inside the double quotes.
+## Remove leading hashtags to uncomment that line and to make it active.
+## Add a hashtag at the beginning of a line to comment it and to make it inactive.
 
 ## App dirs.
 ## ---------
@@ -12,6 +14,11 @@
 #video_editor_projects_dir=""
 #vidhop_backup_dir=""
 
+## User dirs.
+## ----------
+#music_dir_ws=""
+#music_dir_phone=""
+#music_dir_usb=""
 
 ## SSH settings.
 ### PHONE.

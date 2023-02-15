@@ -147,7 +147,10 @@ function is_url() {
 #  \ (backslash)
 #  | (vertical bar or pipe)
 #  : (colon - sometimes works, but is actually NTFS Alternate Data Streams)
-
+#
+# Go to bin/common.sanitize_filename to read about Termux forbidden chars.
+#
+#
 # shellcheck disable=SC2120
 function sanitize_filename() { # echo '"*/<>?\|_: ..ok`' | sanitize_filename
   [ -n "$1" ] && echo "$1" | sanitize_filename && return
@@ -161,13 +164,13 @@ function sanitize_filename() { # echo '"*/<>?\|_: ..ok`' | sanitize_filename
     tr '"' "'" |
     tr '\|' '-' |
     tr '$' 'S' |
-    sed 's/:/ -/g' |
     tr '\`' "'" |
+    sed 's/:/ -/g' |
+    sed 's/#/[ht]/g' |
     sed 's/\.\{2,\}/./g' |
     sed 's/ - Topic//' |
     sed 's/ - Videos//' |
-    xargs -0 | # removes leading and trailing single spaces
-    xargs # removes leading and trailing single quotes
+    sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
   # sed 's/\.\{2,\}//g' removes 2 or more dots
 }
 
@@ -246,7 +249,7 @@ function prefix_extension() {
   echo "$new_file_abs_path"
 }
 
-function myip() {
+function myip-public() {
   curl 'https://api.ipify.org?format=text'
 }
 

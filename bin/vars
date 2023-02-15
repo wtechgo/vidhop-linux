@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # You can change values here but it's not recommended as they will be overwritten when you update VidHop.
-# The solution is to set your values in /VidHop/config.ini.
+# The solution is to set your values in "$vidhop_app_dir/config/config.ini".
+# Copy-paste this command => nano "$vidhop_app_dir/config/config.ini"
 
 [ -z "$vidhop_dir" ] && vidhop_dir="$HOME/Videos/VidHop"
 [ -z "$vidhop_app_dir" ] && vidhop_app_dir="/opt/vidhop"
@@ -13,7 +14,7 @@ facebook_scraper="$bin_dir/facebookscraper.py"
 twitter_scraper="$bin_dir/twitterscraper.py"
 website_scraper="$bin_dir/websitescraper.py"
 
-# media
+# VidHop app dirs -- start
 vids_dir="$vidhop_dir/videos"
 channels_dir="$vidhop_dir/channels"
 music_dir="$vidhop_dir/music"
@@ -21,9 +22,6 @@ podcasts_dir="$vidhop_dir/podcasts"
 thumbnails_dir="$vidhop_dir/thumbnails"
 record_dir="$vidhop_dir/record"
 websites_dir="$vidhop_dir/website"
-# user device media
-music_dir_ws="/home/$USER/Music"
-vidhop_backup_dir="SET_VALUE_IN_CONFIG_INI"
 # metadata
 meta_dir="$vidhop_dir/metadata"
 vids_meta_dir="$meta_dir/videos"
@@ -54,15 +52,22 @@ wp_export_dir="$export_dir/wp"
 
 workstation_screen_char_count=120
 filename_char_count=180
+# VidHop app dirs -- end
 
 # default applications
-video_app="SET_YOUR_APP_EG_VLC_IN_CONFIG_INI"
-audio_app="SET_YOUR_APP_EG_VLC_IN_CONFIG_INI"
-picture_app="SET_YOUR_APP_EG_RISTRETTO_IN_CONFIG_INI"
-picture_app_alt="SET_YOUR_APP_EG_GIMP_IN_CONFIG_INI"
-text_app="SET_YOUR_APP_EG_CODE_IN_CONFIG_INI"
+video_app=""                               # set value in config.ini e.g. vlc
+audio_app=""                               # set value in config.ini e.g. vlc
+picture_app=""                             # set value in config.ini e.g. ristretto
+picture_app_alt=""                         # set value in config.ini e.g. digikam
+text_app=""                                # set value in config.ini e.g. code
 
-video_editor_projects_dir=""  # SET_YOUR_APP_EG_VLC_IN_CONFIG_INI
+# User media (outside VidHop dir)
+shared="/data/data/com.termux/files/home/storage/shared"  # Android file manager root directory
+music_dir_ws="$HOME/Music"                 # set value in config.ini
+music_dir_phone="$shared/Music"            # set value in config.ini
+music_dir_usb="/run/media/$USER/USB_STICK" # set value in config.ini
+vidhop_backup_dir=""                       # set value in config.ini
+video_editor_projects_dir=""               # set value in config.ini e.g. kdenlive, davinci resolve, premiere...
 
 # .bashrc shortkeys
 alias loadconfig='. "$bin_dir/config'
@@ -81,17 +86,6 @@ alias cdthumbs='cd $thumbnails_dir'
 alias cdpods='cd $podcasts_dir'
 alias cddownloaded='cd $downloaded_dir'
 alias cdlogs='cd $log_dir'
-
-alias llvidhop='ls -l $vidhop_dir'
-alias llvid='ls -l $vids_dir'
-alias llchan='ls -l $channels_dir'
-alias llmeta='ls -l $meta_dir'
-alias llvidmeta='ls -l $vids_meta_dir'
-alias llchanmeta='ls -l $channels_meta_dir'
-alias llthumbs='ls -l $thumbnails_dir'
-alias llpods='ls -l $podcasts_dir'
-alias lldownloaded='ls -l $downloaded_dir'
-alias lllogs='ls -l $log_dir'
 
 alias nanodlv='nano $bin_dir/dlv; . vidhop'
 alias nanofvid='nano $bin_dir/fvid; . vidhop'
