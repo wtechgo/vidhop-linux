@@ -2,9 +2,8 @@
 
 # Sync VidHop data from phone to workstation using rsync and vice versa.
 # These functions are intended to be used on the workstation.
-#
-# No permissions error was solved by disabling the firewall on computer.
-# Don't forget to start sshd on the workstation.
+# Don't forget to start sshd on the phone.
+# Allow SSH through your firewall in case of permission errors.
 
 function sync_help() {
   echo " Title: sync"
@@ -26,25 +25,19 @@ function sync_help() {
 }
 
 # PHONE
-IP_PHONE="FILL_IN_IP_ADDRESS_FROM_PHONE_IN_CONFIG.INI"
-USER_PHONE="FILL_IN_USER_FROM_PHONE_IN_CONFIG.INI"
+# -----
 VIDHOP_DIR_PHONE="/data/data/com.termux/files/home/storage/shared/VidHop"
 VIDHOP_APP_DIR_PHONE="/data/data/com.termux/files/usr/opt/vidhop"
-[ -f "$config_ini" ] && . "$config_ini" # overwrite $USER_WS & $USER_HOME_WS
 TERMUX_RC_PHONE="/data/data/com.termux/files/usr/etc/bash.bashrc"
 SSH_PORT_TERMUX=8022
 
 # WORKSTATION
-USER_WS="FILL_IN_USER_FROM_WORKSTATION_IN_CONFIG.INI"
+# -----------
 USER_HOME_WS="/home/$USER_WS"
-[ -f "$config_ini" ] && . "$config_ini" # overwrite $VIDHOP_APP_DIR_WS and $VIDHOP_BIN_DIR_WS
-VIDHOP_APP_DIR_WS="/opt/vidhop"
 VIDHOP_DIR_WS="$USER_HOME_WS/Videos/VidHop"
 DOWNLOADS_WS="$USER_HOME_WS/Downloads"
-TERMUX_RC_WS="SET_IN_CONFIG_INI"
 TOR_DOWNLOADS_WS="/home/$USER_WS/.local/share/torbrowser/tbb/x86_64/tor-browser_en-US/Browser/Downloads"
 SSH_PRIVATE_KEY_WS="$HOME/.ssh/id_vidhop"
-[ -f "$config_ini" ] && . "$config_ini"
 
 function sshphone() {
   [ -n "$1" ] && local IP_PHONE="$1"
@@ -62,10 +55,11 @@ function real_sendvidhop() {
     --exclude="log/" \
     --exclude="import/" \
     --exclude="export/" \
+    --exclude="website/" \
     --include="*/" \
     --include="*.json" \
     --exclude="*" \
-    "$VIDHOP_DIR_WS/" "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE" "$([ "$1" = "--delete" ] && echo "--delete")"
+    "$VIDHOP_DIR_WS/" "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE""$([ "$1" = "--delete" ] && echo " --delete")"
 }
 
 function dry_sendvidhop() {
@@ -78,6 +72,7 @@ function dry_sendvidhop() {
     --exclude="log/" \
     --exclude="import/" \
     --exclude="export/" \
+    --exclude="website/" \
     --include="*/" \
     --include="*.json" \
     --exclude="*" \

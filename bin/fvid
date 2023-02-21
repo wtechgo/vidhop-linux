@@ -282,13 +282,14 @@ function fvidcv() {
 }
 
 function fvidfc() {
-  [ -z "$1" ] || [ -z "$2" ] &&
+  [ -z "$1" ] &&
     echo "  usage: fvidfc <TITLE_SEARCH_TEXT> <CHANNEL_SEARCH_TEXT>" &&
     echo "   info: find downloaded video files for channel in VidHop videos metadata dir," &&
     echo "         with video titles (filenames) that match <TITLE_SEARCH_TEXT>" &&
     echo "         and a channels whose name matches <CHANNEL_SEARCH_TEXT>" && return
-  title_search_text="$(echo "$1" | tr '[:upper:]' '[:lower:]')"
-  channel_search_text="$(echo "$2" | tr '[:upper:]' '[:lower:]')"
+  [ $# = 1 ] && title_search_text="*" && channel_search_text="$(echo "$2" | tr '[:upper:]' '[:lower:]')"
+  [ $# = 2 ] && title_search_text="$(echo "$1" | tr '[:upper:]' '[:lower:]')" &&
+    channel_search_text="$(echo "$2" | tr '[:upper:]' '[:lower:]')"
 
   echo "searching through video files..."
   results="$(
@@ -317,9 +318,11 @@ function fvidf() { # find video files (on disk)
   unset result
   found_something="false"
 
-  result=$(find "$vids_dir" -not -path "*.srt" -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort) # sed adds quotes for filenames with spaces
+  result=$(find -L "$HOME/Videos" -not \( -path "$HOME/Videos/VidHop" -prune \) \
+    -not \( -path "$HOME/Videos/production" -prune \) -not -path "*.srt" -not -path "*.jpg" -not -path "*.webp" -not -path "*.png" \
+    -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort)
   [ "$(wc --words <<<"$result")" -gt 0 ] &&
-    echo -e "> Single video downloads in VidHop directory search result:" && echo -e "${GREEN}$result${NC}" &&
+    echo -e "> Videos in user home directory result:" && echo -e "${GREEN}$result${NC}" &&
     unset result && found_something="true"
 
   result=$(find "$channels_dir" -not -path "*.srt" -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort)
@@ -327,11 +330,9 @@ function fvidf() { # find video files (on disk)
     echo -e "> Channel downloads in VidHop directory search result:" && echo -e "${GREEN}$result${NC}" &&
     unset result && found_something="true"
 
-  result=$(find -L "$HOME/Videos" -not \( -path "$HOME/Videos/VidHop" -prune \) \
-    -not \( -path "$HOME/Videos/production" -prune \) -not -path "*.srt" -not -path "*.jpg" -not -path "*.webp" -not -path "*.png" \
-    -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort)
+  result=$(find "$vids_dir" -not -path "*.srt" -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort) # sed adds quotes for filenames with spaces
   [ "$(wc --words <<<"$result")" -gt 0 ] &&
-    echo -e "> Videos in user home directory result:" && echo -e "${GREEN}$result${NC}" &&
+    echo -e "> Single video downloads in VidHop directory search result:" && echo -e "${GREEN}$result${NC}" &&
     unset result && found_something="true"
 
   [ "$found_something" = "false" ] && echo "found nothing"
@@ -350,9 +351,9 @@ function fvidf-play() {
     -not \( -path "$HOME/Videos/production" -prune \) -not -path "*.srt" \
     -type f -iname "*$text*" | sed 's/^/'"$video_app"' "/;s/$/"/' | sort)
 
-  [ "$(wc -w <<<"$result_vids")" -gt 0 ] && result+="$result_vids\n" && found_something="true"
-  [ "$(wc -w <<<"$result_channels")" -gt 0 ] && result+="$result_channels\n" && found_something="true"
   [ "$(wc -w <<<"$result_user_vids")" -gt 0 ] && result+="$result_user_vids" && found_something="true"
+  [ "$(wc -w <<<"$result_channels")" -gt 0 ] && result+="$result_channels\n" && found_something="true"
+  [ "$(wc -w <<<"$result_vids")" -gt 0 ] && result+="$result_vids\n" && found_something="true"
 
   [ "$found_something" = "false" ] && echo "found nothing" && return
 
@@ -377,8 +378,8 @@ function fvidf-play() {
 }
 
 # Creates symlinks from fvidf results in the project directory of the video editor (defined in config.ini or 2nd arg).
-function fvidf-symlinks-dir() { # find video files (on disk)
-  [ -z "$1" ] && echo "usage: fvidf-symlinks-dir <SEARCH_TEXT> <DEST_DIR>" &&
+function fvidf-symlinks2dir() { # find video files (on disk)
+  [ -z "$1" ] && echo "usage: fvidf-symlinks2dir <SEARCH_TEXT> <DEST_DIR>" &&
     echo " info: creates symbolic links in <DEST_DIR> for all fvidf results that match <SEARCH_TERM>" && return
   text="$1"
   if [ -n "$2" ]; then clips_dir="$2/$text - fvidf results"; else clips_dir="$video_editor_projects_dir/$text - fvidf results"; fi
@@ -393,9 +394,9 @@ function fvidf-symlinks-dir() { # find video files (on disk)
     -not \( -path "$HOME/Videos/production" -prune \) -not -path "*.srt" \
     -type f -iname "*$text*")
 
-  [ "$(wc -w <<<"$result_vids")" -gt 0 ] && result+="$result_vids\n" && found_something="true"
-  [ "$(wc -w <<<"$result_channels")" -gt 0 ] && result+="$result_channels\n" && found_something="true"
   [ "$(wc -w <<<"$result_user_vids")" -gt 0 ] && result+="$result_user_vids" && found_something="true"
+  [ "$(wc -w <<<"$result_channels")" -gt 0 ] && result+="$result_channels\n" && found_something="true"
+  [ "$(wc -w <<<"$result_vids")" -gt 0 ] && result+="$result_vids\n" && found_something="true"
 
   [ "$found_something" = "false" ] && echo "found nothing" && return
 

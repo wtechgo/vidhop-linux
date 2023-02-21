@@ -54,12 +54,7 @@ workstation_screen_char_count=120
 filename_char_count=180
 # VidHop app dirs -- end
 
-# default applications
-video_app=""                               # set value in config.ini e.g. vlc
-audio_app=""                               # set value in config.ini e.g. vlc
-picture_app=""                             # set value in config.ini e.g. ristretto
-picture_app_alt=""                         # set value in config.ini e.g. digikam
-text_app=""                                # set value in config.ini e.g. code
+# default applications: set values in config/config.ini
 
 # User media (outside VidHop dir)
 shared="/data/data/com.termux/files/home/storage/shared"  # Android file manager root directory
