@@ -18,6 +18,7 @@ function create_app_dirs() {
     "$social_media_dir" \
     "$websites_dir" \
     2>/dev/null
+  [ -n "$projects_dir" ] && mkdir -p "$projects_dir" 2>/dev/null
 }
 create_app_dirs
 
@@ -135,6 +136,15 @@ function save_channel_entries_to_archive() {
 
 function is_url() {
   [[ "$1" == *http* ]] && echo true || echo false
+}
+
+function is_list() {
+  [ -z "$1" ] && [ -z "$json" ] && echo "is_list received no input, abort" && return 1
+  [ -f "$1" ] && json=$(jq . "$1")
+  [ ! -f "$1" ] && [ -n "$1" ] && json=$(jq . <<<"$1")
+  [ -z "$json" ] && echo "is_list could not determine valid json, abort" && return 1
+  is_list="$([ "$(jq .entries <<<"$json")" = null ] && echo false || echo true)"
+  echo "$is_list"
 }
 
 # NTFS forbidden chars.

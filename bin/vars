@@ -54,6 +54,8 @@ workstation_screen_char_count=120
 filename_char_count=180
 # VidHop app dirs -- end
 
+# project module: uncomment defaults or set values in config/config.ini
+
 # default applications: set values in config/config.ini
 
 # User media (outside VidHop dir)
