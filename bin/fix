@@ -188,6 +188,7 @@ function rename-channels-meta-json-files() {
     done < <(ls)
 
     cd "$channels_meta_dir"
+    cd "$channels_meta_dir"
   done < <(ls "$channels_meta_dir")
 }
 
@@ -212,8 +213,4 @@ function redownload-all-music() {
       rm "$archive" 2>/dev/null
       if [ "$has_entries" = true ]; then dlapl "$url"; else dla "$url"; fi
     done
-}
-
-function diana() {
-  redownload-all-music
 }
