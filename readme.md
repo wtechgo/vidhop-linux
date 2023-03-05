@@ -28,7 +28,7 @@ frequently though.
 
     ```   
        curl -sL https://raw.githubusercontent.com/wtechgo/vidhop-linux/master/install.sh > install.sh && 
-       chmod +x install.sh && ./install.sh && rm install.sh && . $HOME/.bashrc && . vidhop
+       chmod +x install.sh && ./install.sh && rm install.sh && . vidhop
     ```   
 
 4. Check if it works: download a video and play it !

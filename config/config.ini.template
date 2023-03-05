@@ -7,13 +7,10 @@
 ## ---------
 ## Where VidHop stores downloaded media and metadata.
 #vidhop_dir=""
-#vidhop_dir_alt=""
-## Where VidHop's code resides.
 #vidhop_app_dir=""
-## Overwrites loader.bin_dir before the loader loads in all other binaries.
 #bin_dir=""
-#video_editor_projects_dir=""
 #vidhop_backup_dir=""
+#vidhop_dir_alt=""
 
 ## User dirs.
 ## ----------
@@ -33,7 +30,6 @@
 ### -----------------
 #IP_WS=""
 #USER_WS=""
-#USER_HOME_WS=""
 #VIDHOP_DIR_WS=""
 #VIDHOP_APP_DIR_WS=""
 

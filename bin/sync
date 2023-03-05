@@ -33,10 +33,7 @@ SSH_PORT_TERMUX=8022
 
 # WORKSTATION
 # -----------
-USER_HOME_WS="/home/$USER_WS"
-VIDHOP_DIR_WS="$USER_HOME_WS/Videos/VidHop"
-DOWNLOADS_WS="$USER_HOME_WS/Downloads"
-TOR_DOWNLOADS_WS="/home/$USER_WS/.local/share/torbrowser/tbb/x86_64/tor-browser_en-US/Browser/Downloads"
+VIDHOP_DIR_WS="$HOME/Videos/VidHop"
 SSH_PRIVATE_KEY_WS="$HOME/.ssh/id_vidhop"
 
 function sshphone() {
@@ -106,8 +103,6 @@ function real_fetchvidhop() {
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     --include="*/" \
     --include="*.json" \
-    --include="*.mp3" \
-    --include="*.m4a" \
     --exclude="*" \
     "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE/metadata/" "$VIDHOP_DIR_WS/metadata"
 
@@ -128,6 +123,10 @@ function real_fetchvidhop() {
     --exclude="*.json" \
     --include="*.mp4" \
     --include="*.webm" \
+    --include="*.mp3" \
+    --include="*.m4a" \
+    --include="*.txt" \
+    --include="*.md" \
     "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE/" "$VIDHOP_DIR_WS"
 }
 
@@ -136,8 +135,6 @@ function dry_fetchvidhop() {
   rsync -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     --include="*/" \
     --include="*.json" \
-    --include="*.mp3" \
-    --include="*.m4a" \
     --exclude="*" \
     "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE/metadata/" "$VIDHOP_DIR_WS/metadata"
 
@@ -158,6 +155,10 @@ function dry_fetchvidhop() {
     --exclude="*.json" \
     --include="*.mp4" \
     --include="*.webm" \
+    --include="*.mp3" \
+    --include="*.m4a" \
+    --include="*.txt" \
+    --include="*.md" \
     "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE/" "$VIDHOP_DIR_WS"
 }
 
@@ -180,17 +181,19 @@ function fetchvidhop() {
   fi
 }
 
+# shellcheck disable=SC2120
 function syncvidhop() {
-  unset answer
-  echo -n "Do real run (y) or dry run (n) or abort (a)? Y/n: " && read -r answer
-  answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
-
-  [ "$answer" = "a" ] && return
-  [ "$answer" = "n" ] &&
+  answer="$([ "$1" = -y ] || [ "$1" = --yes ] && echo y)"
+  if [ ! "$answer" = y ]; then
+    echo -n "Do real run (y) or dry run (d) or abort (a or n)? Y/n: " && read -r answer
+    answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
+  fi
+  [ "$answer" = "a" ] || [ "$answer" = "n" ] && return
+  [ "$answer" = "d" ] && # dry run
     echo -e "\n> FETCHING vidhop files DRY RUN..." && dry_fetchvidhop &&
     echo -e "\n> SENDING vidhop files DRY RUN..." && dry_sendvidhop &&
     syncvidhop && return
-  [ "$answer" = "y" ] &&
+  [ "$answer" = "y" ] && # real run
     echo -e "\n> FETCHING vidhop files..." && fetchvidhop -exec &&
     echo -e "\n> SENDING vidhop files..." && sendvidhop -exec
 }
@@ -237,76 +240,76 @@ mov_exts=(mp4 webm mkv mov avi)
 function real_fetchdownloads() {
   for ext in "${audio_exts[@]}"; do
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$USER_HOME_WS/Music"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Music"
   done
 
   for ext in "${doc_exts[@]}"; do
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$USER_HOME_WS/Documents"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Documents"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$docs/" "$USER_HOME_WS/Documents"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$docs/" "$HOME/Documents"
   done
 
   for ext in "${img_exts[@]}"; do
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$USER_HOME_WS/Pictures"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Pictures"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$screenshots/" "$USER_HOME_WS/Pictures"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$screenshots/" "$HOME/Pictures"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$fb2/" "$USER_HOME_WS/Pictures"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$fb2/" "$HOME/Pictures"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$fb1/" "$USER_HOME_WS/Pictures"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$fb1/" "$HOME/Pictures"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$messenger/" "$USER_HOME_WS/Pictures"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$messenger/" "$HOME/Pictures"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$twitter/" "$USER_HOME_WS/Pictures"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$twitter/" "$HOME/Pictures"
   done
 
   for ext in "${mov_exts[@]}"; do
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$USER_HOME_WS/Videos"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Videos"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$youcut/" "$USER_HOME_WS/Videos"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$youcut/" "$HOME/Videos"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$screen_rec/" "$USER_HOME_WS/Videos"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$screen_rec/" "$HOME/Videos"
   done
 }
 
 function dry_fetchdownloads() {
   for ext in "${audio_exts[@]}"; do
     rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$USER_HOME_WS/Music"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Music"
   done
 
   for ext in "${doc_exts[@]}"; do
     rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$USER_HOME_WS/Documents"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Documents"
     rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$docs/" "$USER_HOME_WS/Documents"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$docs/" "$HOME/Documents"
   done
 
   for ext in "${img_exts[@]}"; do
     rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$USER_HOME_WS/Pictures"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Pictures"
     rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$screenshots/" "$USER_HOME_WS/Pictures"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$screenshots/" "$HOME/Pictures"
     rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$fb2/" "$USER_HOME_WS/Pictures"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$fb2/" "$HOME/Pictures"
     rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$fb1/" "$USER_HOME_WS/Pictures"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$fb1/" "$HOME/Pictures"
     rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$messenger/" "$USER_HOME_WS/Pictures"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$messenger/" "$HOME/Pictures"
     rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$twitter/" "$USER_HOME_WS/Pictures"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$twitter/" "$HOME/Pictures"
   done
 
   for ext in "${mov_exts[@]}"; do
     rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$USER_HOME_WS/Videos"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Videos"
     rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$youcut/" "$USER_HOME_WS/Videos"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$youcut/" "$HOME/Videos"
     rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$screen_rec/" "$USER_HOME_WS/Videos"
+      --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$screen_rec/" "$HOME/Videos"
   done
 }
 
@@ -381,6 +384,9 @@ function sendmusictophone() {
 
 # Move downloaded files from ~/Downloads to ~/Documents, ~/Videos, ~/Music, ~/Pictures.
 function mvmedia() {
+  downloads_WS="$HOME/Downloads"
+  tor_downloads_WS="$HOME/.local/share/torbrowser/tbb/x86_64/tor-browser_en-US/Browser/Downloads"
+
   img=(jpg png webp jpeg psd)
   vid=(mp4 mkv mov avi webm)
   audio=(mp3 m4a wav flacc aac m4a)
@@ -389,23 +395,23 @@ function mvmedia() {
 
   [ "$SHELL" = "/bin/zsh" ] && setopt +o nomatch # disable zsh msg "no matches found *.jpg..."
 
-  # Copy Tor DOWNLOADS_WS to normal DOWNLOADS_WS directory.
-  mv "$TOR_DOWNLOADS_WS/"* "$DOWNLOADS_WS" 2>/dev/null
+  # Copy Tor downloads_WS to normal downloads_WS directory.
+  mv "$tor_downloads_WS/"* "$downloads_WS" 2>/dev/null
 
   for ext in "${img[@]}"; do
-    mv "$DOWNLOADS_WS/"*".$ext" "$USER_HOME_WS/Pictures" 2>/dev/null
+    mv "$downloads_WS/"*".$ext" "$HOME/Pictures" 2>/dev/null
   done
 
   for ext in "${vid[@]}"; do
-    mv "$DOWNLOADS_WS/"*".$ext" "$USER_HOME_WS/Videos" 2>/dev/null
+    mv "$downloads_WS/"*".$ext" "$HOME/Videos" 2>/dev/null
   done
 
   for ext in "${audio[@]}"; do
-    mv "$DOWNLOADS_WS/"*".$ext" "$USER_HOME_WS/Music" 2>/dev/null
+    mv "$downloads_WS/"*".$ext" "$HOME/Music" 2>/dev/null
   done
 
   for ext in "${doc[@]}"; do
-    mv "$DOWNLOADS_WS/"*".$ext" "$USER_HOME_WS/Documents" 2>/dev/null
+    mv "$downloads_WS/"*".$ext" "$HOME/Documents" 2>/dev/null
   done
 
   [ "$SHELL" = "/bin/zsh" ] && setopt -o nomatch
@@ -460,7 +466,7 @@ function fetchfile() {
   ! [ -f "$1" ] && echo "$1 is not a file" && return
   shared="/data/data/com.termux/files/home/storage/shared"
   file_phone="$shared/$1"
-  [ -z "$2" ] && file_ws="$USER_HOME_WS/Downloads/$(basename "$file_phone")" || file_ws="$2"
+  [ -z "$2" ] && file_ws="$HOME/Downloads/$(basename "$file_phone")" || file_ws="$2"
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     "$USER_PHONE@$IP_PHONE:$file_phone" "$file_ws"
 }

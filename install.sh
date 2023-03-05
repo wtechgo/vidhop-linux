@@ -4,21 +4,36 @@ BLUE='\e[34m'
 GREEN='\e[32m'
 NC='\e[0m'
 
-echo -e "\nHi, This is the VidHop install script.\n"
-echo -e "It will install all required packages and libraries to run VidHop."
-echo -e "An overview of what this script does:"
+echo -e "\nHi, This is the VidHop install script."
+echo -e "It will install all required packages and libraries to run VidHop.\n"
+echo -e "${BLUE}Overview${NC} of what this script does:"
 echo -e "    1. install required packages from Linux repositories"
 echo -e "    2. install Python"
-echo -e "    3. install yt-dlp (written in Python)"
-echo -e "    4. install VidHop, includes JQ (library for managing JSON metadata) and Python libs for scraping channel avatar images"
+echo -e "    3. install yt-dlp (video downloader library written in Python)"
+echo -e "    4. install VidHop"
+echo -e "       - binaries in /opt/vidhop (shell scripts)"
+echo -e "       - add a shortcut to VidHop loader in /usr/local/vidhop (enables calling . vidhop)"
+echo -e "       - add 1 line to your shell rc to load VidHop on opening a terminal"
 echo -e "\n${BLUE}Requirements:${NC}"
-echo -e "    2. A working internet connection.\n"
-echo -e "ATTENTION: This script is written for Arch like distros.n"
-echo -e "           Modify the script accordingly if you have another distro.\n"
-echo -n "When you are ready, press enter: " && read
+echo -e "    A working internet connection.\n"
+echo -e "${BLUE}Attention${NC}:"
+echo -e "    This script is written for Arch like Linux distros, meaning,"
+echo -e "    the script uses pacman as package manager."
+echo -e ""
+echo -e "    If your distro is Ubuntu for example, you need to replace"
+echo -e "    all 'pacman' commands with 'apt install' commands in install.sh,"
+echo -e "    save the file and execute install.sh again."
+echo -e ""
+echo -e "    If that's the case, do this:"
+echo -e "    - CTRL-C (to abort this script)"
+echo -e "    - nano install.sh (to edit the text)"
+echo -e "    - make the changes, replace 'pacman' with your package manager"
+echo -e "    - CTRL-X (close the document), hit y & ENTER (to save before closing nano)"
+echo -e "    - ./install.sh (to run install.sh again)"
+echo -e ""
+echo -n "When you are ready, press ENTER to continue, or CTRL-C to abort: " && read
 
 echo "installing required packages from Linux repositories..."
-# mediainfo nano openssh git ncurses moreutils python python-pip ffmpeg jq
 sudo pacman --noconfirm -S mediainfo   # required for `specs`
 sudo pacman --noconfirm -S nano  # for editing code with nanodlv, nanofvid,...
 sudo pacman --noconfirm -S openssh # install ssh client and server (sshd command)
@@ -46,6 +61,7 @@ echo "installing VidHop..."
 vidhop_app_dir="/opt/vidhop"        # $PREFIX points to /data/data/com.termux/files/usr
 loader="$vidhop_app_dir/bin/loader" # loader in /opt/vidhop
 loader_bin="/usr/local/bin/vidhop"  # loader in /bin
+shell_rc="$(echo $SHELL | sed "s#/bin/#$HOME/.#g")"
 
 if [ -d "$vidhop_app_dir" ]; then
   echo -n "$vidhop_app_dir already existis, remove it? Y/n: " && read answer && answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
@@ -59,7 +75,7 @@ chmod +x "$vidhop_app_dir/install.sh"
 chmod +x "$loader"
 
 sudo cp "$loader" "$loader_bin" # copy loader to /bin as 'vidhop' to , load VidHop with command 'source vidhop`
-echo -e "\n. vidhop" >>"$HOME/.bashrc"
+echo -e "\n. vidhop" >>"$shell_rc"
 . vidhop # loads vidhop by sourcing $PREFIX/bin/vidhop ## only works when they source install.sh
 cd "$vidhop_dir"
 
@@ -68,8 +84,9 @@ echo -e "Installation added a line to .bashrc to load VidHop in each terminal wh
 echo -e "It won't bog down terminal load times as VidHop is extremely lightweight."
 echo -e "The app only defines functions and variables: work only happens when YOU run a functions.\n"
 
-echo -e "In case you don't like that, remove this line:\n  . vidhop"
-echo -e "from .bashrc at:\n  $HOME/.bashrc"
+echo -e "In case you don't like that, remove this line:"
+echo -e ". vidhop"
+echo -e "from your .rc file at: $shell_rc"
 echo -e "with shortucut:\n  nanobashrc\n"
 
 echo -e "You can still load VidHop manually with commands:"
