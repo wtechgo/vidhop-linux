@@ -109,7 +109,7 @@ To see some of these commands in action, watch [An Introduction to VidHop](https
     dlw <URL>       => alias for dlwebsite
 
  Title: fvid
- Description: Searches for <SEARCH_WORD> in all videos and channels metadata.
+ Description: Find videos for <SEARCH_WORD> in all videos and channels metadata.
  Commands:
     fvid <SEARCH_TEXT>  => find videos where title or description matches <SEARCH_TEXT> in all videos and channels metadata
     fvidv <SEARCH_TEXT> => find videos where title or description matches <SEARCH_TEXT> in all videos metadata (shorter search time)
