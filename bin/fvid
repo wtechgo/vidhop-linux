@@ -319,16 +319,16 @@ function fvidfc() {
 # Output all video files whose name match your query.
 function fvidf() { # find video files (on disk)
   [ -z "$1" ] && echo "  usage: fvidf <SEARCH_TEXT>" && echo "returns: absolute paths of videos files on disk that match <SEARCH_TERM>" && return
-  text="$1"
+  search_text="$(echo "$1" | tr ' ' '*')"
   unset result
   found_something="false"
 
-  result=$(find "$channels_dir" -not -path "*.srt" -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort)
+  result=$(find "$channels_dir" -not -path "*.srt" -type f -iname "*$search_text*" | sed "s/^/'/;s/$/'/" | sort)
   [ "$(wc --words <<<"$result")" -gt 0 ] &&
     echo -e "> Channel downloads in VidHop directory search result:" && echo -e "${GREEN}$result${NC}" &&
     unset result && found_something="true"
 
-  result=$(find "$vids_dir" -not -path "*.srt" -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort) # sed adds quotes for filenames with spaces
+  result=$(find "$vids_dir" -not -path "*.srt" -type f -iname "*$search_text*" | sed "s/^/'/;s/$/'/" | sort) # sed adds quotes for filenames with spaces
   [ "$(wc --words <<<"$result")" -gt 0 ] &&
     echo -e "> Single video downloads in VidHop directory search result:" && echo -e "${GREEN}$result${NC}" &&
     unset result && found_something="true"
@@ -339,7 +339,7 @@ function fvidf() { # find video files (on disk)
 # Output all video files whose name match your query.
 function fvidfall() { # find video files (on disk)
   [ -z "$1" ] && echo "  usage: fvidf <SEARCH_TEXT>" && echo "returns: absolute paths of videos files on disk that match <SEARCH_TERM>" && return
-  text="$1"
+  search_text="$(echo "$1" | tr ' ' '*')"
   unset result
   found_something="false"
 
@@ -351,17 +351,17 @@ function fvidfall() { # find video files (on disk)
     -not -path "*.jpg" \
     -not -path "*.webp" \
     -not -path "*.png" \
-    -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort)
+    -type f -iname "*$search_text*" | sed "s/^/'/;s/$/'/" | sort)
   [ "$(wc --words <<<"$result")" -gt 0 ] &&
     echo -e "> Videos in user home directory result:" && echo -e "${GREEN}$result${NC}" &&
     unset result && found_something="true"
 
-  result=$(find "$channels_dir" -not -path "*.srt" -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort)
+  result=$(find "$channels_dir" -not -path "*.srt" -type f -iname "*$search_text*" | sed "s/^/'/;s/$/'/" | sort)
   [ "$(wc --words <<<"$result")" -gt 0 ] &&
     echo -e "> Channel downloads in VidHop directory search result:" && echo -e "${GREEN}$result${NC}" &&
     unset result && found_something="true"
 
-  result=$(find "$vids_dir" -not -path "*.srt" -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort) # sed adds quotes for filenames with spaces
+  result=$(find "$vids_dir" -not -path "*.srt" -type f -iname "*$search_text*" | sed "s/^/'/;s/$/'/" | sort) # sed adds quotes for filenames with spaces
   [ "$(wc --words <<<"$result")" -gt 0 ] &&
     echo -e "> Single video downloads in VidHop directory search result:" && echo -e "${GREEN}$result${NC}" &&
     unset result && found_something="true"
@@ -373,7 +373,7 @@ function fvidfall() { # find video files (on disk)
 function fvidf-symlinks2dir() {
   [ -z "$1" ] && echo "usage: fvidf-symlinks2dir <SEARCH_TEXT> <DEST_DIR>" &&
     echo " info: creates symbolic links in <DEST_DIR> for all video files returned by searching for <SEARCH_TEXT>" && return
-  search_text="$1"
+  search_text="$(echo "$1" | tr ' ' '*')"
   dest_dir="$2"
   mkdir -p "$dest_dir"
 
@@ -461,22 +461,6 @@ function fvidusermeta() {
   print_usermeta
 }
 
-# Show the metadata of a single video.
-# Provide the filename (not path) as 1st argument, don't worry about the .mp4 extension.
-function vidi() { # video info
-  init_vars "$@" || return
-  cd "$vids_meta_dir"
-  [ -z "$text" ] && echo navigated to videos metadata directory so you can tab autocomplete && return 0
-
-  name=$(basename "$text" ".mp4")
-  name=$(basename "$name" ".webm")
-  json=$(find "$vids_meta_dir" -iname "*$name*.json" | head -n 1)
-  [ -z "$json" ] && echo no match found && return 0
-
-  json=$(jq '.' "$json")
-  opinionated_print
-}
-
 function json_files_for_channel_name() {
   name="$1" platform="$2"
   find "$channels_meta_dir" -type f ! -iname "*avatar_data*json" -iwholename "*$name*$platform*json"
@@ -505,7 +489,7 @@ function chani() { # channel info
   [ -z "$1" ] &&
     echo "usage: chani <CHANNEL_SEARCH_TEXT>" &&
     echo "       chani <ABS_FILE_PATH> [<PLATFORM>]" && return
-  search_text=$(echo "$1" | tr "'" '*')
+  search_text=$(echo "$1" | tr "'" '*' | tr ' ' '*')
   platform="$2"
 
   if [ -f "$search_text" ]; then
@@ -564,18 +548,6 @@ function json_files_for_video_name() {
   name=$(echo "$1" | tr " \- " '*' | tr "\-" '*' | tr ":" '*')
   platform="$2"
   find "$vids_meta_dir" -type f -iwholename "*$platform*$name*json"
-}
-
-function vidmeta() {
-  [ -z "$1" ] && echo "usage: vidmeta <PARTIAL_VIDEO_NAME> [<PLATFORM>]" && return
-  name="$1" platform="$2"
-
-  json_files=$(json_files_for_video_name "$name" "$platform")
-  [ -z "$json_files" ] && echo no match found && return 0
-  [[ "$json_files" == *$'\n'* ]] && msg_multiple_channels_found "vidmeta" && return 0
-  json_file="$json_files"
-
-  code "$json_file"
 }
 
 function find_thumb_from_name() {
@@ -658,7 +630,7 @@ function wp_convert_fvid_merge() {
 
   pwd=$(pwd)
   mkdir -p "$wp_export_dir/merge/oneliners"
-  cd "$HOME/Code/vidhop" || return 1
+  cd "$vidhop_app_dir" || return 1
   python -m cli.vidhop --wp-convert --merge-exports
   cd "$pwd" || return 1
 
@@ -674,7 +646,7 @@ function wp_convert_fvid_oneliner_file() {
 
   pwd=$(pwd)
   mkdir -p "$wp_export_dir/merge/oneliners"
-  cd "$HOME/Code/vidhop" || return 1
+  cd "$vidhop_app_dir" || return 1
   python -m cli.vidhop --wp-convert --input-file "$input_file"
   cd "$pwd" || return 1
 }
@@ -707,16 +679,16 @@ function ls_wp() {
 
 # Find audio file.
 function faudf() {
-  text="$1"
+  search_text="$(echo "$1" | tr ' ' '*')"
   unset result
   found_something="false"
 
-  result=$(find "$(realpath "$music_dir")" -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort) # sed adds quotes for filenames with spaces
+  result=$(find "$(realpath "$music_dir")" -type f -iname "*$search_text*" | sed "s/^/'/;s/$/'/" | sort) # sed adds quotes for filenames with spaces
   [ "$(wc --words <<<"$result")" -gt 0 ] &&
     echo -e "> VidHop music directory search results:" && echo -e "$result" &&
     unset result && found_something="true"
 
-  result=$(find "$(realpath "$music_dir_ws")" -type f -iname "*$text*" | sed "s/^/'/;s/$/'/" | sort) # sed adds quotes for filenames with spaces
+  result=$(find "$(realpath "$music_dir_ws")" -type f -iname "*$search_text*" | sed "s/^/'/;s/$/'/" | sort) # sed adds quotes for filenames with spaces
   [ "$(wc --words <<<"$result")" -gt 0 ] &&
     echo -e "> User music directory search results:" && echo -e "$result" &&
     unset result && found_something="true"

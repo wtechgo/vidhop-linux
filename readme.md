@@ -24,7 +24,7 @@ frequently though.
 
 ## Installation
 
-1. Open Termux and paste this command.
+1. Open a `terminal`, copy-paste this command an hit ENTER.
 
     ```   
        curl -sL https://raw.githubusercontent.com/wtechgo/vidhop-linux/master/install.sh > install.sh && 
@@ -39,14 +39,11 @@ frequently though.
 ## Update & Uninstall
 
 >To update, execute `updatevidhop`.  
->>This command will update Termux, update all Python packages used by VidHop and download new code from GitHub using `git fetch`.
+>>This command will update all Python packages used by VidHop and download new code from GitHub using `git fetch`.
 
 >To uninstall, execute  `uninstallvidhop`.  
->>This will remove the code at `$PREFIX/opt/vidhop`, the loader at `$PREFIX/bin/vidhop` and the program will ask you 
->>if you want to delete your VidHop media and metadata directory at `/sdcard/VidHop`.
-
-In case you were wondering what `$PREFIX` is, it's a default [environment variable in Termux](https://github.com/termux/termux-packages/wiki/Termux-file-system-layout) 
-that holds the path `/data/data/com.termux/files/usr`. That path is Termux' filesystem root, equivalent to `/` in Linux.
+>>This will remove the code at `/opt/vidhop`, the loader at `/usr/local/bin/vidhop` and the program will ask you 
+>>if you want to delete your VidHop media and metadata directory at `$HOME/Videos/VidHop`.
 
 ## Functional Information
 
@@ -241,8 +238,8 @@ Note: Configuring VidHop Sync is not required for downloading videos, channels, 
 
 For explanation purposes, we'll use the scenario of syncing between laptop and phone (bi-directional).
 
-If you ran `install.sh`, `openssh` (SSH) and rsync have already been installed in Termux. However, you might not have 
-installed these packages on your laptop. If not, install them.
+If you ran `install.sh`, `openssh` (SSH) and rsync have already been installed. If `install.sh` wasn't used or if it failed, 
+install these packages manually with your package manager.
 
 The easiest way to go about this, is to establish an SSH connection from laptop to phone first, to avoid typing on the phone. 
 **Termux SSH requires RSA keys**.
