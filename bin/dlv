@@ -131,7 +131,6 @@ function fetch_song_filename() {
     --replace-in-metadata "artist,title" '\*' '' \
     --replace-in-metadata "artist,title" '/' '' \
     --replace-in-metadata "artist,title" ':' ' -' \
-    --replace-in-metadata "artist,title" ':' ' -' \
     --replace-in-metadata "artist,title" '#' '[ht]' \
     --replace-in-metadata "artist,title" '<' '' \
     --replace-in-metadata "artist,title" '>' '' \
@@ -321,32 +320,6 @@ function fetch_channel_metadata() {
       jq 'del(.entries[] | .automatic_captions)' |
       jq 'del(.entries[] | nulls)'
   )
-  #  # not working, attempt to delete entries.entries.thumbnails etc. which happens when a channel has shorts and live streams.
-  #  # .entries [
-  #  #    {shorts .entries},
-  #  #    {videos .entries},
-  #  #    {livestreams .entries},
-  #  # ]
-  #
-  #  json=$(
-  #    jq '
-  #      del(.thumbnails) |
-  #      del(.entries[] | .formats) |
-  #      del(.entries[] | select(.ie_key)) |
-  #      del(.entries[] | .thumbnails) |
-  #      del(.entries[] | .requested_downloads) |
-  #      del(.entries[] | .requested_formats) |
-  #      del(.entries[] | .subtitles) |
-  #      del(.entries[] | .automatic_captions) |
-  #      (if .entries[].entries != null then (del(.entries[] | .entries[] | .formats)) else empty end) |
-  #      (if .entries[].entries != null then (del(.entries[] | .entries[] | select(.ie_key))) else empty end) |
-  #      (if .entries[].entries != null then (del(.entries[] | .entries[] | .thumbnails)) else empty end) |
-  #      (if .entries[].entries != null then (del(.entries[] | .entries[] | .requested_downloads)) else empty end) |
-  #      (if .entries[].entries != null then (del(.entries[] | .entries[] | .requested_formats)) else empty end) |
-  #      (if .entries[].entries != null then (del(.entries[] | .entries[] | .subtitles)) else empty end) |
-  #      (if .entries[].entries != null then (del(.entries[] | .entries[] | .automatic_captions)) else empty end)
-  #      ' <<<"$json"
-  #  )
 }
 
 # With --downloaded-archive, only new videos are downloaded.
@@ -1079,21 +1052,28 @@ function dlpod() {
   mkdir -p "$podcasts_meta_dir/$platform" 2>/dev/null
 
   name="$(fetch_sanitized_title)"
-  json_file="$podcasts_meta_dir/$platform/$name/metadata.json"
+
+  video_meta_dir="$podcasts_meta_dir/$platform/$name"
+  mkdir -p "$video_meta_dir"
+  json_file="$video_meta_dir/metadata.json"
+
   fetch_video_metadata "$url"
+  fetch_video_thumbnail
+  fetch_video_subs
+
   ext=m4a
   add_to_phistory
   augment_json
   jq <<<"$json" >"$json_file"
 
   yt-dlp --write-thumbnail --convert-thumbnails jpg --no-download --add-metadata \
-    -P "$podcasts_meta_dir/$platform/$name" -o "thumbnail.%(ext)s" --verbose "$url"
+    -P "$video_meta_dir" -o "thumbnail.%(ext)s" --verbose "$url"
 
   yt-dlp -f ba --recode m4a --no-mtime \
     -P "$podcasts_dir/$platform" -o "$name.%(ext)s" --verbose "$url"
 
-  print_metadata
   cd "$podcasts_dir/$platform" || return
+  print_metadata
 }
 
 # Download thumbnail. Store the thumbnail of a single video plus its metadata.
