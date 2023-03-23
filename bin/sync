@@ -353,18 +353,11 @@ function sendmusictousb() {
   echo "==================================================="
   [ ! -d "$usb_music_dir" ] && echo "usb not found at $usb_music_dir" && return
 
-  echo "removing id3tags..." && sleep 2
-  find "$src_music_dir" -type f |
-    while read -r file; do
-      id3convert --strip 2>/dev/null # strip all id-tags as some choke the car radio
-    done
-
   echo "converting m4a files to mp3..." && sleep 2
   find "$src_music_dir" -type f -iname "*.m4a" |
     while read -r file; do
       echo "converting $file..."
-      mp3_file="$(strip_extension "$file").mp3"
-      ffmpeg -nostdin -v 5 -y -i "$file" -acodec libmp3lame -ac 2 -ab 192k "$mp3_file"
+      convert-to-mp3 "$file"
       rm "$file"
     done
 
@@ -489,6 +482,16 @@ function fetchfileabs() {
 }
 
 function senddir() {
+  dir_ws="$1"
+  dir_phone="$shared/$2"
+  rsync -Pauvl -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+    "$dir_ws" "$USER_PHONE@$IP_PHONE:$dir_phone"
+  # TODO: remove $shared= lines, $shared is defined in vars (check).
+  #senddir "/home/freetalk/Projects/law/rechtzaak samenscholing As 11-04-2021/" "Projects/law"
+  #senddir "/home/freetalk/Pictures/Projects/law/rechtzaak samenscholing As 11-04-2021/" "Projects/law/rechtzaak samenscholing As 11-04-2021/img"
+}
+
+function senddirabs() {
   dir_ws="$1"
   dir_phone="$2"
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
