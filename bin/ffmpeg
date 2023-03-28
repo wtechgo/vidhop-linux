@@ -105,9 +105,11 @@ function extract-mp3() {
 function convert-to-mp3() {
   input_file="$1"
   [ ! -f "$input_file" ] && echo "not a file: $input_file" && return 1
+  [[ "$input_file" == *.mp3 ]] && return
+
   mp3_file="$(strip_extension "$input_file").mp3"
   ffmpeg -v 5 -y -i "$input_file" -acodec libmp3lame -ac 2 -ab 220k "$mp3_file"
-  rm "$input_file"
+  [ -f "$mp3_file" ] && rm "$input_file"
 }
 
 function id3tags() { # uses ffprobe
