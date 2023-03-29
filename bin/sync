@@ -5,7 +5,7 @@
 # Don't forget to start sshd on the phone.
 # Allow SSH through your firewall in case of permission errors.
 
-function sync_help() {
+sync_help() {
   echo " Title: sync"
   echo " Description: Sync files between phone and workstation."
   echo " Commands:"
@@ -39,13 +39,13 @@ SSH_PORT_TERMUX=8022
 VIDHOP_DIR_WS="$HOME/Videos/VidHop"
 SSH_PRIVATE_KEY_WS="$HOME/.ssh/id_vidhop"
 
-function sshphone() {
+sshphone() {
   [ -n "$1" ] && local IP_PHONE="$1"
   ssh -4 -p 8022 -i "$SSH_PRIVATE_KEY_WS" "$USER_PHONE@$IP_PHONE"
 }
 
 # sendvidhop
-function real_sendvidhop() {
+real_sendvidhop() {
   echo -e ">> SENDING METADATA (JSON files)$([ "$1" = "--delete" ] && echo " and DELETE JSON FILES on phone that don't exist on workstation")..."
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     --exclude=".git/" \
@@ -62,7 +62,7 @@ function real_sendvidhop() {
     "$VIDHOP_DIR_WS/" "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE""$([ "$1" = "--delete" ] && echo " --delete")"
 }
 
-function dry_sendvidhop() {
+dry_sendvidhop() {
   echo -e ">> SENDING METADATA (JSON files)..."
   rsync -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     --exclude=".git/" \
@@ -81,7 +81,7 @@ function dry_sendvidhop() {
 
 # sync media files
 # ----------------
-function sendvidhop() {
+sendvidhop() {
   unset answer
   if [ "$1" = "-exec" ]; then
     real_sendvidhop
@@ -101,7 +101,7 @@ function sendvidhop() {
 }
 
 # fetchvidhop
-function real_fetchvidhop() {
+real_fetchvidhop() {
   echo -e ">> FETCHING METADATA (JSON files)..."
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     --include="*/" \
@@ -133,7 +133,7 @@ function real_fetchvidhop() {
     "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE/" "$VIDHOP_DIR_WS"
 }
 
-function dry_fetchvidhop() {
+dry_fetchvidhop() {
   echo -e ">> FETCHING METADATA (JSON files)..."
   rsync -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     --include="*/" \
@@ -167,7 +167,7 @@ function dry_fetchvidhop() {
 
 # Termux doesn't support creating files with names containing colons, backslash and who knows what else.
 # For files with such names, rsync will not work.
-function fetchvidhop() {
+fetchvidhop() {
   unset answer
   if [ "$1" = "-exec" ]; then
     real_fetchvidhop
@@ -185,7 +185,7 @@ function fetchvidhop() {
 }
 
 # shellcheck disable=SC2120
-function syncvidhop() {
+syncvidhop() {
   answer="$([ "$1" = -y ] || [ "$1" = --yes ] && echo y)"
   if [ ! "$answer" = y ]; then
     echo -n "Do real run (y) or dry run (d) or abort (a or n)? Y/n: " && read -r answer
@@ -201,7 +201,7 @@ function syncvidhop() {
     echo -e "\n> SENDING vidhop files..." && sendvidhop -exec
 }
 
-function sendvidhopbin() {
+sendvidhopbin() {
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     --exclude=".git/" \
     --exclude=".gitignore" \
@@ -210,7 +210,7 @@ function sendvidhopbin() {
     "$VIDHOP_DEV_DIR_WS/"* "$USER_PHONE@$IP_PHONE:$VIDHOP_APP_DIR_PHONE"
 }
 
-function fetchvidhopbin() {
+fetchvidhopbin() {
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     --exclude=".git/" \
     --exclude=".gitignore" \
@@ -240,7 +240,7 @@ img_exts=(jpg png webp jpeg)
 audio_exts=(mp3 m4a wav flacc aac)
 mov_exts=(mp4 webm mkv mov avi)
 
-function real_fetchdownloads() {
+real_fetchdownloads() {
   for ext in "${audio_exts[@]}"; do
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
       --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Music"
@@ -278,7 +278,7 @@ function real_fetchdownloads() {
   done
 }
 
-function dry_fetchdownloads() {
+dry_fetchdownloads() {
   for ext in "${audio_exts[@]}"; do
     rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
       --include="*.$ext" --exclude="*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Music"
@@ -316,7 +316,7 @@ function dry_fetchdownloads() {
   done
 }
 
-function fetchdownloads() {
+fetchdownloads() {
   if [ "$1" = "-dry" ] || [ "$1" = "-d" ]; then
     dry_fetchdownloads
     echo "---"
@@ -332,7 +332,7 @@ function fetchdownloads() {
   fi
 }
 
-function sshconfig() {
+sshconfig() {
   echo "User on this phone      : $(whoami)"
   echo "IP-address of this phone: $(ifdata -pa wlan0)"
 }
@@ -346,7 +346,7 @@ phone_music_dir="$shared/Music/Portable"
 # Removes ID3Tags.
 # Converts m4a files to mp3 files, after each conversion,
 # removes the m4a file in $src_music_dir.
-function sendmusictousb() {
+sendmusictousb() {
   echo "syncing music from workstation to usb with rsync..."
   echo "from: $src_music_dir"
   echo "  to: $usb_music_dir"
@@ -375,7 +375,7 @@ function sendmusictousb() {
 #  rm -rf "$usb_music_dir/.Trash-1000"
 }
 
-function sendmusictophone() {
+sendmusictophone() {
   echo "syncing music from workstation to phone with rsync..."
   echo "from: $src_music_dir"
   echo "  to: $phone_music_dir"
@@ -386,7 +386,7 @@ function sendmusictophone() {
 }
 
 # Move downloaded files from ~/Downloads to ~/Documents, ~/Videos, ~/Music, ~/Pictures.
-function mvmedia() {
+mvmedia() {
   downloads_WS="$HOME/Downloads"
   tor_downloads_WS="$HOME/.local/share/torbrowser/tbb/x86_64/tor-browser_en-US/Browser/Downloads"
 
@@ -420,7 +420,7 @@ function mvmedia() {
   [ "$SHELL" = "/bin/zsh" ] && setopt -o nomatch
 }
 
-function create-backup-vidhop() {
+create-backup-vidhop() {
   [ "$1" = -h ] || [ "$1" = --help ] &&
     echo "usage: create-backup-vidhop" &&
     echo " info: copy files from \$vidhop_dir to \$vidhop_backup_dir (ideally set in config.ini)" &&
@@ -432,7 +432,7 @@ function create-backup-vidhop() {
   rsync -av "$vidhop_dir"/* "$vidhop_backup_dir" --exclude=".git/" --exclude=".idea"
 }
 
-function restore-backup-vidhop() {
+restore-backup-vidhop() {
   [ "$1" = -h ] || [ "$1" = --help ] &&
     echo "usage: restore-backup-vidhop" &&
     echo " info: copy files from \$vidhop_backup_dir to \$vidhop_dir (ideally set in config.ini)" &&
@@ -444,17 +444,17 @@ function restore-backup-vidhop() {
   rsync -av "$vidhop_backup_dir"/* "$vidhop_dir" --exclude=".git/" --exclude=".idea"
 }
 
-function sendbashrc() {
+sendbashrc() {
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     "$TERMUX_RC_WS" "$USER_PHONE@$IP_PHONE:$TERMUX_RC_PHONE"
 }
 
-function fetchbashrc() {
+fetchbashrc() {
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     "$USER_PHONE@$IP_PHONE:$TERMUX_RC_PHONE" "$TERMUX_RC_WS"
 }
 
-function sendfile() {
+sendfile() {
   [ -z "$1" ] && echo "usage: sendfile <SRC_FILE> <DEST_FILE> [<DEST_DIR>]" && return
   ! [ -f "$1" ] && echo "$1 is not a file" && return
   file_ws="$1"
@@ -464,7 +464,7 @@ function sendfile() {
     "$file_ws" "$USER_PHONE@$IP_PHONE:$file_phone"
 }
 
-function fetchfile() {
+fetchfile() {
   [ -z "$1" ] && echo "usage: fetchfile <SRC_FILE> <DEST_FILE>" && return
   ! [ -f "$1" ] && echo "$1 is not a file" && return
   shared="/data/data/com.termux/files/home/storage/shared"
@@ -474,21 +474,21 @@ function fetchfile() {
     "$USER_PHONE@$IP_PHONE:$file_phone" "$file_ws"
 }
 
-function sendfileabs() {
+sendfileabs() {
   file_ws="$1"
   file_phone="$2"
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     "$file_ws" "$USER_PHONE@$IP_PHONE:$file_phone"
 }
 
-function fetchfileabs() {
+fetchfileabs() {
   file_phone="$1"
   file_ws="$2"
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     "$USER_PHONE@$IP_PHONE:$file_phone" "$file_ws"
 }
 
-function senddir() {
+senddir() {
   dir_ws="$1"
   dir_phone="$shared/$2"
   rsync -Pauvl -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
@@ -498,14 +498,14 @@ function senddir() {
   #senddir "/home/freetalk/Pictures/Projects/law/rechtzaak samenscholing As 11-04-2021/" "Projects/law/rechtzaak samenscholing As 11-04-2021/img"
 }
 
-function senddirabs() {
+senddirabs() {
   dir_ws="$1"
   dir_phone="$2"
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     "$dir_ws" "$USER_PHONE@$IP_PHONE:$dir_phone"
 }
 
-function fetchdir-abs() {
+fetchdir-abs() {
   [ -z "$1" ] &&
     echo "usage: fetchdir <PHONE_DIR_ABS_PATH> <WS_DIR_ABS_PATH>" &&
     echo "       fetchdir <PHONE_DIR_ABS_PATH>" &&
@@ -518,7 +518,7 @@ function fetchdir-abs() {
     "$USER_PHONE@$IP_PHONE:$dir_phone" "$dir_ws"
 }
 
-function fetchdir() {
+fetchdir() {
   [ -z "$1" ] &&
     echo "usage: fetchdir-sdcard <PHONE_DIR_RELATIVE_SHARED_STORAGE> <WS_DIR_ABS_PATH>" &&
     echo "       fetchdir-sdcard <PHONE_DIR_RELATIVE_SHARED_STORAGE>" &&
@@ -531,7 +531,7 @@ function fetchdir() {
     "$USER_PHONE@$IP_PHONE:$dir_phone" "$dir_ws"
 }
 
-function fetch-usb-microphone-recordings() {
+fetch-usb-microphone-recordings() {
   phone_usb_microscope_dir="$shared/DCIM/USBCamera/Videos"
   ws_usb_microscope_dir="$record_dir/usb microscope/Videos"
   mkdir -p "$ws_usb_microscope_dir" 2>/dev/null
@@ -540,7 +540,7 @@ function fetch-usb-microphone-recordings() {
     "$USER_PHONE@$IP_PHONE:$phone_usb_microscope_dir" "$ws_usb_microscope_dir"
 }
 
-function fetch-screen-recordings() {
+fetch-screen-recordings() {
   phone_dir="$shared/Movies/Screen Recorder"
   ws_dir="$record_dir/phone"
   mkdir -p "$ws_dir" 2>/dev/null
