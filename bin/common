@@ -264,6 +264,7 @@ prefix_extension() {
 
 myip-public() {
   curl 'https://api.ipify.org?format=text'
+#  curl 'https://api.ipify.org?format=json'
 }
 
 epoch2date() {
