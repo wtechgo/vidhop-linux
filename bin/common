@@ -22,7 +22,8 @@ create_app_dirs() {
 }
 create_app_dirs
 
-create_import_files() {
+create_app_files() {
+  touch "$log_file" 2>/dev/null
   touch "$import_list_dir/dlac.list" 2>/dev/null
   touch "$import_list_dir/dlaci.list" 2>/dev/null
   touch "$import_list_dir/dlalbum.list" 2>/dev/null
@@ -38,7 +39,7 @@ create_import_files() {
   touch "$import_list_dir/dlvpli.list" 2>/dev/null
   touch "$import_list_dir/dla.list" 2>/dev/null
 }
-create_import_files
+create_app_files
 
 is_url() {
   [[ "$1" == *http* ]] && echo true || echo false
@@ -103,7 +104,6 @@ is_media_download() {
 }
 
 media_file_to_metadata_path() {
-  [ ! -f "$1" ] && echo "not a file" && return 1
   [[ "$1" == */metadata/videos/* ]] && [[ "$1" == *.json* ]] && return "$1"
   echo "$(strip_extension "$(echo "$1" | sed 's;/videos/;/metadata/videos/;g')")/metadata.json"
 }
@@ -241,7 +241,6 @@ get_sub_extension() {
   lang=$(echo -n "$1" | rev | cut -d '.' -f 2 | rev)
   ext="$lang.$sub_type"
   echo "$ext"
-  #  [ "$(echo -n "$ext" | wc --chars)" -gt 4 ] && echo "get_extension failed: result larger than return 4 chars" && return 1
 }
 
 strip_extension() {
@@ -323,6 +322,11 @@ prefix_suffix_with_double_quotes() {
   sed 's/^/"/;s/$/"/'
 }
 
+remove_leading_trailing_double_quotes() {
+  [ -n "$1" ] && echo "$1" | sed -e 's/^"//' -e 's/"$//' && return
+  sed -e 's/^"//' -e 's/"$//'
+}
+
 # shellcheck disable=SC2120
 replace_special_chars_with_asterisks() {
   [ -n "$1" ] && echo "$1" |
@@ -347,5 +351,5 @@ shorten_text() {
 }
 
 timestamp() {
-  date +'%Y%m%d_%Hh%Mm'
+  date +'%Y-%m-%d_%H:%M:%S'
 }
