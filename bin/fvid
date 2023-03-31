@@ -352,7 +352,7 @@ fvidfall() { # find video files (on disk)
 
   result=$(find -L "$HOME/Videos" \
     -not \( -path "$HOME/Videos/VidHop" -prune \) \
-    -not \( -path "$HOME/Videos/production" -prune \) \
+    -not \( -path "$HOME/Videos/Production" -prune \) \
     -not -path "*Video File Links*" \
     -not -path "*.srt" \
     -not -path "*.jpg" \
