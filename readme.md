@@ -8,7 +8,7 @@ VidHop stores metadata of the video files you process as JSON files, metadata th
 
 VidHop is like a Swiss knife for anyone interested in saving audiovisual content from the internet.
 
-VidHop for Linux also exists. Sync functionality is built-in on both Linux and Android versions of VidHop though that 
+VidHop for Android (Termux) also exists. Sync functionality is built-in on both Linux and Android versions of VidHop though that 
 requires a working SSH connection between laptop and phone.
 
 Windows users can head over to [VidHop for Docker](https://github.com/wtechgo/vidhop-docker). This repo gets updated less 
