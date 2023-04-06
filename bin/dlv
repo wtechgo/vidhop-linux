@@ -1154,7 +1154,7 @@ dlfbpost() {
   text="$(jq '.text' <<<"$json")"
   shortened_text="$(shorten_text "$text")"
   username=$(jq .username <<<"$json" | tr -d '"')
-  fbpost_dir="${social_media_dir}/$platform/${username}_$(timestamp)$([ -n "$shortened_text" ] && echo " - $shortened_text")"
+  fbpost_dir="${social_media_dir}/$platform/${username} - $shortened_text_$(timestamp)"
   json_file="$fbpost_dir/metadata.json"
   mkdir -p "$fbpost_dir" 2>/dev/null
   jq . <<<"$json" >"$json_file"

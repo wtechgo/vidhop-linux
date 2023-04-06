@@ -353,11 +353,20 @@ sendmusictousb() {
   echo "==================================================="
   [ ! -d "$usb_music_dir" ] && echo "usb not found at $usb_music_dir" && return
 
+#  echo "converting m4a files to mp3..." && sleep 2
+#  m4a_files="$(find "$src_music_dir" -type f -iname "*.m4a")"
+#  if [ -n "$m4a_files" ]; then
+#    while read -r file; do
+#      echo "converting $file..."
+#      convert-to-mp3 "$file"
+#    done < <(echo "$m4a_files")
+#  fi
+
   echo "converting m4a files to mp3..." && sleep 2
   find "$src_music_dir" -type f -iname "*.m4a" |
     while read -r file; do
       echo "converting $file..."
-      convert-to-mp3 "$file"
+      to-mp3-remove-input "$file"
       sleep 1
     done
 
@@ -370,9 +379,9 @@ sendmusictousb() {
   echo "copying files..."
   /bin/cp -v "$src_music_dir"/* "$usb_music_dir"
   echo "sync music to USB complete"
-#  rsync -hvrPt --ignore-existing "$src_music_dir/" "$usb_music_dir" --delete
-#  echo "removing .Trash-1000 from usb..."
-#  rm -rf "$usb_music_dir/.Trash-1000"
+  #  rsync -hvrPt --ignore-existing "$src_music_dir/" "$usb_music_dir" --delete
+  #  echo "removing .Trash-1000 from usb..."
+  #  rm -rf "$usb_music_dir/.Trash-1000"
 }
 
 sendmusictophone() {
