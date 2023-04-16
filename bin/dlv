@@ -1196,7 +1196,7 @@ dlcensored() {
   [ ! "$(command -v torsocks)" ] && echo torsocks not installed, abort && return
   [ -z "$1" ] && echo "usage: dlcensored <URL>" && return || url="$1"
   echo "fetching public IP address via https://api.ipify.org..."
-  echo "your IP-address is $(myip-public)" && sleep 2
+  echo "your IP-address is $(publicip)" && sleep 2
 
   if [ "$(command -v systemctl)" ]; then
     echo "starting Tor..." && sleep 3

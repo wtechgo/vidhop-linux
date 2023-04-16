@@ -56,7 +56,7 @@ to-x265-1080p() {
 
 cutvideo() {
   [ -z "$1" ] || [ -z "$2" ] && cat <<EOF && return
-usage: cutvideo <INPUT_FILE> <START_TIME> [<END_TIME>] [<OUTPUT_FILE>]
+usage: cutvideo <INPUT_FILE> <START_TIME> [<END_TIME>]
 
 time input formats:
     formats to be used for <START_TIME> and <END_TIME>
@@ -85,8 +85,10 @@ EOF
   output_file="$(prefix_extension "$input_file" cut)"
 
   ffmpeg -i "$input_file" -ss "$start_time" -to "$end_time" -c copy "$output_file"
+  echo -e "cut video complete, result at:\n\"$output_file\""
+  cd "$(dirname "$input_file")"
 }
-
+ 
 embed-thumbnail-into-video() { # not tested
   [ $# -lt 2 ] && echo "usage: embed-thumbnail-into-video <THUMBNAIL_FILE> <VIDEO_FILE>" && return
   thumb_file="$1" && [ ! -f "$thumb_file" ] && echo "not a file: '$thumb_file'" && return

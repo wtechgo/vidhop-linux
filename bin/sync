@@ -468,11 +468,24 @@ fetchbashrc() {
 }
 
 sendfile() {
-  [ -z "$1" ] && echo "usage: sendfile <SRC_FILE> <DEST_FILE> [<DEST_DIR>]" && return
+  [ -z "$1" ] &&
+    echo "       usage: sendfile <SRC_FILE> [<DEST_FILE>]" && \
+    echo "              sendfile <SRC_FILE> [<DEST_DIR>]" && \
+    echo "        info: <DEST_DIR> and <DEST_FILE> is the path relative to sdcard." && \
+    echo "              Empty <DEST_FILE> (or <DEST_DIR>) will send the file to sdcard/Downloads" && \
+    echo && \
+    echo "   example 1: sendfile dick_pic.png Pictures/Audrey/dick_pic.png" && \
+    echo "   example 2: sendfile dick_pic.png Pictures/Audrey" && \
+    echo "result 1 & 2: The full path of the transferred file will be:" && \
+    echo "              /data/data/com.termux/files/home/storage/shared/Pictures/Audrey/dick_pic.png" && return
   ! [ -f "$1" ] && echo "$1 is not a file" && return
+
   file_ws="$1"
-  shared="/data/data/com.termux/files/home/storage/shared"
   [ -z "$2" ] && file_phone="$shared/Download/$(basename "$file_ws")" || file_phone="$shared/$2"
+
+  echo "sending: \"$file_ws\""
+  echo "     to: \"$file_phone\""
+
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     "$file_ws" "$USER_PHONE@$IP_PHONE:$file_phone"
 }
