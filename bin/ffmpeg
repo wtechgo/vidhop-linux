@@ -88,7 +88,25 @@ EOF
   echo -e "cut video complete, result at:\n\"$output_file\""
   cd "$(dirname "$input_file")"
 }
- 
+
+merge-videos() {
+  [ $# -lt 3 ] &&
+    echo "usage: merge-videos <VIDEO_FILE_1> <VIDEO_FILE_2> <OUTPUT_FILE>" &&
+    echo " info: files must have the same encoding or the second video will be black" &&return
+  if [ -f "$1" ]; then file1="$1"; else echo "not a file '$1'" && return; fi
+  if [ -f "$2" ]; then file2="$2"; else echo "not a file '$2'" && return; fi
+  output_file="$3"
+
+  text_file=concat_demuxer.txt
+  touch "$text_file"
+  echo "file '$file1'" >> "$text_file"
+  echo "file '$file2'" >> "$text_file"
+
+  ffmpeg -f concat -safe 0 -i "$text_file" -c copy "$output_file"
+  rm "$text_file"
+  echo "merge video at '$output_file'"
+}
+
 embed-thumbnail-into-video() { # not tested
   [ $# -lt 2 ] && echo "usage: embed-thumbnail-into-video <THUMBNAIL_FILE> <VIDEO_FILE>" && return
   thumb_file="$1" && [ ! -f "$thumb_file" ] && echo "not a file: '$thumb_file'" && return
