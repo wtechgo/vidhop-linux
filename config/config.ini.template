@@ -34,6 +34,7 @@
 #VIDHOP_APP_DIR_WS=""
 
 ## Default applications.
+#filemanager_app="xdg-open"
 #video_app="vlc"
 #audio_app="vlc"
 #picture_app="ristretto"

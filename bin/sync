@@ -186,18 +186,12 @@ fetchvidhop() {
 
 # shellcheck disable=SC2120
 syncvidhop() {
-  answer="$([ "$1" = -y ] || [ "$1" = --yes ] && echo y)"
-  if [ ! "$answer" = y ]; then
-    echo -n "Do real run (y) or dry run (d) or abort (a or n)? Y/n: " && read -r answer
-    answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
-  fi
-  [ "$answer" = "a" ] || [ "$answer" = "n" ] && return
-  [ "$answer" = "d" ] && # dry run
+  [ "$1" = "-d" ] || [ "$1" = "--dry" ] && # dry run
     echo -e "\n> FETCHING vidhop files DRY RUN..." && dry_fetchvidhop &&
     echo -e "\n> SENDING vidhop files DRY RUN..." && dry_sendvidhop &&
     syncvidhop && return
-  [ "$answer" = "y" ] && # real run
-    echo -e "\n> FETCHING vidhop files..." && fetchvidhop -exec &&
+
+  echo -e "\n> FETCHING vidhop files..." && fetchvidhop -exec &&
     echo -e "\n> SENDING vidhop files..." && sendvidhop -exec
 }
 
@@ -357,14 +351,14 @@ sendmusictousb() {
   echo "==================================================="
   [ ! -d "$usb_music_dir" ] && echo "usb not found at $usb_music_dir" && return
 
-#  echo "converting m4a files to mp3..." && sleep 2
-#  m4a_files="$(find "$src_music_dir" -type f -iname "*.m4a")"
-#  if [ -n "$m4a_files" ]; then
-#    while read -r file; do
-#      echo "converting $file..."
-#      convert-to-mp3 "$file"
-#    done < <(echo "$m4a_files")
-#  fi
+  #  echo "converting m4a files to mp3..." && sleep 2
+  #  m4a_files="$(find "$src_music_dir" -type f -iname "*.m4a")"
+  #  if [ -n "$m4a_files" ]; then
+  #    while read -r file; do
+  #      echo "converting $file..."
+  #      convert-to-mp3 "$file"
+  #    done < <(echo "$m4a_files")
+  #  fi
 
   echo "converting m4a files to mp3..." && sleep 2
   find "$src_music_dir" -type f -iname "*.m4a" |
@@ -381,11 +375,11 @@ sendmusictousb() {
     done
 
   echo "copying files..."
-  /bin/cp -v "$src_music_dir"/* "$usb_music_dir"
+  #  /bin/cp -v "$src_music_dir"/* "$usb_music_dir"
+  rsync -hvrPt --ignore-existing "$src_music_dir/" "$usb_music_dir" --delete
+  echo "removing .Trash-1000 from usb..."
+  rm -rf "$usb_music_dir/.Trash-1000"
   echo "sync music to USB complete"
-  #  rsync -hvrPt --ignore-existing "$src_music_dir/" "$usb_music_dir" --delete
-  #  echo "removing .Trash-1000 from usb..."
-  #  rm -rf "$usb_music_dir/.Trash-1000"
 }
 
 sendmusictophone() {
@@ -435,11 +429,11 @@ mvmedia() {
 
 create-backup-vidhop() {
   [ "$1" = -h ] || [ "$1" = --help ] &&
-    echo "usage: create-backup-vidhop" &&
-    echo " info: copy files from \$vidhop_dir to \$vidhop_backup_dir (ideally set in config.ini)" &&
+    echo "Usage: create-backup-vidhop" &&
+    echo " Info: copy files from \$vidhop_dir to \$vidhop_backup_dir (ideally set in config.ini)" &&
     echo &&
-    echo "usage: create-backup-vidhop <VIDHOP_BACKUP_DIR>" &&
-    echo " info: copy files from \$vidhop_dir to \$vidhop_backup_dir (ideally set in config.ini)" &&
+    echo "Usage: create-backup-vidhop <VIDHOP_BACKUP_DIR>" &&
+    echo " Info: copy files from \$vidhop_dir to \$vidhop_backup_dir (ideally set in config.ini)" &&
     echo && return
   [ -n "$1" ] && vidhop_backup_dir="$1"
   rsync -av "$vidhop_dir"/* "$vidhop_backup_dir" --exclude=".git/" --exclude=".idea"
@@ -447,11 +441,11 @@ create-backup-vidhop() {
 
 restore-backup-vidhop() {
   [ "$1" = -h ] || [ "$1" = --help ] &&
-    echo "usage: restore-backup-vidhop" &&
-    echo " info: copy files from \$vidhop_backup_dir to \$vidhop_dir (ideally set in config.ini)" &&
+    echo "Usage: restore-backup-vidhop" &&
+    echo " Info: copy files from \$vidhop_backup_dir to \$vidhop_dir (ideally set in config.ini)" &&
     echo &&
-    echo "usage: restore-backup-vidhop <VIDHOP_BACKUP_DIR>" &&
-    echo " info: copy files from \$vidhop_backup_dir to \$vidhop_dir (ideally set in config.ini)" &&
+    echo "Usage: restore-backup-vidhop <VIDHOP_BACKUP_DIR>" &&
+    echo " Info: copy files from \$vidhop_backup_dir to \$vidhop_dir (ideally set in config.ini)" &&
     echo && return
   [ -n "$1" ] && vidhop_backup_dir="$1"
   rsync -av "$vidhop_backup_dir"/* "$vidhop_dir" --exclude=".git/" --exclude=".idea"
@@ -469,14 +463,14 @@ fetchbashrc() {
 
 sendfile() {
   [ -z "$1" ] &&
-    echo "       usage: sendfile <SRC_FILE> [<DEST_FILE>]" && \
-    echo "              sendfile <SRC_FILE> [<DEST_DIR>]" && \
-    echo "        info: <DEST_DIR> and <DEST_FILE> is the path relative to sdcard." && \
-    echo "              Empty <DEST_FILE> (or <DEST_DIR>) will send the file to sdcard/Downloads" && \
-    echo && \
-    echo "   example 1: sendfile dick_pic.png Pictures/Audrey/dick_pic.png" && \
-    echo "   example 2: sendfile dick_pic.png Pictures/Audrey" && \
-    echo "result 1 & 2: The full path of the transferred file will be:" && \
+    echo "       Usage: sendfile <SRC_FILE> [<DEST_FILE>]" &&
+    echo "              sendfile <SRC_FILE> [<DEST_DIR>]" &&
+    echo "        Info: <DEST_DIR> and <DEST_FILE> is the path relative to sdcard." &&
+    echo "              Empty <DEST_FILE> (or <DEST_DIR>) will send the file to sdcard/Downloads" &&
+    echo &&
+    echo "   example 1: sendfile dick_pic.png Pictures/Audrey/dick_pic.png" &&
+    echo "   example 2: sendfile dick_pic.png Pictures/Audrey" &&
+    echo "result 1 & 2: The full path of the transferred file will be:" &&
     echo "              /data/data/com.termux/files/home/storage/shared/Pictures/Audrey/dick_pic.png" && return
   ! [ -f "$1" ] && echo "$1 is not a file" && return
 
@@ -490,12 +484,13 @@ sendfile() {
     "$file_ws" "$USER_PHONE@$IP_PHONE:$file_phone"
 }
 
-fetchfile() {
-  [ -z "$1" ] && echo "usage: fetchfile <SRC_FILE> <DEST_FILE>" && return
-  ! [ -f "$1" ] && echo "$1 is not a file" && return
-  shared="/data/data/com.termux/files/home/storage/shared"
+fafetchfile() {
+  [ -z "$1" ] &&
+    echo "Usage: fetchfile <SRC_FILE_REL_SHARED> <DEST_FILE>" &&
+    echo " Info: <SRC_FILE_REL_SHARED> is the path to the file on the phone, relative to sdcard." &&
+    echo "       <DEST_FILE> left empty will use the current directory." && return
   file_phone="$shared/$1"
-  [ -z "$2" ] && file_ws="$HOME/Downloads/$(basename "$file_phone")" || file_ws="$2"
+  [ -z "$2" ] && file_ws="$PWD/$(basename "$1")" || file_ws="$2"
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     "$USER_PHONE@$IP_PHONE:$file_phone" "$file_ws"
 }
@@ -533,7 +528,7 @@ senddirabs() {
 
 fetchdir-abs() {
   [ -z "$1" ] &&
-    echo "usage: fetchdir <PHONE_DIR_ABS_PATH> <WS_DIR_ABS_PATH>" &&
+    echo "Usage: fetchdir <PHONE_DIR_ABS_PATH> <WS_DIR_ABS_PATH>" &&
     echo "       fetchdir <PHONE_DIR_ABS_PATH>" &&
     echo "       => Empty second argument puts the fetched dir in the current dir." && return
 
@@ -546,7 +541,7 @@ fetchdir-abs() {
 
 fetchdir() {
   [ -z "$1" ] &&
-    echo "usage: fetchdir-sdcard <PHONE_DIR_RELATIVE_SHARED_STORAGE> <WS_DIR_ABS_PATH>" &&
+    echo "Usage: fetchdir-sdcard <PHONE_DIR_RELATIVE_SHARED_STORAGE> <WS_DIR_ABS_PATH>" &&
     echo "       fetchdir-sdcard <PHONE_DIR_RELATIVE_SHARED_STORAGE>" &&
     echo "       => Empty second argument puts the fetched directory in $import_dir." && return
 
@@ -559,9 +554,10 @@ fetchdir() {
 
 fetch-usb-microphone-recordings() {
   phone_usb_microscope_dir="$shared/DCIM/USBCamera/Videos"
-  ws_usb_microscope_dir="$record_dir/usb microscope/Videos"
+  ws_usb_microscope_dir="$record_dir/usb_microscope/Videos"
   mkdir -p "$ws_usb_microscope_dir" 2>/dev/null
 
+  echo -e "fetching files from phone:\n${phone_usb_microscope_dir}\nto workstation:\n${ws_usb_microscope_dir}"
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     "$USER_PHONE@$IP_PHONE:$phone_usb_microscope_dir" "$ws_usb_microscope_dir"
 }
