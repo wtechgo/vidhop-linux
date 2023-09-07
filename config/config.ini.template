@@ -32,6 +32,11 @@
 #USER_WS=""
 #VIDHOP_DIR_WS=""
 #VIDHOP_APP_DIR_WS=""
+#BROWSER=""
+
+## Platform logins
+## twitter_username=""
+## twitter_password=""
 
 ## Default applications.
 #filemanager_app="xdg-open"

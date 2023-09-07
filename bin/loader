@@ -89,7 +89,9 @@ update_python_packages() {
 
 updateytdlp() {
   echo "> Updating YT-DLP..." && sleep 1
-  pip install -U yt-dlp
+   pip install -U yt-dlp
+#  pipx upgrade yt-dlp
+#  yt-dlp -U
 }
 
 updatevidhop() {

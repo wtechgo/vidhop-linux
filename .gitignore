@@ -3,6 +3,7 @@ import
 export
 
 config/config.ini
+**/cookies.txt
 
 # ---
 

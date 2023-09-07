@@ -23,6 +23,7 @@ website_scraper="$bin_dir/websitescraper.py"
 [ -z "$record_dir" ] && record_dir="$vidhop_dir/record"
 [ -z "$websites_dir" ] && websites_dir="$vidhop_dir/website"
 [ -z "$uploads_dir" ] && uploads_dir="$vidhop_dir/uploads"
+[ -z "$config_dir" ] && config_dir="$vidhop_app_dir/config"
 
 # metadata
 [ -z "$meta_dir" ] && meta_dir="$vidhop_dir/metadata"
@@ -84,10 +85,10 @@ video_projects_dir="$HOME/Videos/Production"
 
 # User media (outside VidHop dir)
 shared="/data/data/com.termux/files/home/storage/shared"  # Android file manager root directory
-music_dir_ws="$HOME/Music"                 # set value in config.ini
-music_dir_phone="$shared/Music"            # set value in config.ini
-music_dir_usb="/run/media/$USER/USB_STICK" # set value in config.ini
-vidhop_backup_dir=""                       # set value in config.ini
+music_dir_ws="$HOME/Music"
+music_dir_phone="$shared/Music"
+music_dir_usb="/run/media/$USER/USB_STICK"
+vidhop_backup_dir=""
 
 # .bashrc shortkeys
 alias loadconfig='. "$bin_dir/config'
