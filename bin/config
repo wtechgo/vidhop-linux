@@ -1,7 +1,13 @@
 #!/bin/bash
 
-fetch_cookies_txt() {
+save_cookies_txt_from_browser() {
+  [ -n "$1" ] && BROWSER="$1"
+  [ -z "$BROWSER" ] && echo "no browser set in /opt/vidhop/config/config.ini or provided as argument, abort" && return
   yt-dlp --cookies-from-browser "$BROWSER" --cookies "$config_dir/cookies.txt"
+}
+
+update_cookies_txt() {
+  save_cookies_txt_from_browser "$BROWSER"
 }
 
 set_user_phone() {

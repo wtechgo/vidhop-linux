@@ -1266,9 +1266,16 @@ dlcensored() {
 }
 
 insert_cookies_param () {
-  if [ -n "$BROWSER" ]; then
-    echo -n "--cookies-from-browser $BROWSER "
-  elif [ -f "$config_dir/cookies.txt" ]; then
+  # prefer cookies.txt (faster)
+  if [ -f "$config_dir/cookies.txt" ]; then
     echo -n "--cookies $config_dir/cookies.txt "
+  elif [ -n "$BROWSER" ]; then
+    echo -n "--cookies-from-browser $BROWSER "
   fi
+#  # prefer cookies from browser
+#  if [ -n "$BROWSER" ]; then
+#    echo -n "--cookies-from-browser $BROWSER "
+#  elif [ -f "$config_dir/cookies.txt" ]; then
+#    echo -n "--cookies $config_dir/cookies.txt "
+#  fi
 }
