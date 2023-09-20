@@ -2,12 +2,24 @@
 
 save_cookies_txt_from_browser() {
   [ -n "$1" ] && BROWSER="$1"
-  [ -z "$BROWSER" ] && echo "no browser set in /opt/vidhop/config/config.ini or provided as argument, abort" && return
+  [ -z "$BROWSER" ] && echo "no browser set in /opt/vidhop/config/config.ini, nor provided as argument, abort" && return
   yt-dlp --cookies-from-browser "$BROWSER" --cookies "$config_dir/cookies.txt"
 }
 
-update_cookies_txt() {
+updatecookies() {
   save_cookies_txt_from_browser "$BROWSER"
+}
+
+fetchcookies() {
+  save_cookies_txt_from_browser "$BROWSER"
+}
+
+sendcookies(){
+  [ -z "$SSH_PORT_TERMUX"  ] && echo "no value set for \$SSH_PORT_TERMUX in /config/config.ini, can't establish SSH connection, abort" && return
+  [ -z "$SSH_PRIVATE_KEY_WS"  ] && echo "no value set for \$SSH_PRIVATE_KEY_WS in /config/config.ini, can't establish SSH connection, abort" && return
+  [ ! -f "$config_dir/cookies.txt" ] && echo "no cookies.txt found at '$config_dir/cookies.txt', abort" && return
+  rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+    "$config_dir/cookies.txt" "$USER_PHONE@$IP_PHONE:/data/data/com.termux/files/usr/opt/vidhop/config/cookies.txt"
 }
 
 set_user_phone() {
