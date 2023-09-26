@@ -88,30 +88,30 @@ def main(channel_url, channel_name, channels_meta_dir, is_playlist=False):
 
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser(
-    #     prog='Video channel profile picture scraper.',
-    #     formatter_class=argparse.RawDescriptionHelpFormatter, epilog=textwrap.dedent('''\
-    #          additional information:
-    #              Scrapes and save the profile picture of a channel
-    #              in $channels_meta_dir/$name/$name.jpg.
-    #              Useful as an addition to e.g. yt-dlp.
-    #              Example:
-    #                 Example:
-    #                 python scrape_channel_avatar_img.py --channel-url "https://www.bitchute.com/channel/ZcpM80EVcYa7/" --channel-name "WT" --channels-meta-dir $(pwd)
-    #          '''))
-    # parser.add_argument('-u', '--channel-url', help='the url of the channel', required=True)
-    # parser.add_argument('-n', '--channel-name', help='name of the channel', required=True)
-    # parser.add_argument('-d', '--channels-meta-dir', help='channels metadata directory', required=True)
-    # parser.add_argument('-p', '--is-playlist', action=argparse.BooleanOptionalAction)
-    # args = parser.parse_args()
-    # channel_url, channel_name, channels_meta_dir, is_playlist = args.channel_url, args.channel_name, args.channels_meta_dir, args.is_playlist
+    parser = argparse.ArgumentParser(
+        prog='Video channel profile picture scraper.',
+        formatter_class=argparse.RawDescriptionHelpFormatter, epilog=textwrap.dedent('''\
+             additional information:
+                 Scrapes and save the profile picture of a channel
+                 in $channels_meta_dir/$name/$name.jpg.
+                 Useful as an addition to e.g. yt-dlp.
+                 Example:
+                    Example:
+                    python scrape_channel_avatar_img.py --channel-url "https://www.bitchute.com/channel/ZcpM80EVcYa7/" --channel-name "WT" --channels-meta-dir $(pwd)
+             '''))
+    parser.add_argument('-u', '--channel-url', help='the url of the channel', required=True)
+    parser.add_argument('-n', '--channel-name', help='name of the channel', required=True)
+    parser.add_argument('-d', '--channels-meta-dir', help='channels metadata directory', required=True)
+    parser.add_argument('-p', '--is-playlist', action=argparse.BooleanOptionalAction)
+    args = parser.parse_args()
+    channel_url, channel_name, channels_meta_dir, is_playlist = args.channel_url, args.channel_name, args.channels_meta_dir, args.is_playlist
     # Arguments configuration done.
 
-    # Test data
-    channel_url = "https://www.youtube.com/channel/UCHUsy5lZnUzU1H6VLdWMSJg"
-    channel_name = "MonneylessWorld"
-    channels_meta_dir = "/Home/Code/vidhop/shell/linux/test/fetch_avatar_image_test"
-    is_playlist = False
+    # # Test data
+    # channel_url = "https://www.youtube.com/channel/UCHUsy5lZnUzU1H6VLdWMSJg"
+    # channel_name = "MonneylessWorld"
+    # channels_meta_dir = "/Home/Code/vidhop/shell/linux/test/fetch_avatar_image_test"
+    # is_playlist = False
 
     main(channel_url, channel_name, channels_meta_dir, is_playlist)
 
