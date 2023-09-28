@@ -237,6 +237,11 @@ get_extension() {
   echo "$ext"
 }
 
+get_name() {
+  the_name="$(basename "$1")"
+  strip_extension "$the_name"
+}
+
 get_sub_extension() {
   sub_type=$(echo -n "$1" | rev | cut -d '.' -f 1 | rev)
   lang=$(echo -n "$1" | rev | cut -d '.' -f 2 | rev)
@@ -357,4 +362,8 @@ shorten_text() {
 
 timestamp() {
   date +'%Y-%m-%d_%Hh%Mm%Ss'  # removed H:M:S format for Termux compatibility
+}
+
+remove_blank_lines() {
+  grep "\S"
 }

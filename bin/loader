@@ -157,6 +157,7 @@ vidhophelp() {
   dlv_help && echo
   fvid_help && echo
   files_help && echo
+  image_help && echo
   metadata_help && echo
   history_help && echo
   sync_help && echo

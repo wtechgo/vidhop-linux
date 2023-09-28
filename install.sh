@@ -41,9 +41,11 @@ sudo pacman --noconfirm -S openssh # install ssh client and server (sshd command
 sudo pacman --noconfirm -S git # pull in code and updates
 sudo pacman --noconfirm -S ncurses # for installing tput, used in fvid
 sudo pacman --noconfirm -S moreutils # for fetching the current IP address
-sudo pacman --noconfirm -S python
-sudo pacman --noconfirm -S ffmpeg
 sudo pacman --noconfirm -S jq
+sudo pacman --noconfirm -S ffmpeg
+sudo pacman --noconfirm -S imagemagick
+sudo pacman --noconfirm -S tesseract
+sudo pacman --noconfirm -S python
 
 echo "installing Python packages..."
 pip install -U pip
