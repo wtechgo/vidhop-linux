@@ -1,7 +1,8 @@
+media
+**/test
 log
 import
 export
-**/test
 
 config/config.ini
 **/cookies.txt
