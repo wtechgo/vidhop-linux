@@ -51,13 +51,13 @@ echo "installing Python packages..."
 pip install -U pip
 pip install -U wheel
 pip install -U yt-dlp
-pip install -U requests
+pip install -U facebook-scraper
+pip install -U snscrape
 pip install -U selenium
+pip install -U requests
 pip install -U beautifulsoup4
 pip install -U image
 pip install -U pillow
-pip install -U facebook-scraper
-pip install -U snscrape
 pip install -U pywebcopy
 
 echo "installing VidHop..."
