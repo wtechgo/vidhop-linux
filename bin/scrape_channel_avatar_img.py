@@ -9,6 +9,7 @@ from PIL import Image
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 
+
 def main(channel_url, channel_name, channels_meta_dir, is_playlist=False):
     platforms = [
         "bitchute.com",

@@ -78,34 +78,20 @@ update_python_packages() {
   pip install -U pip
   pip install -U wheel
   pip install -U yt-dlp
-  ## VidHop relies on Selenium for scraping channel avatars in scenario's where yt-dlp doesn't.
-  ## The webdriver for Selenium is not installed and probably doesn't work on Termux, gonna let this one go.
-  #  pip install -U requests
-  #  pip install -U selenium
-  #  pip install -U beautifulsoup4
-  #  pip install -U image
-  #  pip install -U pillow
-  ## Social media scrapers only scrape text, no images, which makes it kinda useless.
-  #  pip install -U facebook-scraper
-  #  pip install -U snscrape
-  ## This website scraper is inferior to 'Save Page As' functionality of a browser.
-  #  pip install -U pywebcopy
-}
-
-remove_unused_python_packages() {
-  pip uninstall --yes requests
-  pip uninstall --yes selenium
-  pip uninstall --yes beautifulsoup4
-  pip uninstall --yes image
-  pip uninstall --yes pillow
-  pip uninstall --yes facebook-scraper
-  pip uninstall --yes snscrape
-  pip uninstall --yes pywebcopy
+  pip install -U requests
+  pip install -U selenium
+  pip install -U beautifulsoup4
+  pip install -U image
+  pip install -U pillow
+  pip install -U facebook-scraper
+  pip install -U snscrape
+  pip install -U pywebcopy
 }
 
 updateytdlp() {
   echo "> Updating YT-DLP..." && sleep 1
-  pip install -U yt-dlp
+  yt-dlp -U
+  #   pip install -U yt-dlp
   #  pipx upgrade yt-dlp
   #  yt-dlp -U
 }
