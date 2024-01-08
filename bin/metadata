@@ -32,7 +32,7 @@ extract_summary_vars() {
   title="$(jq .title <<<"$json")"
   url="$(jq .webpage_url <<<"$json")"
   channel_name="$(channel_name_from_obj "$json")"
-  channel_url="$(channel_url_from_obj "$json")"
+  channel_url="$(channel_url_from_obj)"
   true # if channel_url fails, exit code is still 0, so && won't fail
 }
 
@@ -84,6 +84,7 @@ set_metadata_field_json_obj() {
 # Sets JSON field with 'key' to 'value' and writes to $meta_file if available.
 # Usage: command "key" "value" ---------------------> uses "$json"
 #        command "key" "value" "partial_filename" --> seeks metadata file, stores path, in $metadata and loads it "$json"
+## Bug: calling this function after renlast failed.
 set_metadata_field() {
   [ "$#" = 0 ] || [ "$#" = 1 ] && echo "Usage: set_metadata_field <KEY> <VALUE> [<PARTIAL_FILENAME>]" && return
   [ "$#" = 2 ] && key="$1" && value="$2" && metadata="$json" # Two arguments (key & value), implies to use $json as metadata.
@@ -275,4 +276,13 @@ rm_meta_file() {
 rm_thumb_file() {
   rm_metadata_field 'vh_thumb_file' || return
   echo "'vh_thumb_file' was removed $([ -f "$meta_file" ] && echo -e "from metadata file:\n$meta_file")"
+}
+
+# inspect video file specs
+is-streamable() {
+  mediainfo --Language=raw --Full --Inform="General;%IsStreamable%" "$1"
+}
+
+is-web-optimized() {
+  is-streamable "$1"
 }

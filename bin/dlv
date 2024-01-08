@@ -37,6 +37,10 @@ clear_vars_dlv() {
   return 0
 }
 
+remove_url_query_parms() {
+  url=${url%?si=*} # remove youtube's ?si= param
+}
+
 # Fetch video metadata (yt-dlp), select relevant fields and pretty print (jq).
 # Populates global variable $json.
 fetch_video_metadata() {
@@ -248,6 +252,8 @@ dlv() {
   function=dlv
 
   [ "$(is_url "$url")" = false ] && echo "not a URL" && return 1
+  remove_url_query_parms
+
   platform=$(extract_platform_name "$url") || return 1
   mkdir "$vids_dir/$platform" 2>/dev/null
 
@@ -1078,6 +1084,12 @@ dlalbum() {
   dlapl "$@"
 }
 
+has_audio_formats() {
+  grep -q m4a <<<"$formats" && echo true && return
+  grep -q mp3 <<<"$formats" && echo true && return
+  echo false
+}
+
 # Download podcast metadata.
 dlpodi() {
   ! [ "$function" = dlpod ] && function=dlpodi && standalone=true
@@ -1093,10 +1105,10 @@ dlpodi() {
   mkdir -p "$podcast_meta_dir" 2>/dev/null
   json_file="$podcast_meta_dir/metadata.json"
 
+  formats="$(yt-dlp -F "$url")"
   fetch_video_metadata "$url"
   fetch_thumbnail "$podcast_meta_dir"
   fetch_subs
-  ext=m4a
 
   add_to_phistory
   augment_json
@@ -1120,11 +1132,11 @@ dlpod() {
 
   dlpodi "$url"
 
-  yt-dlp $(insert_cookies_param) \
-    -f ba --recode m4a --embed-thumbnail --no-mtime --add-metadata --force-overwrites \
-    -P "$podcasts_dir/$platform" -o "$name.%(ext)s" --verbose "$url"
-
-  if [ $? = 1 ]; then # error no audio formats available
+  if [ "$(has_audio_formats)" = true ]; then
+    yt-dlp $(insert_cookies_param) \
+      -f "ba*[ext=m4a] / ba[ext=mp3]" --embed-thumbnail --no-mtime --add-metadata --force-overwrites \
+      -P "$podcasts_dir/$platform" -o "$name.%(ext)s" --verbose "$url"
+  else
     echo "default podcast download failed"
     echo "starting fallback strategy:"
     echo "  1. download video"
@@ -1137,7 +1149,7 @@ dlpod() {
     video_file_tmp="$podcasts_dir/$platform/$name.$ext"
     media_file="$podcasts_dir/$platform/$name.mp3"
     thumb_file="$podcast_meta_dir/thumbnail.jpg"
-    convert-to-mp3 "$video_file_tmp"
+    to-mp3-remove-input "$video_file_tmp"
     embed-thumbnail-into-mp3 "$thumb_file" "$media_file"
   fi
 
@@ -1265,17 +1277,17 @@ dlcensored() {
   echo download finished
 }
 
-insert_cookies_param () {
+insert_cookies_param() {
   # prefer cookies.txt (faster)
   if [ -f "$config_dir/cookies.txt" ]; then
     echo -n "--cookies $config_dir/cookies.txt "
   elif [ -n "$BROWSER" ]; then
     echo -n "--cookies-from-browser $BROWSER "
   fi
-#  # prefer cookies from browser
-#  if [ -n "$BROWSER" ]; then
-#    echo -n "--cookies-from-browser $BROWSER "
-#  elif [ -f "$config_dir/cookies.txt" ]; then
-#    echo -n "--cookies $config_dir/cookies.txt "
-#  fi
+  #  # prefer cookies from browser
+  #  if [ -n "$BROWSER" ]; then
+  #    echo -n "--cookies-from-browser $BROWSER "
+  #  elif [ -f "$config_dir/cookies.txt" ]; then
+  #    echo -n "--cookies $config_dir/cookies.txt "
+  #  fi
 }

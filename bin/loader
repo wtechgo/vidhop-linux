@@ -17,6 +17,7 @@ config_ini="/opt/vidhop/config/config.ini"
 . "$bin_dir/metadata"
 
 . "$bin_dir/dlv"
+. "$bin_dir/scrape"
 . "$bin_dir/batch"
 . "$bin_dir/ffmpeg"
 . "$bin_dir/image"
@@ -24,6 +25,7 @@ config_ini="/opt/vidhop/config/config.ini"
 . "$bin_dir/project"
 . "$bin_dir/fix"
 . "$bin_dir/debug"
+. "$bin_dir/text"
 
 switch-env-vidhop() {
   [ "$1" = -h ] || [ "$1" = --help ] &&
@@ -90,10 +92,8 @@ update_python_packages() {
 
 updateytdlp() {
   echo "> Updating YT-DLP..." && sleep 1
-  yt-dlp -U
-  #   pip install -U yt-dlp
-  #  pipx upgrade yt-dlp
-  #  yt-dlp -U
+  pip install yt-dlp -U --break-system-packages
+#  yt-dlp -U
 }
 
 updatevidhop() {
