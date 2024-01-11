@@ -49,7 +49,7 @@ fetch_video_metadata() {
     yt-dlp \
       $([ "$dl_comments" = true ] && echo -n --write-comments) \
       $(insert_cookies_param) \
-      --dump-single-json --verbose "$url" |
+      --dump-single-json "$url" |
       jq '{
                   id: .id,
                   title: .title,
@@ -684,7 +684,7 @@ fetch_music_metadata() {
   json=$(
     yt-dlp $(insert_cookies_param) \
       $([ "$dl_comments" = true ] && echo -n --write-comments) \
-      --dump-single-json --verbose "$url" |
+      --dump-single-json "$url" |
       jq '{
                   id: .id,
                   webpage_url: .webpage_url,
