@@ -348,10 +348,11 @@ remove_trailing_slash() {
 }
 
 # shellcheck disable=SC2120
+# tr ' ' '*' |
 replace_special_chars_with_asterisks() {
   [ -n "$1" ] && echo "$1" |
-    tr ' ' '*' | tr '|' '*' | tr '&' '*' | tr "'" '*' | tr '"' '*' && return
-  tr ' ' '*' | tr '|' '*' | tr '&' '*' | tr "'" '*' | tr '"' '*'
+    tr '|' '*' | tr '&' '*' | tr "'" '*' | tr '"' '*' && return
+  tr '|' '*' | tr '&' '*' | tr "'" '*' | tr '"' '*'
 }
 
 # shellcheck disable=SC2120

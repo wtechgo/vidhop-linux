@@ -217,7 +217,7 @@ fetchvidhopbin() {
 # sync downloaded files
 # ---------------------
 
-# android dirs
+# ANDROID dirs
 shared="/data/data/com.termux/files/home/storage/shared"
 ## media directories
 dl="$shared/Download"
@@ -229,156 +229,92 @@ fb1="$pictures/Facebook"
 fb2="$shared/DCIM/Facebook"
 messenger="$pictures/Messenger"
 twitter="$pictures/Twitter"
-## telegram
-#audio_telegram="$shared/Music/Telegram" # not sure
-download_telegram="$shared/Download/Telegram"
-movies_telegram="$movies/Telegram"
-pictures_telegram="$pictures/Telegram"
 # mov media directories
 youcut="$shared/Movies/youcut"
 screen_rec="$shared/Movies/Screen Recorder"
 
-# Telegram Desktop can be set in config.ini
-[ -z "$documents_telegram_ws" ] && documents_telegram_ws="$HOME/Telegram Desktop"
-[ -z "$movies_telegram_ws" ] && movies_telegram_ws="$HOME/Telegram Desktop"
-[ -z "$pictures_telegram_ws" ] && pictures_telegram_ws="$HOME/Telegram Desktop"
+# Telegram
+# PHONE
+tgdl_phone="$shared/Download/Telegram"
+tgvids_phone="$movies/Telegram"
+tgimgs_phone="$pictures/Telegram"
+tgdocs_phone="$docs/Telegram"
+tgaudio_phone="$shared/Music/Telegram" # not sure
+
+# WORKSTATION dirs
+# Telegram dirs can be set in config.ini
+[ -z "$tgdl_ws" ] && tgdl_ws="$HOME/Downloads/Telegram Desktop"
+[ -z "$tgdocs_ws" ] && tgdocs_ws="$HOME/Downloads/Telegram Desktop/Documents"
+[ -z "$tgvids_ws" ] && tgvids_ws="$HOME/Downloads/Telegram Desktop/Videos"
+[ -z "$tgimgs_ws" ] && tgimgs_ws="$HOME/Downloads/Telegram Desktop/Pictures"
+[ -z "$tgaudio_ws" ] && tgaudio_ws="$HOME/Downloads/Telegram Desktop/Audio"
 
 # file extensions
-doc_exts=(doc docx xls xlsx pdf txt md DOC DOCX XLS XLSX PDF TXT MD)
-img_exts=(jpg png webp jpeg JPG PNG WEBP JPEG)
-audio_exts=(mp3 m4a wav flacc aac MP3 M4A WAV FLACC AAC)
-mov_exts=(mp4 webm mkv mov avi MP4 WEBM MKV MOV AVI)
-
-real_fetchdownloads() {
-  for ext in "${audio_exts[@]}"; do
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Music"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$dl/" "$audio_telegram_ws"
-#    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-#      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$audio_telegram/" "$audio_telegram_ws" # not sure
-  done
-
-  for ext in "${doc_exts[@]}"; do
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Documents"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$docs/" "$HOME/Documents"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$documents_telegram/" "$documents_telegram_ws"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$download_telegram/" "$documents_telegram_ws"
-  done
-
-  for ext in "${img_exts[@]}"; do
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*/" "$USER_PHONE@$IP_PHONE:$pictures/" "$HOME/Pictures"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Pictures"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$screenshots/" "$HOME/Pictures"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$fb2/" "$HOME/Pictures"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$fb1/" "$HOME/Pictures"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$messenger/" "$HOME/Pictures"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$twitter/" "$HOME/Pictures"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$pictures_telegram/" "$pictures_telegram_ws"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$download_telegram/" "$pictures_telegram_ws"
-  done
-
-  for ext in "${mov_exts[@]}"; do
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Videos"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$youcut/" "$HOME/Videos"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$screen_rec/" "$HOME/Videos"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$screenshots/" "$HOME/Videos"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$movies_telegram/" "$videos_telegram_ws"
-    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$download_telegram/" "$videos_telegram_ws"
-  done
-}
-
-dry_fetchdownloads() {
-  for ext in "${audio_exts[@]}"; do
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Music"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$dl/" "$audio_telegram_ws"
-#    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-#      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$audio_telegram/" "$audio_telegram_ws" # not sure
-  done
-
-  for ext in "${doc_exts[@]}"; do
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Documents"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$docs/" "$HOME/Documents"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$documents_telegram/" "$documents_telegram_ws"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$download_telegram/" "$documents_telegram_ws"
-  done
-
-  for ext in "${img_exts[@]}"; do
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*/" "$USER_PHONE@$IP_PHONE:$pictures/" "$HOME/Pictures"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Pictures"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$screenshots/" "$HOME/Pictures"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$fb2/" "$HOME/Pictures"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$fb1/" "$HOME/Pictures"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$messenger/" "$HOME/Pictures"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$twitter/" "$HOME/Pictures"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$pictures_telegram/" "$pictures_telegram_ws"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$download_telegram/" "$pictures_telegram_ws"
-  done
-
-  for ext in "${mov_exts[@]}"; do
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Videos"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$youcut/" "$HOME/Videos"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$screen_rec/" "$HOME/Videos"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$screenshots/" "$HOME/Videos"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$movies_telegram/" "$videos_telegram_ws"
-    rsync --remove-source-files -Pauvn -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$download_telegram/" "$videos_telegram_ws"
-  done
-}
+audio_exts=(mp3 m4a wav flacc aac ogg MP3 M4A WAV FLACC AAC OGG)
+doc_exts=(doc docx xls xlsx pdf txt md epub DOC DOCX XLS XLSX PDF TXT MD EPUB)
+img_exts=(jpg png webp jpeg gif JPG PNG WEBP JPEG GIF)
+vid_exts=(mp4 webm mkv mov avi MP4 WEBM MKV MOV AVI)
 
 fetchdownloads() {
-  if [ "$1" = "-dry" ] || [ "$1" = "-d" ]; then
-    dry_fetchdownloads
-    echo "---"
-    echo "this was a dry run"
-    echo "execute 'senddownloads -exec' to do a real run"
-    unset answer && echo -n "Do real run now? Y/n: " && read -r answer
-    answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
-    [ "$answer" = "n" ] && return
-    [ "$answer" = "y" ] || [ -z "$answer" ] && fetchdownloads -exec && return
-    echo "unknown answer '$answer', abort"
-  else # dry run, files identical to previous block
-    real_fetchdownloads
-  fi
+  echo "you'll see a lot of \"errors\", for each directory or file extension the function does not find, but it works for what it does find" && sleep 1
+
+  echo "fetching audio files..."
+  for ext in "${audio_exts[@]}"; do
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Music"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$tgdl_phone/" "$tgaudio_ws"
+  done
+
+  echo "fetching documents..."
+  for ext in "${doc_exts[@]}"; do
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Documents"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$docs/" "$HOME/Documents"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$tgdocs_phone/" "$tgdocs_ws"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$tgdl_phone/" "$tgdocs_ws"
+  done
+
+  echo "fetching images..."
+  for ext in "${img_exts[@]}"; do
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*/" "$USER_PHONE@$IP_PHONE:$pictures/" "$HOME/Pictures"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Pictures"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$screenshots/" "$HOME/Pictures"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$fb2/" "$HOME/Pictures"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$fb1/" "$HOME/Pictures"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$messenger/" "$HOME/Pictures"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$twitter/" "$HOME/Pictures"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$tgimgs_phone/" "$tgimgs_ws"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$tgdl_phone/" "$tgimgs_ws"
+  done
+
+  echo "fetching videos..."
+  for ext in "${vid_exts[@]}"; do
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$dl/" "$HOME/Videos"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$youcut/" "$HOME/Videos"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$screen_rec/" "$HOME/Videos"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$screenshots/" "$HOME/Videos"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$tgvids_phone/" "$tgvids_ws"
+    rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" "$USER_PHONE@$IP_PHONE:$tgdl_phone/" "$tgvids_ws"
+  done
 }
 
 sshconfig() {
@@ -447,11 +383,6 @@ sendmusictophone() {
 mvmedia() {
   downloads_WS="$HOME/Downloads"
   tor_downloads_WS="$HOME/.local/share/torbrowser/tbb/x86_64/tor-browser_en-US/Browser/Downloads"
-
-  img=(jpg png webp jpeg psd)
-  vid=(mp4 mkv mov avi webm)
-  audio=(mp3 m4a wav flacc aac m4a)
-  doc=(doc docx xls lsx pdf txt md epub)
   keepdoc=(notes law finance offgrid videos)
 
   [ "$SHELL" = "/bin/zsh" ] && setopt +o nomatch # disable zsh msg "no matches found *.jpg..."
@@ -459,23 +390,45 @@ mvmedia() {
   # Copy Tor downloads_WS to normal downloads_WS directory.
   mv "$tor_downloads_WS/"* "$downloads_WS" 2>/dev/null
 
-  for ext in "${img[@]}"; do
+  for ext in "${img_exts[@]}"; do
     mv "$downloads_WS/"*".$ext" "$HOME/Pictures" 2>/dev/null
   done
 
-  for ext in "${vid[@]}"; do
+  for ext in "${vid_exts[@]}"; do
     mv "$downloads_WS/"*".$ext" "$HOME/Videos" 2>/dev/null
   done
 
-  for ext in "${audio[@]}"; do
+  for ext in "${audio_exts[@]}"; do
     mv "$downloads_WS/"*".$ext" "$HOME/Music" 2>/dev/null
   done
 
-  for ext in "${doc[@]}"; do
+  for ext in "${doc_exts[@]}"; do
     mv "$downloads_WS/"*".$ext" "$HOME/Documents" 2>/dev/null
   done
 
   [ "$SHELL" = "/bin/zsh" ] && setopt -o nomatch
+}
+
+sorttelegram() {
+  setopt +o nomatch # disable zsh msg "no matches found *.jpg..."
+
+  for ext in "${audio_exts[@]}"; do
+    mv "$tgdl_ws/"*".$ext" "$tgaudio_ws" 2>/dev/null
+  done
+
+  for ext in "${doc_exts[@]}"; do
+    mv "$tgdl_ws/"*".$ext" "$tgdocs_ws" 2>/dev/null
+  done
+
+  for ext in "${img_exts[@]}"; do
+    mv "$tgdl_ws/"*".$ext" "$tgimgs_ws" 2>/dev/null
+  done
+
+  for ext in "${vid_exts[@]}"; do
+    mv "$tgdl_ws/"*".$ext" "$tgvids_ws" 2>/dev/null
+  done
+
+  setopt -o nomatch
 }
 
 create-backup-vidhop() {

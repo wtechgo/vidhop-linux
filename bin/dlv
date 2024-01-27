@@ -32,18 +32,21 @@ dlv_help() {
 clear_vars_dlv() {
   [ "$(is_media_download)" = true ] && unset url standalone platform name
   unset json json_file meta_file archive_file has_archive archive_content avatar_json \
-    avatar_json_file valid album artist pl_name pl_dir media_file thumb_file channel_dir
+    avatar_json_file valid album artist pl_name pl_dir media_file thumb_file channel_dir formats ext
   rm "$log_json_file" 2>/dev/null
   return 0
 }
 
 remove_url_query_parms() {
-  url=${url%?si=*} # remove youtube's ?si= param
+  url=${url%?si=*}   # remove youtube's ?si= param
+  url=${url%?igsh=*} # remove instagram's ?igsh= param
+  url=${url%/mediaViewer?*} # remove twitter's mediaViewer? params
 }
 
 # Fetch video metadata (yt-dlp), select relevant fields and pretty print (jq).
 # Populates global variable $json.
 fetch_video_metadata() {
+  echo "[vidhop] fetching metadata"
   url="$1"
   json=$(
     yt-dlp \
@@ -150,6 +153,7 @@ fetch_song_filename() {
 }
 
 fetch_subs() {
+  echo "[vidhop] fetching subs"
   unset subs_dir auto_subs_dir english english_auto
   [ "$function" = dlv ] || [ "$function" = dlvi ] &&
     meta_dir_dest="$vids_meta_dir/$platform/$name" &&
@@ -204,6 +208,7 @@ augment_json() {
 }
 
 fetch_thumbnail() {
+  echo "[vidhop] fetching thumbnail"
   meta_dir_dest="$1" # Example input for podcasts: "$podcasts_meta_dir/$platform/$name"
   yt-dlp $(insert_cookies_param) \
     --write-thumbnail --convert-thumbnails jpg \
@@ -223,7 +228,9 @@ dlvi() {
 
   fetch_video_metadata "$url" # populates $json
   name="$(fetch_sanitized_title)"
+  channel_name="$(channel_name_from_obj)"
   [ "$(is_platform_facebook)" = true ] && name="$(shorten_text "$name")_$(timestamp)"
+
   video_meta_dir="$vids_meta_dir/$platform/$name"
   mkdir -p "$video_meta_dir"
   json_file="$video_meta_dir/metadata.json"
@@ -297,12 +304,13 @@ dlv2160p() {
 # Fetch channel metadata (yt-dlp), select relevant fields and pretty print (jq).
 # Populates global variable $json.
 fetch_channel_metadata() {
+  echo "[vidhop] fetching channel metadata"
   url="$1"
   archive_args="$(echo "--download-archive $archive_file")"
 
   json=$(
     yt-dlp $(insert_cookies_param) \
-      --dump-single-json $([ "$has_archive" = "true" ] && echo "$archive_args") --verbose "$url" | jq '
+      --dump-single-json $([ "$has_archive" = "true" ] && echo "$archive_args") "$url" | jq '
        {
          title: .title,
          description: .description,
@@ -1106,6 +1114,9 @@ dlpodi() {
   json_file="$podcast_meta_dir/metadata.json"
 
   formats="$(yt-dlp -F "$url")"
+  grep -q mp3 <<<"$formats" && ext="mp3"
+  grep -q m4a <<<"$formats" && ext="m4a"
+
   fetch_video_metadata "$url"
   fetch_thumbnail "$podcast_meta_dir"
   fetch_subs

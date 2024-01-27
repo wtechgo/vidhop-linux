@@ -47,45 +47,31 @@ scrape-substack-page() {
   ln -s "$POST_HTML_FILE" "$DIR/$DOMAIN/${POST}.html"
 }
 
+# broken, scrape with selenium or similar
 scrape-substack-pages() {
-  [ -z "$1" ] &&
-    echo "Usage: scrape-substack-pages <URLS>" &&
-    echo "       scrape-substack-pages <LIST_FILE>" && return
+  echo "broken function: scrape is blocked by popup on author homepage with a request to subscribe" && return
+  URL="$(echo -n "$1")"
 
-  if [ -f "$1" ]; then URLS="$(cat "$1")"; else URLS="$1"; fi
+  DIR="$substack_pages_dir"
+  [ -n "$2" ] && DIR="$(realpath "$2")"
+  ! [ -d "$DIR" ] && echo "not a directory '$DIR', abort" && return
 
-  set +e
-  while IFS= read -r URL
-  do  # https://superuser.com/questions/1236851/what-is-wrong-with-this-while-loop
-    { # brackets isolate the stdout from httrack which otherwise would break the loop (untested)
-      echo "> Started scraping $URL"
-      scrape-substack-page "$URL"
-      echo "> Done scraping $URL"
-    }
-  done < <(printf '%s\n' "$URLS")
+  DOMAIN="$(extract_domain_name "$URL")"
+  DOMAIN="$(remove_trailing_slash "$DOMAIN")"
+#  POST="$(extract_substack_post_slug "$URL")" # last segment of the url
+
+  POST_DIR="$DIR/$DOMAIN"
+
+  # [Nice command for HTTrack](https://gist.github.com/tmslnz/69d08ada96a66a39b463bc5824f2ea75)
+  echo "start scraping ${URL}..."
+  httrack "$URL" -O "${POST_DIR}" \
+    -N100 −%i0 -I0 --max-rate 0 --disable-security-limits --near -v
+
+  echo "removing inline javascript (blocks offline reading)..."
+  rmjs "$POST_DIR"
+#  POST_HTML_FILE="$(realpath "$(find "$DIR" -iwholename "*/${POST}.html")")"
+#  remove-inline-js "$POST_HTML_FILE" # creates a backup file: $POST_HTML_FILE.BAK
+
+#  ln -s "$POST_HTML_FILE" "$DIR/$DOMAIN/${POST}.html"
+  echo "scraping done"
 }
-
-#scrape-substack-page "https://micronaut.substack.com/p/water-bear-and-friends"
-#scrape-substack-page "https://micronaut.substack.com/p/funky-filament-focus"
-#scrape-substack-page "https://micronaut.substack.com/p/rain-water-crystals-mold-spores"
-#scrape-substack-page "https://micronaut.substack.com/p/quit-bugn-the-lady"
-#scrape-substack-page "https://micronaut.substack.com/p/strange-movement-in-eye-drops"
-#scrape-substack-page "https://micronaut.substack.com/p/brownian-motion"
-#scrape-substack-page "https://micronaut.substack.com/p/blood-and-unnamed-substance"
-#scrape-substack-page "https://micronaut.substack.com/p/fair-weather-fiends"
-#scrape-substack-page "https://micronaut.substack.com/p/unleash-the-beastmaybe-not"
-#scrape-substack-page "https://micronaut.substack.com/p/eyes-on-the-skies"
-#scrape-substack-page "https://micronaut.substack.com/p/interesting-zicam-properties"
-#scrape-substack-page "https://micronaut.substack.com/p/flonase-under-microscope"
-#scrape-substack-page "https://micronaut.substack.com/p/zicam-photos"
-#scrape-substack-page "https://micronaut.substack.com/p/evidence-that-fibers-can-rupture"
-#scrape-substack-page "https://micronaut.substack.com/p/zicam-nasal-swabs"
-#scrape-substack-page "https://micronaut.substack.com/p/more-magnetic-dust"
-#scrape-substack-page "https://micronaut.substack.com/p/strange-physical-behaviors-of-filaments"
-#scrape-substack-page "https://micronaut.substack.com/p/additional-images-and-footage"
-#scrape-substack-page "https://micronaut.substack.com/p/naloxone"
-#scrape-substack-page "https://micronaut.substack.com/p/further-examination-of-magnetic-accumulations"
-#scrape-substack-page "https://micronaut.substack.com/p/mio-my"
-#scrape-substack-page "https://micronaut.substack.com/p/magnetic-accumulations-in-urban-environment"
-#scrape-substack-page "https://micronaut.substack.com/p/eye-drops-with-methelyn-blue-creeping"
-#scrape-substack-page "https://micronaut.substack.com/p/taking-a-crash-course-in-microscopy"
