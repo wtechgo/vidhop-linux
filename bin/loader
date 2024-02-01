@@ -146,7 +146,8 @@ vidhophelp() {
   image_help && echo
   metadata_help && echo
   history_help && echo
-  sync_help && echo
   batch_help && echo
+  project_help && echo
+  sync_help && echo
   loader_help && return
 }
