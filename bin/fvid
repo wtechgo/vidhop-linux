@@ -729,7 +729,7 @@ fpodf() {
 }
 
 # Find image files.
-fimg() {
+fimgf() {
   search_text="$(echo "$1" | tr ' ' '*')"
   unset result
   found_something="false"
