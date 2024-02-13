@@ -81,8 +81,19 @@ metadata() {
     echo "metadata function shows metadata from 1 specific media file, but multiple files were found"
     echo "$result" && return
   fi
-    
+
   echo "found nothing for '$search_text'"
+}
+
+url() {
+  result="$(metadata "$1")"
+  webpage_url="$(echo "$result" | \
+    grep '  "webpage_url": "' | \
+    sed 's/"webpage_url": "//' | \
+    sed 's/",//' | sed 's/^[ \t]*//;s/[ \t]*$//'
+  )"
+  [ -z "$webpage_url" ] && echo "$result" && return
+  echo "$webpage_url"
 }
 
 filesize-channel-meta-files() {
