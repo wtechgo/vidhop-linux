@@ -72,56 +72,94 @@ workstation_screen_char_count=120
 filename_char_count=180
 # VidHop app dirs -- end
 
-# Project module: uncomment defaults or set values in config/config.ini
+# Project module
+# Set your values in config/config.ini
 [ -z "$name_projects_root_dir" ] && name_projects_root_dir="Projects"
 [ -z "$projects_dir" ] && projects_dir="$HOME/$name_projects_root_dir"
 [ -z "$projects_videos_dir" ] && projects_videos_dir="$HOME/Videos/$name_projects_root_dir"
 [ -z "$projects_images_dir" ] && projects_images_dir="$HOME/Pictures/$name_projects_root_dir"
 [ -z "$projects_documents_dir" ] && projects_documents_dir="$HOME/Documents/$name_projects_root_dir"
-# Video projects
+
+# User media outside VidHop dir
 video_projects_dir="$HOME/Videos/Production"
-
-# default applications: set values in config/config.ini
-
-# User media (outside VidHop dir)
-shared="/data/data/com.termux/files/home/storage/shared"  # Android file manager root directory
 music_dir_ws="$HOME/Music"
 music_dir_phone="$shared/Music"
 music_dir_usb="/run/media/$USER/USB_STICK"
 vidhop_backup_dir=""
 
+# default applications
+#filemanager_app="xdg-open"
+[ -z "$filemanager_app" ] && filemanager_app="dolphin"
+[ -z "$video_app" ] && video_app="vlc"
+[ -z "$audio_app" ] && audio_app="vlc"
+[ -z "$picture_app" ] && picture_app="gwenview"
+[ -z "$picture_editor_app" ] && picture_editor_app="gimp"
+[ -z "$text_app" ] && text_app="vscodium"
+[ -z "$browser_app" ] && text_app="firefox"
+[ -z "$pdf_reader_app" ] && pdf_reader_app="okular"
+
+# Phone dirs
+shared="/data/data/com.termux/files/home/storage/shared"
+## Media directories
+dl_phone="$shared/Download"
+docs_phone="$shared/Documents"
+pictures_phone="$shared/Pictures"
+movies_phone="$shared/Movies"
+screenshots_phone="$pictures_phone/Screenshots"
+fb1_phone="$pictures_phone/Facebook"
+fb2_phone="$shared/DCIM/Facebook"
+messenger_phone="$pictures_phone/Messenger"
+twitter_phone="$pictures_phone/Twitter"
+# mov media directories
+youcut_phone="$shared/Movies/youcut_phone"
+screen_rec_phone="$shared/Movies/Screen Recorder"
+
+## Telegram phone
+tgdl_phone="$shared/Download/Telegram"
+tgvids_phone="$movies_phone/Telegram"
+tgimgs_phone="$pictures_phone/Telegram"
+tgdocs_phone="$docs_phone/Telegram"
+tgaudio_phone="$shared/Music/Telegram" # not sure
+# End of phone vars.
+
+## Telegram workstation
+[ -z "$tgdl_ws" ] && tgdl_ws="$HOME/Downloads/Telegram Desktop"
+[ -z "$tgdocs_ws" ] && tgdocs_ws="$HOME/Downloads/Telegram Desktop/Documents"
+[ -z "$tgvids_ws" ] && tgvids_ws="$HOME/Downloads/Telegram Desktop/Videos"
+[ -z "$tgimgs_ws" ] && tgimgs_ws="$HOME/Downloads/Telegram Desktop/Pictures"
+[ -z "$tgaudio_ws" ] && tgaudio_ws="$HOME/Downloads/Telegram Desktop/Audio"
+
 # .bashrc shortkeys
-alias loadconfig='. "$bin_dir/config'
+alias loadconfig='. "$bin_dir/config"'
+alias cdvidhop='cd "$vidhop_dir"'
+alias cdappdir='cd "$vidhop_app_dir"'
+alias cdvidhopbin='cd "$bin_dir"'
+alias cdvbin='cd "$bin_dir"'
+alias cdvid='cd "$vids_dir"'
+alias cdchan='cd "$channels_dir"'
+alias cdmeta='cd "$meta_dir"'
+alias cdvmeta='cd "$vids_meta_dir"'
+alias cdcmeta='cd "$channels_meta_dir"'
+alias cdmusic='cd "$music_dir"'
+alias cdthumbs='cd "$thumbnails_dir"'
+alias cdpods='cd "$podcasts_dir"'
+alias cduploads='cd "$uploads_dir"'
+alias cddownloaded='cd "$downloaded_dir"'
+alias cdlogs='cd "$log_dir"'
 
-alias cdvidhop='cd $vidhop_dir'
-alias cdappdir='cd $vidhop_app_dir'
-alias cdvidhopbin='cd $bin_dir'
-alias cdvbin='cd $bin_dir'
-alias cdvid='cd $vids_dir'
-alias cdchan='cd $channels_dir'
-alias cdmeta='cd $meta_dir'
-alias cdvmeta='cd $vids_meta_dir'
-alias cdcmeta='cd $channels_meta_dir'
-alias cdmusic='cd $music_dir'
-alias cdthumbs='cd $thumbnails_dir'
-alias cdpods='cd $podcasts_dir'
-alias cduploads='cd $uploads_dir'
-alias cddownloaded='cd $downloaded_dir'
-alias cdlogs='cd $log_dir'
-
-alias nanodlv='nano $bin_dir/dlv; . vidhop'
-alias nanofvid='nano $bin_dir/fvid; . vidhop'
-alias nanosync='nano $bin_dir/sync; . vidhop'
-alias nanofiles='nano $bin_dir/files; . vidhop'
-alias nanobatch='nano $bin_dir/batch; . vidhop'
-alias nanohistory='nano $bin_dir/history; . vidhop'
-alias nanoffmpeg='nano $bin_dir/ffmpeg; . vidhop'
-alias nanofix='nano $bin_dir/fix; . vidhop'
-alias nanocommon='nano $bin_dir/common; . vidhop'
-alias nanohistory='nano $bin_dir/history; . vidhop'
-alias nanovars='nano $bin_dir/vars; . vidhop'
-alias nanoloader='nano $bin_dir/loader; . vidhop'
-alias nanoconfigini='nano $vidhop_app_dir/config.ini; . vidhop'
+alias nanodlv='nano "$bin_dir/dlv"; . vidhop'
+alias nanofvid='nano "$bin_dir/fvid"; . vidhop'
+alias nanosync='nano "$bin_dir/sync"; . vidhop'
+alias nanofiles='nano "$bin_dir/files"; . vidhop'
+alias nanobatch='nano "$bin_dir/batch"; . vidhop'
+alias nanohistory='nano "$bin_dir/history"; . vidhop'
+alias nanoffmpeg='nano "$bin_dir/ffmpeg"; . vidhop'
+alias nanofix='nano "$bin_dir/fix"; . vidhop'
+alias nanocommon='nano "$bin_dir/common"; . vidhop'
+alias nanohistory='nano "$bin_dir/history"; . vidhop'
+alias nanovars='nano "$bin_dir/vars"; . vidhop'
+alias nanoloader='nano "$bin_dir/loader"; . vidhop'
+alias nanoconfigini='nano "$vidhop_app_dir/config.ini"; . vidhop'
 
 # color codes
 BLACK='\e[30m'

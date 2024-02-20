@@ -377,3 +377,8 @@ timestamp() {
 remove_blank_lines() {
   grep "\S"
 }
+
+rp() {
+  realpath "$1" | prefix_suffix_with_double_quotes
+}
+alias rpp="realpath"

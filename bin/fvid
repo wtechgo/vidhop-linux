@@ -380,6 +380,7 @@ fvidfall() { # find video files (on disk)
     echo -e "> Videos in user home directory result:" && echo -e "${GREEN}$result${NC}" &&
     unset result && found_something="true"
 
+  sorttelegram # move file from $tgdl_ws to $tgvids_ws, $tgimgs_ws etc.
   result=$(find "$tgvids_ws" -not -path "*.srt" -type f -iname "*$search_text*" | prefix_suffix_with_double_quotes | sort)
   [ "$(wc --words <<<"$result")" -gt 0 ] &&
     echo -e "> Videos in Telegram gallery search result:" && echo -e "${GREEN}$result${NC}" &&
