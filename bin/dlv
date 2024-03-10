@@ -282,7 +282,7 @@ dlv() {
   unset dl_comments function
 }
 
-dlv480() {
+dlv480p() {
   res=480
   dlv "$@"
   unset res
