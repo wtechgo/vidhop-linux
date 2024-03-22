@@ -56,6 +56,7 @@ real_sendvidhop() {
     --exclude="import/" \
     --exclude="export/" \
     --exclude="website/" \
+    --exclude="uploads/" \
     --include="*/" \
     --include="*.json" \
     --exclude="*" \

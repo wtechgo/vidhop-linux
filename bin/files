@@ -105,6 +105,10 @@ renpost() {
   echo "post renamed"
 }
 
+playall() {
+  vlc --sout-all --sout '#display' "$1"re
+}
+
 # Rename a video and its metadata.
 renvid() {
   [ -z "$1" ] || [ -z "$2" ] && echo -e "Usage: renvid <OLD_NAME> <NEW_NAME>" && return
