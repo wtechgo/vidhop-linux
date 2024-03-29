@@ -98,6 +98,7 @@ metadata() {
 # Bug: url "/data/Users/krist/Videos/VidHop/videos/odysee.com/Microchips en anestésico dental.mp4"
 #      metadata() returned json file instead of json content.
 url() {
+  [ -z "$1" ] && echo "$webpage_url" && return
   result="$(metadata "$1")"
   webpage_url="$(echo "$result" | \
     grep '  "webpage_url": "' | \
