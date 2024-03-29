@@ -1,0 +1,408 @@
+#!/bin/bash
+
+# Solutions:
+# 1. Run Tor browser with a user specified country as exit node.
+# 2. Run Chrome based applications (Electron) over Tor with proxychains-daemon.
+tor_help() {
+  echo " Title: tor"
+  echo " Description: Run Tor browser with an exit node in a specified country."
+  echo "              Run Chrome-based apps over Tor, and other unwieldy apps."
+  echo "    torbrowser-country <COUNTRY_CODE> => Start Tor browser with as exit node the specified country."
+  echo "    torbrowser-usa <URL>     => Alias for torbrowser-country us."
+  echo "    torbrowser-vietnam <URL> => Alias for torbrowser-country vn."
+  echo "    torbrowser-czech <URL>   => Alias for torbrowser-country cz."
+  echo "    torbrowser-country-search <COUNTRY_NAME> => Search a country code by name."
+  echo "    torbrowser-country-list => Show list of country and their codes."
+  echo "    torbrowser-default <URL> => Restores (overwrites) torrc-defaults with torrc-defaults.bak."
+  echo "    torbrowser-reset <URL>   => Restores (overwrites) torrc-defaults with torrc-defaults.original."
+  echo "    tor-executable <APP_EXECUTABLE_PATH> => Run unwieldy apps over Tor, pass in the path to the executable (binary file).."
+  echo "    tor-chrome      => tor-executable preconfigured to run Chrome."
+  echo "    tor-chromium    => tor-executable preconfigured to run Chromium."
+  echo "    tor-electron    => tor-executable alias."
+}
+
+# proxychains-ng
+
+tor-executable() {
+  [ -z "$1" ] && echo "Usage tor-executable <APP_EXECUTABLE_PATH>" && return
+  [ -z "$(command -v tor)" ] && echo "Tor isn't installed, abort" && return
+  [ -z "$(command -v proxychains)" ] && echo "proxychains-ng isn't installed, abort" && return
+  ! grep -qx "proxy_dns_daemon 127.0.0.1:1053" /etc/proxychains.conf &&
+    echo "This likely won't work because the line 'proxy_dns_daemon 127.0.0.1:1053' is missing in /etc/proxychains.conf." &&
+    echo "Moreover, the line proxy_dns should be commented out." &&
+    echo "Make these changes in /etc/proxychains.conf, possibly /etc/proxychains4.conf, and try again." && sleep 2 && return
+
+  echo "starting proxychains4-daemon..."
+  (proxychains4-daemon &)
+  sleep 4
+  echo "starting tor"...
+  [ -z "$(pgrep tor)" ] && echo "Tor isn't running, starting Tor..." &&
+    sudo tor --runasdaemon 1
+  sleep 3
+  proxychains "$1"
+}
+
+tor-chrome() {
+  tor-executable "$(which google-chrome)"
+}
+
+tor-chromium() {
+  tor-executable "$(which chromium)"
+}
+
+tor-electron() {
+  [ -z "$1" ] && echo "Usage tor-electron <APP_EXECUTABLE_PATH>" && return
+  tor-executable "$@"
+}
+
+# Tor browser
+
+tor_data_dir="$HOME/.local/share/torbrowser/tbb/x86_64/tor-browser/Browser/TorBrowser/Data/Tor"
+
+run-checks-torbrowser() {
+  ! [ -d "$tor_data_dir" ] &&
+    echo "directory containing to torrc-defaults does not exist at '$tor_data_dir', abort" && return
+
+  ! [ -f "$tor_data_dir/torrc-defaults.original" ] &&
+    /bin/cp "$tor_data_dir/torrc-defaults" "$tor_data_dir/torrc-defaults.original"
+
+  ! [ -f "$tor_data_dir/torrc-defaults.bak" ] &&
+    /bin/cp "$tor_data_dir/torrc-defaults" "$tor_data_dir/torrc-defaults.bak"
+}
+
+torbrowser-country-search() {
+  [ -z "$1" ] && echo "Usage: tor-country-search <COUNTRY_NAME_IN_ENGLISH>" && return
+  grep -i "$1" <<<"$tor_country_codes" && return
+}
+
+torbrowser-country-list() {
+  echo "$tor_country_codes"
+}
+
+torbrowser-country() {
+  [ -z "$1" ] &&
+    echo "Usage: torbrowser-country <COUNTRY_CODE>" &&
+    echo " Info: Starts Tor browser with as exit node the country that matches <COUNTRY_CODE> (without accolades)." &&
+    echo "       Search your country code in the list with command 'tor-country' or use 'tor-country-search'." &&
+    echo &&
+    echo "       Overwrites torrc-defaults with a config file that matches the selected country." &&
+    echo "       however a backup is created first at torrc-defaults.bak." &&
+    echo "       Revert back to your initial config with command 'torbrowser-default'." && return
+
+  country_code="$1"
+  ! grep -iq "$country_code" <<<"$tor_country_codes" &&
+    echo "country code '$country_code' is not  a valid Tor country code, abort" && return
+
+  torbrowser-set-torrc-for-country "$country_code"
+  torbrowser-launcher
+}
+
+torbrowser-usa() {
+  torbrowser-country us
+}
+
+torbrowser-vietnam() {
+  torbrowser-country vn
+}
+
+torbrowser-czech() {
+  torbrowser-country cz
+}
+
+torbrowser-default() {
+  run-checks-torbrowser
+  /bin/cp "$tor_data_dir/torrc-defaults.bak" "$tor_data_dir/torrc-defaults"
+}
+
+torbrowser-reset() {
+  run-checks-torbrowser
+  /bin/cp "$tor_data_dir/torrc-defaults.original" "$tor_data_dir/torrc-defaults"
+}
+
+torbrowser-set-torrc-for-country() {
+  [ -z "$1" ] &&
+    echo "Usage: torbrowser-set-torrc-for-country <COUNTRY_CODE>" &&
+    echo " Info: Overwrites torrc-defaults with a config file that matches the selected country." &&
+    echo "       however a backup is created first at torrc-defaults.bak." &&
+    echo "       Revert back to your initial config with command 'torbrowser-default'." && return
+
+  country_code="$1"
+  ! grep -iq "$country_code" <<<"$tor_country_codes" &&
+    echo "country code '$country_code' is not  a valid Tor country code, abort" && return 1
+
+  run-checks-torbrowser
+
+  cat <<EOF >"$tor_data_dir/torrc-defaults"
+# torrc-defaults for Tor Browser
+#
+# DO NOT EDIT THIS FILE
+#
+# This file is distributed with Tor Browser and SHOULD NOT be modified (it
+# may be overwritten during the next Tor Browser update). To customize your
+# Tor configuration, shut down Tor Browser and edit the torrc file.
+#
+
+# If non-zero, try to write to disk less frequently than we would otherwise.
+AvoidDiskWrites 1
+# Where to send logging messages.  Format is minSeverity[-maxSeverity]
+# (stderr|stdout|syslog|file FILENAME).
+Log notice stdout
+CookieAuthentication 1
+DormantCanceledByStartup 1
+ClientTransportPlugin meek_lite,obfs2,obfs3,obfs4,scramblesuit exec ./TorBrowser/Tor/PluggableTransports/lyrebird
+ClientTransportPlugin snowflake exec ./TorBrowser/Tor/PluggableTransports/snowflake-client
+ClientTransportPlugin webtunnel exec ./TorBrowser/Tor/PluggableTransports/webtunnel-client
+ClientTransportPlugin conjure exec ./TorBrowser/Tor/PluggableTransports/conjure-client -registerURL https://registration.refraction.network/api
+
+ExitNodes {$country_code} StrictNodes 1
+
+EOF
+}
+
+tor_country_codes="Country                               Code
+ASCENSION ISLAND                      {ac}
+AFGHANISTAN                           {af}
+ALAND                                 {ax}
+ALBANIA                               {al}
+ALGERIA                               {dz}
+ANDORRA                               {ad}
+ANGOLA                                {ao}
+ANGUILLA                              {ai}
+ANTARCTICA                            {aq}
+ANTIGUA AND BARBUDA                   {ag}
+ARGENTINA REPUBLIC                    {ar}
+ARMENIA                               {am}
+ARUBA                                 {aw}
+AUSTRALIA                             {au}
+AUSTRIA                               {at}
+AZERBAIJAN                            {az}
+BAHAMAS                               {bs}
+BAHRAIN                               {bh}
+BANGLADESH                            {bd}
+BARBADOS                              {bb}
+BELARUS                               {by}
+BELGIUM                               {be}
+BELIZE                                {bz}
+BENIN                                 {bj}
+BERMUDA                               {bm}
+BHUTAN                                {bt}
+BOLIVIA                               {bo}
+BOSNIA AND HERZEGOVINA                {ba}
+BOTSWANA                              {bw}
+BOUVET ISLAND                         {bv}
+BRAZIL                                {br}
+BRITISH INDIAN OCEAN TERR             {io}
+BRITISH VIRGIN ISLANDS                {vg}
+BRUNEI DARUSSALAM                     {bn}
+BULGARIA                              {bg}
+BURKINA FASO                          {bf}
+BURUNDI                               {bi}
+CAMBODIA                              {kh}
+CAMEROON                              {cm}
+CANADA                                {ca}
+CAPE VERDE                            {cv}
+CAYMAN ISLANDS                        {ky}
+CENTRAL AFRICAN REPUBLIC              {cf}
+CHAD                                  {td}
+CHILE                                 {cl}
+PEOPLE'S REPUBLIC OF CHINA            {cn}
+CHRISTMAS ISLANDS                     {cx}
+COCOS ISLANDS                         {cc}
+COLOMBIA                              {co}
+COMORAS                               {km}
+CONGO                                 {cg}
+CONGO (DEMOCRATIC REPUBLIC)           {cd}
+COOK ISLANDS                          {ck}
+COSTA RICA                            {cr}
+COTE D IVOIRE                         {ci}
+CROATIA                               {hr}
+CUBA                                  {cu}
+CYPRUS                                {cy}
+CZECH REPUBLIC                        {cz}
+DENMARK                               {dk}
+DJIBOUTI                              {dj}
+DOMINICA                              {dm}
+DOMINICAN REPUBLIC                    {do}
+EAST TIMOR                            {tp}
+ECUADOR                               {ec}
+EGYPT                                 {eg}
+EL SALVADOR                           {sv}
+EQUATORIAL GUINEA                     {gq}
+ESTONIA                               {ee}
+ETHIOPIA                              {et}
+FALKLAND ISLANDS                      {fk}
+FAROE ISLANDS                         {fo}
+FIJI                                  {fj}
+FINLAND                               {fi}
+FRANCE                                {fr}
+FRANCE METROPOLITAN                   {fx}
+FRENCH GUIANA                         {gf}
+FRENCH POLYNESIA                      {pf}
+FRENCH SOUTHERN TERRITORIES           {tf}
+GABON                                 {ga}
+GAMBIA                                {gm}
+GEORGIA                               {ge}
+GERMANY                               {de}
+GHANA                                 {gh}
+GIBRALTER                             {gi}
+GREECE                                {gr}
+GREENLAND                             {gl}
+GRENADA                               {gd}
+GUADELOUPE                            {gp}
+GUAM                                  {gu}
+GUATEMALA                             {gt}
+GUINEA                                {gn}
+GUINEA-BISSAU                         {gw}
+GUYANA                                {gy}
+HAITI                                 {ht}
+HEARD & MCDONALD ISLAND               {hm}
+HONDURAS                              {hn}
+HONG KONG                             {hk}
+HUNGARY                               {hu}
+ICELAND                               {is}
+INDIA                                 {in}
+INDONESIA                             {id}
+IRAN, ISLAMIC REPUBLIC OF             {ir}
+IRAQ                                  {iq}
+IRELAND                               {ie}
+ISLE OF MAN                           {im}
+ISRAEL                                {il}
+ITALY                                 {it}
+JAMAICA                               {jm}
+JAPAN                                 {jp}
+JORDAN                                {jo}
+KAZAKHSTAN                            {kz}
+KENYA                                 {ke}
+KIRIBATI                              {ki}
+KOREA, DEM. PEOPLES REP OF            {kp}
+KOREA, REPUBLIC OF                    {kr}
+KUWAIT                                {kw}
+KYRGYZSTAN                            {kg}
+LAO PEOPLE'S DEM. REPUBLIC            {la}
+LATVIA                                {lv}
+LEBANON                               {lb}
+LESOTHO                               {ls}
+LIBERIA                               {lr}
+LIBYAN ARAB JAMAHIRIYA                {ly}
+LIECHTENSTEIN                         {li}
+LITHUANIA                             {lt}
+LUXEMBOURG                            {lu}
+MACAO                                 {mo}
+MACEDONIA                             {mk}
+MADAGASCAR                            {mg}
+MALAWI                                {mw}
+MALAYSIA                              {my}
+MALDIVES                              {mv}
+MALI                                  {ml}
+MALTA                                 {mt}
+MARSHALL ISLANDS                      {mh}
+MARTINIQUE                            {mq}
+MAURITANIA                            {mr}
+MAURITIUS                             {mu}
+MAYOTTE                               {yt}
+MEXICO                                {mx}
+MICRONESIA                            {fm}
+MOLDAVA REPUBLIC OF                   {md}
+MONACO                                {mc}
+MONGOLIA                              {mn}
+MONTENEGRO                            {me}
+MONTSERRAT                            {ms}
+MOROCCO                               {ma}
+MOZAMBIQUE                            {mz}
+MYANMAR                               {mm}
+NAMIBIA                               {na}
+NAURU                                 {nr}
+NEPAL                                 {np}
+NETHERLANDS ANTILLES                  {an}
+NETHERLANDS, THE                      {nl}
+NEW CALEDONIA                         {nc}
+NEW ZEALAND                           {nz}
+NICARAGUA                             {ni}
+NIGER                                 {ne}
+NIGERIA                               {ng}
+NIUE                                  {nu}
+NORFOLK ISLAND                        {nf}
+NORTHERN MARIANA ISLANDS              {mp}
+NORWAY                                {no}
+OMAN                                  {om}
+PAKISTAN                              {pk}
+PALAU                                 {pw}
+PALESTINE                             {ps}
+PANAMA                                {pa}
+PAPUA NEW GUINEA                      {pg}
+PARAGUAY                              {py}
+PERU                                  {pe}
+PHILIPPINES (REPUBLIC OF THE)         {ph}
+PITCAIRN                              {pn}
+POLAND                                {pl}
+PORTUGAL                              {pt}
+PUERTO RICO                           {pr}
+QATAR                                 {qa}
+REUNION                               {re}
+ROMANIA                               {ro}
+RUSSIAN FEDERATION                    {ru}
+RWANDA                                {rw}
+SAMOA                                 {ws}
+SAN MARINO                            {sm}
+SAO TOME/PRINCIPE                     {st}
+SAUDI ARABIA                          {sa}
+SCOTLAND                              {uk}
+SENEGAL                               {sn}
+SERBIA                                {rs}
+SEYCHELLES                            {sc}
+SIERRA LEONE                          {sl}
+SINGAPORE                             {sg}
+SLOVAKIA                              {sk}
+SLOVENIA                              {si}
+SOLOMON ISLANDS                       {sb}
+SOMALIA                               {so}
+SOMOA,GILBERT,ELLICE ISLANDS          {as}
+SOUTH AFRICA                          {za}
+SOUTH GEORGIA, SOUTH SANDWICH ISLANDS {gs}
+SOVIET UNION                          {su}
+SPAIN                                 {es}
+SRI LANKA                             {lk}
+ST. HELENA                            {sh}
+ST. KITTS AND NEVIS                   {kn}
+ST. LUCIA                             {lc}
+ST. PIERRE AND MIQUELON               {pm}
+ST. VINCENT & THE GRENADINES          {vc}
+SUDAN                                 {sd}
+SURINAME                              {sr}
+SVALBARD AND JAN MAYEN                {sj}
+SWAZILAND                             {sz}
+SWEDEN                                {se}
+SWITZERLAND                           {ch}
+SYRIAN ARAB REPUBLIC                  {sy}
+TAIWAN                                {tw}
+TAJIKISTAN                            {tj}
+TANZANIA, UNITED REPUBLIC OF          {tz}
+THAILAND                              {th}
+TOGO                                  {tg}
+TOKELAU                               {tk}
+TONGA                                 {to}
+TRINIDAD AND TOBAGO                   {tt}
+TUNISIA                               {tn}
+TURKEY                                {tr}
+TURKMENISTAN                          {tm}
+TURKS AND CALCOS ISLANDS              {tc}
+TUVALU                                {tv}
+UGANDA                                {ug}
+UKRAINE                               {ua}
+UNITED ARAB EMIRATES                  {ae}
+UNITED KINGDOM (no new registrations) {gb}
+UNITED KINGDOM                        {uk}
+UNITED STATES                         {us}
+UNITED STATES MINOR OUTL.IS.          {um}
+URUGUAY                               {uy}
+UZBEKISTAN                            {uz}
+VANUATU                               {vu}
+VATICAN CITY STATE                    {va}
+VENEZUELA                             {ve}
+VIETNAM                               {vn}
+VIRGIN ISLANDS (USA)                  {vi}
+WALLIS AND FUTUNA ISLANDS             {wf}
+WESTERN SAHARA                        {eh}
+YEMEN                                 {ye}
+ZAMBIA                                {zm}
+ZIMBABWE                              {zw}"
