@@ -98,6 +98,14 @@ vidhop_backup_dir=""
 [ -z "$browser_app" ] && text_app="firefox"
 [ -z "$pdf_reader_app" ] && pdf_reader_app="okular"
 
+# tor (installed from website zip)
+[ -z "$tor_data_dir" ] && tor_data_dir="$HOME/.local/share/torbrowser/Browser/TorBrowser/Data/Tor"
+[ -z "$torbrowser_app" ] && torbrowser_app="$HOME/.local/share/torbrowser/Browser/start-tor-browser"
+
+# tor (installed from website zip)
+#[ -z "$tor_data_dir" ] && tor_data_dir="$HOME/.local/share/torbrowser/tbb/x86_64/tor-browser/Browser/TorBrowser/Data/Tor"
+#[ -z "$torbrowser_app" ] && torbrowser_app="torbrowser-launcher"
+
 # Phone dirs
 shared="/data/data/com.termux/files/home/storage/shared"
 ## Media directories
