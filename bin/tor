@@ -15,16 +15,16 @@ tor_help() {
   echo "    torbrowser-country-list => Show list of country and their codes."
   echo "    torbrowser-default <URL> => Restores (overwrites) torrc-defaults with torrc-defaults.bak."
   echo "    torbrowser-reset <URL>   => Restores (overwrites) torrc-defaults with torrc-defaults.original."
-  echo "    tor-executable <APP_EXECUTABLE_PATH> => Run unwieldy apps over Tor, pass in the path to the executable (binary file).."
-  echo "    tor-chrome      => tor-executable preconfigured to run Chrome."
-  echo "    tor-chromium    => tor-executable preconfigured to run Chromium."
-  echo "    tor-electron    => tor-executable alias."
+  echo "    torexec <APP_EXECUTABLE_PATH> => Run unwieldy apps over Tor, pass in the path to the executable (binary file).."
+  echo "    tor-chrome      => torexec preconfigured to run Chrome."
+  echo "    tor-chromium    => torexec preconfigured to run Chromium."
+  echo "    tor-electron    => torexec alias."
 }
 
 # proxychains-ng
 
-tor-executable() {
-  [ -z "$1" ] && echo "Usage tor-executable <APP_EXECUTABLE_PATH>" && return
+torexec() {
+  [ -z "$1" ] && echo "Usage torexec <APP_EXECUTABLE_PATH>" && return
   [ -z "$(command -v tor)" ] && echo "Tor isn't installed, abort" && return
   [ -z "$(command -v proxychains)" ] && echo "proxychains-ng isn't installed, abort" && return
   ! grep -qx "proxy_dns_daemon 127.0.0.1:1053" /etc/proxychains.conf &&
@@ -43,16 +43,16 @@ tor-executable() {
 }
 
 tor-chrome() {
-  tor-executable "$(which google-chrome)"
+  torexec "$(which google-chrome)"
 }
 
 tor-chromium() {
-  tor-executable "$(which chromium)"
+  torexec "$(which chromium)"
 }
 
 tor-electron() {
   [ -z "$1" ] && echo "Usage tor-electron <APP_EXECUTABLE_PATH>" && return
-  tor-executable "$@"
+  torexec "$@"
 }
 
 # Tor browser
