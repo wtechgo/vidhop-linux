@@ -76,7 +76,7 @@ fetch_github() {
   . "$bin_dir/loader"
 }
 
-update_python_packages() {
+updatepythonpackages() {
   echo "> Updating Python packages..." && sleep 1
   pip install -U pip
   pip install -U wheel
@@ -100,7 +100,7 @@ updateytdlp() {
 updatevidhop() {
   pwd=$(pwd) && cd "$vidhop_app_dir"
   fetch_github
-  update_python_packages
+  updatepythonpackages
   install_loader
   echo -e "\n${GREEN}VidHop updated ! ${NC}\n\nReload VidHop by choosing one of these two options:"
   echo -e "  1. Close Termux and reopen Termux.\n  2. Execute '. vidhop'"
@@ -137,7 +137,7 @@ loader_help() {
   echo "    installloader   => alias for install_loader"
   echo "    install_loader  => enables users to reload with '. vidhop"
   echo "    fetch_github    => download the newest VidHop code from GitHub"
-  echo "    update_python_packages => updates Python packages with pip (package manager)"
+  echo "    updatepythonpackages => updates Python packages with pip (package manager)"
 }
 
 vidhophelp() {

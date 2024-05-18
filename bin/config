@@ -1,5 +1,10 @@
 #!/bin/bash
 
+editconfig(){
+  [ -n "$text_editor" ] && "$text_editor" "$config_ini" && return
+  [ -n "$text_app" ] && "$text_app" "$config_ini"
+}
+
 save_cookies_txt_from_browser() {
   [ -n "$1" ] && BROWSER="$1"
   [ -z "$BROWSER" ] && echo "no browser set in /opt/vidhop/config/config.ini, nor provided as argument, abort" && return

@@ -388,12 +388,12 @@ fproj() {
   # Display with relative paths.
   prev="$PWD"
   [[ "$PWD" != *"$projects_dir"* ]] && cd "$projects_dir"
-#  result="$(find -L "$search_dir" -type f \
-  result="$(find -L "$search_dir" \
+#  result="$(find -L "$search_dir" \
+  result="$(find -L "$search_dir" -type f \
     -not -path "*.js" \
     -not -path "*.css" \
     -not -path "*_files/*" \
-    -iname "*$search_text*" -exec realpath {} \; | sort | uniq | prefix_suffix_with_double_quotes)"
+    -iname "*$search_text*" -exec realpath {} \; 2>/dev/null | sort | uniq | prefix_suffix_with_double_quotes)"
   echo "${GREEN}${result}${NC}"
 }
 

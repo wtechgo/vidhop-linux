@@ -80,12 +80,13 @@ workstation_screen_char_count=120
 [ -z "$projects_images_dir" ] && projects_images_dir="$HOME/Pictures/$name_projects_root_dir"
 [ -z "$projects_documents_dir" ] && projects_documents_dir="$HOME/Documents/$name_projects_root_dir"
 
-# User media outside VidHop dir
-video_projects_dir="$HOME/Videos/Production"
-music_dir_ws="$HOME/Music"
-music_dir_phone="$shared/Music"
-music_dir_usb="/run/media/$USER/USB_STICK"
-vidhop_backup_dir=""
+# User directories (outside VidHop)
+[ -z "$video_projects_dir" ] && video_projects_dir="$HOME/Videos/Production"
+[ -z "$music_dir_ws" ] && music_dir_ws="$HOME/Music"
+[ -z "$music_dir_phone" ] && music_dir_phone="$shared/Music"
+[ -z "$music_dir_usb" ] && music_dir_usb="/run/media/$USER/USB_STICK"
+[ -z "$screenshots_dir" ] && screenshots_dir="$HOME/Pictures/Screenshots"
+[ -z "$vidhop_backup_dir" ] && vidhop_backup_dir=""
 
 # default applications
 #filemanager_app="xdg-open"
