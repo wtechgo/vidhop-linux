@@ -86,6 +86,7 @@ workstation_screen_char_count=120
 [ -z "$music_dir_phone" ] && music_dir_phone="$shared/Music"
 [ -z "$music_dir_usb" ] && music_dir_usb="/run/media/$USER/USB_STICK"
 [ -z "$screenshots_dir" ] && screenshots_dir="$HOME/Pictures/Screenshots"
+[ -z "$screenrecs_dir" ] && screenrecs_dir="$HOME/Videos/Screen recording"
 [ -z "$vidhop_backup_dir" ] && vidhop_backup_dir=""
 
 # default applications

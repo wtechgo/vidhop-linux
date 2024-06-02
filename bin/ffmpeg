@@ -219,7 +219,7 @@ EOF
     -sexagesimal "$input_file" | sed 's/\..*//g')"
   output_file="$(prefix_extension "$input_file" cut)"
 
-  ffmpeg -i "$input_file" -ss "$start_time" -t "$end_time" "$output_file"
+  ffmpeg -i "$input_file" -ss "$start_time" -to "$end_time" "$output_file"
   echo -e "cut complete, result at:\n\"$output_file\""
   cd "$(dirname "$input_file")"
 
@@ -506,4 +506,18 @@ screenshots-from-video-file() {
   done < <(find "$frames_dir" -iname "*.png" | sort)
   echo "duplicate screenshots removed from directory $frames_dir"
   echo "screenshots created at directory '$frames_dir'"
+}
+
+cpscreenrec() {
+  dest_dir="$PWD"
+  [ -n "$1" ] && dest_dir"$1"
+  !  [ -d "$dest_dir" ] && echo "not a dir '$dest_dir', abort" && return
+  cp "$screenrecs_dir/$(ls -lhtr --time-style=long-iso "$screenrecs_dir" | tr -s ' ' | cut -d ' ' -f 8- | grep '\S' | tail -n 1)" .
+}
+
+mvscreenrec() {
+  dest_dir="$PWD"
+  [ -n "$1" ] && dest_dir"$1"
+  !  [ -d "$dest_dir" ] && echo "not a dir '$dest_dir', abort" && return
+  mv "$screenrecs_dir/$(ls -lhtr --time-style=long-iso "$screenrecs_dir" | tr -s ' ' | cut -d ' ' -f 8- | grep '\S' | tail -n 1)" .
 }
