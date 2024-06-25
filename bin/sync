@@ -447,7 +447,7 @@ sendfile() {
     echo "              /data/data/com.termux/files/home/storage/shared/Pictures/Audrey/dick_pic.png" && return
   ! [ -f "$1" ] && echo "$1 is not a file" && return
 
-  file_ws="$1"
+  file_ws="$(realpath "$1")"
   [ -z "$2" ] && file_phone="$shared/Download/$(basename "$file_ws")" || file_phone="$shared/$2"
 
   echo "sending: \"$file_ws\""
@@ -458,7 +458,7 @@ sendfile() {
 }
 
 sendfileabs() {
-  file_ws="$1"
+  file_ws="$(realpath "$1")"
   file_phone="$2"
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
     "$file_ws" "$USER_PHONE@$IP_PHONE:$file_phone"

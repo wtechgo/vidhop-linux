@@ -32,7 +32,6 @@ ffmpeg_help() {
   echo "    screenshots-from-video-file   => No docs atm. Try command without args to learn more, or which <command>, or type <command>."
 }
 
-
 # Video.
 to-x264() {
   [ -z "$1" ] &&
@@ -44,11 +43,15 @@ to-x264() {
   dest="$(strip_extension "$src").mp4"                         # converts into the same location
   [ -f "$dest" ] && dest="$(strip_extension "$dest")_x264.mp4" # append _264 if the destination is also mp4
 
-  ffmpeg -i "$src" -c:v libx264 -profile:v high -preset slow -f mp4 -crf 18  -b:v 4M "$dest"
-#  ffmpeg -i "$src" -c:v libx264 -profile:v high -preset slow -f mp4 -tune film -crf 18 "$dest"
+  ffmpeg -i "$src" -c:v libx264 -profile:v high -preset slow -f mp4 -crf 18 -b:v 4M "$dest"
+  #  ffmpeg -i "$src" -c:v libx264 -profile:v high -preset slow -f mp4 -tune film -crf 18 "$dest"
   echo "file conversion to x264 completed"
   ## instructions from https://lbry.com/faq/video-publishing-guide
   #ffmpeg -i input.avi -c:v libx264 -crf 21 -preset faster -pix_fmt yuv420p -maxrate 5000K -bufsize 5000K -vf 'scale=if(gte(iw\,ih)\,min(1920\,iw)\,-2):if(lt(iw\,ih)\,min(1920\,ih)\,-2)' -movflags +faststart -c:a aac -b:a 160k output.mp4
+}
+
+to-mp4() {
+  to-x264 "$@"
 }
 
 to-x265() {
@@ -522,13 +525,13 @@ screenshots-from-video-file() {
 cpscreenrec() {
   dest_dir="$PWD"
   [ -n "$1" ] && dest_dir"$1"
-  !  [ -d "$dest_dir" ] && echo "not a dir '$dest_dir', abort" && return
+  ! [ -d "$dest_dir" ] && echo "not a dir '$dest_dir', abort" && return
   cp "$screenrecs_dir/$(ls -lhtr --time-style=long-iso "$screenrecs_dir" | tr -s ' ' | cut -d ' ' -f 8- | grep '\S' | tail -n 1)" .
 }
 
 mvscreenrec() {
   dest_dir="$PWD"
   [ -n "$1" ] && dest_dir"$1"
-  !  [ -d "$dest_dir" ] && echo "not a dir '$dest_dir', abort" && return
+  ! [ -d "$dest_dir" ] && echo "not a dir '$dest_dir', abort" && return
   mv "$screenrecs_dir/$(ls -lhtr --time-style=long-iso "$screenrecs_dir" | tr -s ' ' | cut -d ' ' -f 8- | grep '\S' | tail -n 1)" .
 }
