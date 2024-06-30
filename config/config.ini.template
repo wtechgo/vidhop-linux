@@ -17,6 +17,12 @@
 #music_dir_ws=""
 #music_dir_phone=""
 #music_dir_usb=""
+#screenshots_dir=""
+#screenrecs_dir=""
+## Telegram Desktop Linux
+#tgdocs_ws=""
+#tgvids_ws=""
+#tgimgs_ws=""
 
 ## SSH settings.
 ### PHONE.
@@ -39,12 +45,14 @@
 ## twitter_password=""
 
 ## Default applications.
-#filemanager_app="xdg-open"
-#video_app="vlc"
-#audio_app="vlc"
-#picture_app="ristretto"
-#picture_app_alt="gimp"
-#text_app="code"
+#filemanager_app=""
+#video_app=""
+#audio_app=""
+#picture_app=""
+#picture_editor_app=""
+#browser_app=""
+#text_app=""
+text_editor="nano"
 #pdf_reader_app=""
 
 ## Projects module.
@@ -54,3 +62,12 @@
 #projects_videos_dir="$HOME/Videos/$name_projects_root_dir"
 #projects_images_dir="$HOME/Pictures/$name_projects_root_dir"
 #projects_documents_dir="$HOME/Documents/$name_projects_root_dir"
+
+## Tor module.
+# Config when installed from website zip for Linux.
+#tor_data_dir="$HOME/.local/share/torbrowser/Browser/TorBrowser/Data/Tor"
+#torbrowser_app="$HOME/.local/share/torbrowser/Browser/start-tor-browser"
+
+# Config when installed from Torbrowser-launcher package.
+#tor_data_dir="$HOME/.local/share/torbrowser/tbb/x86_64/tor-browser/Browser/TorBrowser/Data/Tor"
+#torbrowser_app="torbrowser-launcher"

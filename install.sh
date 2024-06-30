@@ -21,7 +21,7 @@ echo -e "    This script is written for Arch like Linux distros, meaning,"
 echo -e "    the script uses pacman as package manager."
 echo -e ""
 echo -e "    If your distro is Ubuntu for example, you need to replace"
-echo -e "    all 'pacman' commands with 'apt install' commands in install.sh,"
+echo -e "    all 'pacman -S' commands with 'apt install' commands in install.sh,"
 echo -e "    save the file and execute install.sh again."
 echo -e ""
 echo -e "    If that's the case, do this:"
@@ -41,24 +41,45 @@ sudo pacman --noconfirm -S openssh # install ssh client and server (sshd command
 sudo pacman --noconfirm -S git # pull in code and updates
 sudo pacman --noconfirm -S ncurses # for installing tput, used in fvid
 sudo pacman --noconfirm -S moreutils # for fetching the current IP address
-sudo pacman --noconfirm -S jq
-sudo pacman --noconfirm -S ffmpeg
-sudo pacman --noconfirm -S imagemagick
-sudo pacman --noconfirm -S tesseract
 sudo pacman --noconfirm -S python
+sudo pacman --noconfirm -S ffmpeg
+sudo pacman --noconfirm -S jq
 
 echo "installing Python packages..."
-pip install -U pip
-pip install -U wheel
-pip install -U yt-dlp
-pip install -U facebook-scraper
-pip install -U snscrape
-pip install -U selenium
-pip install -U requests
-pip install -U beautifulsoup4
-pip install -U image
-pip install -U pillow
-pip install -U pywebcopy
+# https://peps.python.org/pep-0668/?ref=itsfoss.com
+#sudo rm /usr/lib/python3.11/EXTERNALLY-MANAGED # enable break
+#sudo touch /usr/lib/python3.11/EXTERNALLY-MANAGED # disable break
+pip install --break-system-packages -U pip
+pip install --break-system-packages -U wheel
+pip install --break-system-packages -U yt-dlp
+pip install --break-system-packages -U requests
+pip install --break-system-packages -U selenium
+pip install --break-system-packages -U beautifulsoup4
+pip install --break-system-packages -U image
+pip install --break-system-packages -U pillow
+
+#yes | pip uninstall --break-system-packages wheel
+#yes | pip uninstall --break-system-packages yt-dlp
+#yes | pip uninstall --break-system-packages requests
+#yes | pip uninstall --break-system-packages selenium
+#yes | pip uninstall --break-system-packages beautifulsoup4
+#yes | pip uninstall --break-system-packages image
+#yes | pip uninstall --break-system-packages pillow
+
+## Create and use a venv for VidHop.
+## https://peps.python.org/pep-0668/?ref=itsfoss.com
+#echo "installing Python packages..."
+#python -m venv /opt/vidhop/bin/.env-python
+#source /opt/vidhop/bin/.env-python/bin/activate
+#/opt/vidhop/bin/.env-python/bin/python -m pip install --upgrade pip
+#/opt/vidhop/bin/.env-python/bin/pip install yt-dlp
+#/opt/vidhop/bin/.env-python/bin/pip install requests
+#/opt/vidhop/bin/.env-python/bin/pip install selenium
+#/opt/vidhop/bin/.env-python/bin/pip install beautifulsoup4
+#/opt/vidhop/bin/.env-python/bin/pip install image
+#/opt/vidhop/bin/.env-python/bin/pip install pillow
+## Ignore venv system: sudo rm /usr/lib/python3.11/EXTERNALLY-MANAGED
+## Revert venv system: sudo touch /usr/lib/python3.11/EXTERNALLY-MANAGED
 
 echo "installing VidHop..."
 vidhop_app_dir="/opt/vidhop"        # $PREFIX points to /data/data/com.termux/files/usr

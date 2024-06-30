@@ -222,7 +222,7 @@ To see some of these commands in action, watch [An Introduction to VidHop](https
     installloader   => alias for install_loader
     install_loader  => enables users to reload with '. vidhop'
     fetch_github    => download the newest VidHop code from GitHub
-    update_python_packages => updates Python packages with pip (package manager)
+    updatepythonpackages => updates Python packages with pip (package manager)
 ```
 
 ## Sync
@@ -378,11 +378,12 @@ Special thanks to the incredibly awesome projects [YT-DLP](https://github.com/yt
 
 <h3>Buy Me A Coffee</h3>
 <a href="https://www.buymeacoffee.com/wtechgo">
-<img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee - WTechGO" width="150" />
+    <img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee - WTechGO" width="150" />
 </a>
+
 <h3>Bitcoin</h3>
 <a href="https://github.com/wtechgo/vidhop-linux/blob/master/img/qr_bitcoin_wtechgo.png?raw=true">
-<img src="https://github.com/wtechgo/vidhop-linux/blob/master/img/qr_bitcoin_wtechgo.png?raw=true" alt="Bitcoin" width="100"/>
+    <img src="https://github.com/wtechgo/vidhop-linux/blob/master/img/qr_bitcoin_wtechgo.png?raw=true" alt="Bitcoin" width="100"/>
 </a>
 <pre>bc1qkxqz0frjhx6gshm0uc668zx6686xtfsxdm67u3</pre>
 
