@@ -117,6 +117,7 @@ fetch_video_metadata() {
             }'
   )
   ext="$(yt-dlp --print ext "$url")"
+#  ext="$(get_extension "$(yt-dlp --print after_move:filepath "$url")")"
 }
 
 # SINGLE VIDEO
@@ -134,6 +135,7 @@ fetch_sanitized_title() {
     --replace-in-metadata "title" '<' '' \
     --replace-in-metadata "title" '>' '' \
     --replace-in-metadata "title" '\?' '' \
+    --replace-in-metadata "title" '\!' '' \
     --replace-in-metadata "title" '\\' '' \
     --replace-in-metadata "title" '\|' '-' \
     --replace-in-metadata "title" '\`' "'" \
@@ -484,6 +486,7 @@ dlci() {
     --replace-in-metadata "title" '<' '' \
     --replace-in-metadata "title" '>' '' \
     --replace-in-metadata "title" '\?' '' \
+    --replace-in-metadata "title" '\!' '' \
     --replace-in-metadata "title" '\\' '' \
     --replace-in-metadata "title" '\|' '_' \
     --replace-in-metadata "title" '\`' "'" \
@@ -546,6 +549,7 @@ dlc() {
     --replace-in-metadata "title" '<' '' \
     --replace-in-metadata "title" '>' '' \
     --replace-in-metadata "title" '\?' '' \
+    --replace-in-metadata "title" '\!' '' \
     --replace-in-metadata "title" '\\' '' \
     --replace-in-metadata "title" '\|' '_' \
     --replace-in-metadata "title" '\`' "'" \
@@ -675,6 +679,7 @@ dlvpli() {
     --replace-in-metadata "title" '<' '' \
     --replace-in-metadata "title" '>' '' \
     --replace-in-metadata "title" '\?' '' \
+    --replace-in-metadata "title" '\!' '' \
     --replace-in-metadata "title" '\\' '' \
     --replace-in-metadata "title" '\|' '_' \
     --replace-in-metadata "title" '\`' "'" \
@@ -720,6 +725,7 @@ dlvpl() {
     --replace-in-metadata "title" '<' '' \
     --replace-in-metadata "title" '>' '' \
     --replace-in-metadata "title" '\?' '' \
+    --replace-in-metadata "title" '\!' '' \
     --replace-in-metadata "title" '\\' '' \
     --replace-in-metadata "title" '\|' '_' \
     --replace-in-metadata "title" '\`' "'" \
@@ -947,6 +953,7 @@ dlaci() {
     --replace-in-metadata "title" '<' '' \
     --replace-in-metadata "title" '>' '' \
     --replace-in-metadata "title" '\?' '' \
+    --replace-in-metadata "title" '\!' '' \
     --replace-in-metadata "title" '\\' '' \
     --replace-in-metadata "title" '\|' '_' \
     --replace-in-metadata "title" '\`' "'" \
@@ -991,6 +998,7 @@ dlac() {
     --replace-in-metadata "title" '<' '' \
     --replace-in-metadata "title" '>' '' \
     --replace-in-metadata "title" '\?' '' \
+    --replace-in-metadata "title" '\!' '' \
     --replace-in-metadata "title" '\\' '' \
     --replace-in-metadata "title" '\|' '_' \
     --replace-in-metadata "title" '\`' "'" \
@@ -1074,6 +1082,7 @@ dlapli() {
     --replace-in-metadata "title" '<' '' \
     --replace-in-metadata "title" '>' '' \
     --replace-in-metadata "title" '\?' '' \
+    --replace-in-metadata "title" '\!' '' \
     --replace-in-metadata "title" '\\' '' \
     --replace-in-metadata "title" '\|' '_' \
     --replace-in-metadata "title" '\`' "'" \
@@ -1119,6 +1128,7 @@ dlapl() {
     --replace-in-metadata "title" '<' '' \
     --replace-in-metadata "title" '>' '' \
     --replace-in-metadata "title" '\?' '' \
+    --replace-in-metadata "title" '\!' '' \
     --replace-in-metadata "title" '\\' '' \
     --replace-in-metadata "title" '\|' '_' \
     --replace-in-metadata "title" '\`' "'" \
@@ -1344,12 +1354,11 @@ dlcensored() {
 }
 
 insert_cookies_param() {
+  [ "$cookies" = "no" ] && return
   # prefer cookies.txt (faster)
-  if [ -f "$config_dir/cookies.txt" ]; then
-    echo -n "--cookies $config_dir/cookies.txt "
-  elif [ -n "$BROWSER" ]; then
-    echo -n "--cookies-from-browser $BROWSER "
-  fi
+  if [ -s "$config_dir/cookies.txt" ]; then echo -n "--cookies $config_dir/cookies.txt " && return; fi
+  if [ -n "$BROWSER" ]; then echo -n "--cookies-from-browser $BROWSER "; fi
+
   #  # prefer cookies from browser
   #  if [ -n "$BROWSER" ]; then
   #    echo -n "--cookies-from-browser $BROWSER "

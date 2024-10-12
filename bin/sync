@@ -57,6 +57,7 @@ real_sendvidhop() {
     --exclude="export/" \
     --exclude="website/" \
     --exclude="uploads/" \
+    --exclude="metadata/" \
     --include="*/" \
     --include="*.json" \
     --exclude="*" \
@@ -74,6 +75,8 @@ dry_sendvidhop() {
     --exclude="import/" \
     --exclude="export/" \
     --exclude="website/" \
+    --exclude="uploads/" \
+    --exclude="metadata/" \
     --include="*/" \
     --include="*.json" \
     --exclude="*" \
@@ -120,6 +123,7 @@ real_fetchvidhop() {
     --exclude="import/" \
     --exclude="export/" \
     --exclude="uploads/" \
+    --exclude="keep/" \
     --include="*/" \
     --include="*.jpg" \
     --include="*.jpeg" \
