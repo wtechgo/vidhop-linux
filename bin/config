@@ -9,8 +9,9 @@ save_cookies_txt_from_browser() {
   [ -n "$1" ] && BROWSER="$1"
   [ -z "$BROWSER" ] && echo "no browser set in /opt/vidhop/config/config.ini, nor provided as argument, abort" && return
   cookies_txt="$config_dir/cookies.txt"
+  /bin/rm "$cookies_txt" 2>/dev/null
   yt-dlp --cookies-from-browser "$BROWSER" --cookies "$cookies_txt"
-  echo -e "Saved cookies file from browser at:\n$cookies_txt"
+  echo -e "saved cookies file from browser at:\n$cookies_txt"
 }
 
 updatecookies() {

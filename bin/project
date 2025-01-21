@@ -184,6 +184,7 @@ add2project() {
 
   link_path="$project_dir/vid/$(basename "$file")"
   ln -s "$file" "$link_path"
+
   [ $? = 1 ] && echo "failed to create link from '$file' to '$link_path'" && return
   echo -e "  video file: '$file'"
   echo -e "project link: '$link_path'"
@@ -293,14 +294,14 @@ linkvideos4project() {
       # create link
       ln -s "$file" "$(basename "$file")" 2>/dev/null
       # write title & link to file
-      metadata="$(media_file2metadata_path "$file")"
-      if [ -f "$metadata" ]; then
-        title="$(jq '.title' "$metadata" | remove_leading_trailing_double_quotes)"
-        url="$(jq '.webpage_url' "$metadata" | remove_leading_trailing_double_quotes)"
-        channel_name="$(channel_name_from_json_file "$metadata" | remove_leading_trailing_double_quotes)"
-        channel_title_url_item_md >>"$list_md"
-        title_url_txt >>"$list_txt"
-      fi
+#      metadata="$(media_file2metadata_path "$file")"
+#      if [ -f "$metadata" ]; then
+#        title="$(jq '.title' "$metadata" | remove_leading_trailing_double_quotes)"
+#        url="$(jq '.webpage_url' "$metadata" | remove_leading_trailing_double_quotes)"
+#        channel_name="$(channel_name_from_json_file "$metadata" | remove_leading_trailing_double_quotes)"
+#        channel_title_url_item_md >>"$list_md"
+#        title_url_txt >>"$list_txt"
+#      fi
     else
       echo "file error for '$file'"
     fi

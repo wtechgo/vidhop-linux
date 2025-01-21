@@ -135,11 +135,12 @@ tgaudio_phone="$shared/Music/Telegram" # not sure
 # End of phone vars.
 
 ## Telegram workstation
-[ -z "$tgdl_ws" ] && tgdl_ws="$HOME/Downloads/Telegram Desktop"
-[ -z "$tgdocs_ws" ] && tgdocs_ws="$HOME/Downloads/Telegram Desktop/Documents"
-[ -z "$tgvids_ws" ] && tgvids_ws="$HOME/Downloads/Telegram Desktop/Videos"
-[ -z "$tgimgs_ws" ] && tgimgs_ws="$HOME/Downloads/Telegram Desktop/Pictures"
-[ -z "$tgaudio_ws" ] && tgaudio_ws="$HOME/Downloads/Telegram Desktop/Audio"
+tg_dir="$HOME/Downloads/Telegram Desktop"
+[ -z "$tgdl_ws" ] && tgdl_ws="$tg_dir"
+[ -z "$tgdocs_ws" ] && tgdocs_ws="$tg_dir/Documents"
+[ -z "$tgvids_ws" ] && tgvids_ws="$tg_dir/Videos"
+[ -z "$tgimgs_ws" ] && tgimgs_ws="$tg_dir/Pictures"
+[ -z "$tgaudio_ws" ] && tgaudio_ws="$tg_dir/Audio"
 
 # .bashrc shortkeys
 alias loadconfig='. "$bin_dir/config"'
@@ -158,6 +159,7 @@ alias cdpods='cd "$podcasts_dir"'
 alias cduploads='cd "$uploads_dir"'
 alias cddownloaded='cd "$downloaded_dir"'
 alias cdlogs='cd "$log_dir"'
+alias cdtg='cd "tg_dir"'
 
 alias nanodlv='nano "$bin_dir/dlv"; . vidhop'
 alias nanofvid='nano "$bin_dir/fvid"; . vidhop'

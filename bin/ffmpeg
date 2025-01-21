@@ -163,6 +163,13 @@ to-cfr-fast() {
   echo -e "file converted to constant frame rate (cfr) at:\n$output_file"
 }
 
+to-2000kbps() {
+  input_file="$(realpath "$1")"
+  output_file="$(prefix_extension "$input_file" _2000kbps)"
+  ffmpeg -i "$input_file" -c:v libx264 -b:v 2M -maxrate 2M -bufsize 1M "$output_file"
+  echo -e "file converted to a bit rate of 2000 kbps at:\n$output_file"
+}
+
 cut-video() {
   [ -z "$1" ] || [ -z "$2" ] && cat <<EOF && return
 Usage: cut-video <INPUT_VIDEO_FILE> <START_TIME> [<END_TIME>]
@@ -357,11 +364,13 @@ merge-audiotracks() {
 
   input_file="$1"
   output_file="$(prefix_extension "$input_file" amerge)"
+  [ -n "$2" ] && output_file="$(dirname "$input_file")""/$2.mp4"
 
   count_audio_tracks="$(ffprobe -loglevel error -select_streams a -show_entries stream=index -of csv=p=0 "$input_file" | wc -l)"
 
   ffmpeg -i "$input_file" \
-    -c:v copy -c:a aac -b:a 160k -ac 2 \
+    -c:v libx264 -profile:v high -preset slow -f mp4 -crf 18 -b:v 4M \
+    -c:a aac -b:a 160k -ac 2 \
     -filter_complex amerge=inputs="$count_audio_tracks" "$output_file"
 
   echo -n "replace original with merged audio version? N/y: " && read -r answer
