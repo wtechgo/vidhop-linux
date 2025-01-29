@@ -123,7 +123,7 @@ real_fetchvidhop() {
     --exclude="import/" \
     --exclude="export/" \
     --exclude="uploads/" \
-    --exclude="Keep/" \
+    --exclude="${keep_dir}/" \
     --include="*/" \
     --include="*.jpg" \
     --include="*.jpeg" \
@@ -234,21 +234,21 @@ fetchdownloads() {
   echo "fetching audio files..."
   for ext in "${audio_exts[@]}"; do
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="Keep/" "$USER_PHONE@$IP_PHONE:$dl_phone/" "$HOME/Music"
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="$keep_dir/" "$USER_PHONE@$IP_PHONE:$dl_phone/" "$HOME/Music"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="Keep/" "$USER_PHONE@$IP_PHONE:$tgdl_phone/" "$tgaudio_ws"
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="$keep_dir/" "$USER_PHONE@$IP_PHONE:$tgdl_phone/" "$tgaudio_ws"
   done
 
   echo "fetching documents..."
   for ext in "${doc_exts[@]}"; do
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="Keep/" "$USER_PHONE@$IP_PHONE:$dl_phone/" "$HOME/Documents"
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="$keep_dir/" "$USER_PHONE@$IP_PHONE:$dl_phone/" "$HOME/Documents"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="Keep/" "$USER_PHONE@$IP_PHONE:$docs_phone/" "$HOME/Documents"
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="$keep_dir/" "$USER_PHONE@$IP_PHONE:$docs_phone/" "$HOME/Documents"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="Keep/" "$USER_PHONE@$IP_PHONE:$tgdocs_phone/" "$tgdocs_ws"
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="$keep_dir/" "$USER_PHONE@$IP_PHONE:$tgdocs_phone/" "$tgdocs_ws"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="Keep/" "$USER_PHONE@$IP_PHONE:$tgdl_phone/" "$tgdocs_ws"
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="$keep_dir/" "$USER_PHONE@$IP_PHONE:$tgdl_phone/" "$tgdocs_ws"
   done
 
   echo "fetching images..."
@@ -256,21 +256,21 @@ fetchdownloads() {
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
       --include="*.$ext" --exclude="*/" "$USER_PHONE@$IP_PHONE:$pictures_phone/" "$HOME/Pictures"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="Keep/" "$USER_PHONE@$IP_PHONE:$dl_phone/" "$HOME/Pictures"
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="$keep_dir/" "$USER_PHONE@$IP_PHONE:$dl_phone/" "$HOME/Pictures"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="Keep/" "$USER_PHONE@$IP_PHONE:$screenshots_phone/" "$HOME/Pictures"
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="$keep_dir/" "$USER_PHONE@$IP_PHONE:$screenshots_phone/" "$HOME/Pictures"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="Keep/" "$USER_PHONE@$IP_PHONE:$fb2_phone/" "$HOME/Pictures"
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="$keep_dir/" "$USER_PHONE@$IP_PHONE:$fb2_phone/" "$HOME/Pictures"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="Keep/" "$USER_PHONE@$IP_PHONE:$fb1/" "$HOME/Pictures"
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="$keep_dir/" "$USER_PHONE@$IP_PHONE:$fb1/" "$HOME/Pictures"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="Keep/" "$USER_PHONE@$IP_PHONE:$messenger_phone/" "$HOME/Pictures"
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="$keep_dir/" "$USER_PHONE@$IP_PHONE:$messenger_phone/" "$HOME/Pictures"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="Keep/" "$USER_PHONE@$IP_PHONE:$twitter_phone/" "$HOME/Pictures"
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="$keep_dir/" "$USER_PHONE@$IP_PHONE:$twitter_phone/" "$HOME/Pictures"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="Keep/" "$USER_PHONE@$IP_PHONE:$tgimgs_phone/" "$tgimgs_ws"
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="$keep_dir/" "$USER_PHONE@$IP_PHONE:$tgimgs_phone/" "$tgimgs_ws"
     rsync --remove-source-files -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="Keep/" "$USER_PHONE@$IP_PHONE:$tgdl_phone/" "$tgimgs_ws"
+      --include="*.$ext" --exclude="*" --exclude=".trashed*" --exclude="$keep_dir/" "$USER_PHONE@$IP_PHONE:$tgdl_phone/" "$tgimgs_ws"
   done
 
   echo "fetching videos..."
