@@ -345,7 +345,7 @@ videos2links() {
   [ -d "$1" ] && links_dir="$1"
 #  if [ -d "$1" ]; then links_dir="$1"; else echo "no directory provided, using current working directory" && echo; fi
   [ ! -d "$links_dir" ] && echo "path '$links_dir' is not a directory" && return
-  unset summary_txt errors
+  unset summary_txt errors items
 
   while read -r media_file; do
     title="$(strip_extension "$(basename "$media_file")")"
@@ -358,6 +358,7 @@ videos2links() {
       url="$(jq .webpage_url <<<"$json" | remove_leading_trailing_double_quotes)"
       item="$(echo -e "${title}\n${url}\n${channel_name}, ${upload_date}\n")"
       summary_txt+="$item\n\n"
+      items+="$item\n\n"
     else
       errors+="$(echo -e "\n${media_file}")"
     fi
@@ -365,8 +366,11 @@ videos2links() {
 #    unset title url channel_name item
   done < <(find -L "$links_dir" -maxdepth 1 -type f ! -name '*.txt' ! -name '*.md' -exec realpath {} \;)
 
+  echo -e "$items"
+  [ -n "$errors" ] && echo -e "Errors:\n$errors"
+
   echo -e "$summary_txt" >"$links_dir/links.txt"
-  echo -e "Errors:\n$errors" >>"$links_dir/links.txt"
+  [ -n "$errors" ] && echo -e "Errors:\n$errors" >>"$links_dir/links.txt"
 }
 
 videos2links-wp() {
@@ -446,6 +450,7 @@ writeproject() {
 }
 
 lsprojects() {
+  [ "$1" = -h ] && echo "Usage: lsprojects [<SEARCH_TEXT>]" && return
   [ -n "$1" ] && find "$projects_dir" -maxdepth 1 -type d -iname "*$1*" -exec basename {} \; | sort && return
   find "$projects_dir" -maxdepth 1 -type d -exec basename {} \; | sort
 }
@@ -459,7 +464,6 @@ fproj() {
   # Display with relative paths.
   prev="$PWD"
   [[ "$PWD" != *"$projects_dir"* ]] && cd "$projects_dir"
-#  result="$(find -L "$search_dir" \
   result="$(find -L "$search_dir" -type f \
     -not -path "*.js" \
     -not -path "*.css" \
