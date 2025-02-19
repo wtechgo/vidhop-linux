@@ -22,7 +22,7 @@ wp-list-item() {
 }
 
 wp-append-item() {
-  wp_href="$(wp-href "$1" "$2")"
+  wp_href="$(wp-href "$1" "$2")" # 1:text, 2:href
 
   wp_item="$(echo '  <!-- wp:list-item -->'
   echo '    <li>'"$wp_href"'</li>'
@@ -76,4 +76,16 @@ odysee-embed-wp() {
     echo '<!-- /wp:html -->'
     echo
   done <<<"$urls"
+}
+
+md-list-to-wp(){
+  md_list_items="$1"
+
+  while read -r md_list_item; do
+    title="$(echo "$md_list_item" | sed -E 's/.*\[(.*)\]\((.*)\)/\1/')"
+    url="$(echo "$md_list_item" | sed -E 's/.*\[(.*)\]\((.*)\)/\2/')"
+    wp-append-item "$title" "$url"
+  done <<<"$md_list_items"
+
+  wp-list "$wp_items"
 }

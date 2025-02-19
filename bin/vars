@@ -77,7 +77,7 @@ workstation_screen_char_count=120
 # Project module
 # Set your values in config/config.ini
 [ -z "$name_projects_root_dir" ] && name_projects_root_dir="Projects"
-[ -z "$projects_dir" ] && projects_dir="$HOME/$name_projects_root_dir"
+[ -z "$projects_dir" ] && projects_dir="$HOME/$name_projects_root_dir" && pd="$projects_dir"
 [ -z "$projects_videos_dir" ] && projects_videos_dir="$HOME/Videos/$name_projects_root_dir"
 [ -z "$projects_images_dir" ] && projects_images_dir="$HOME/Pictures/$name_projects_root_dir"
 [ -z "$projects_documents_dir" ] && projects_documents_dir="$HOME/Documents/$name_projects_root_dir"
