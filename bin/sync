@@ -193,13 +193,14 @@ fetchvidhop() {
 
 # shellcheck disable=SC2120
 syncvidhop() {
-  [ "$1" = "-d" ] || [ "$1" = "--dry" ] && # dry run
-    echo -e "\n> FETCHING vidhop files DRY RUN..." && dry_fetchvidhop &&
-    echo -e "\n> SENDING vidhop files DRY RUN..." && dry_sendvidhop &&
-    syncvidhop && return
-
-  echo -e "\n> FETCHING vidhop files..." && fetchvidhop -exec &&
-    echo -e "\n> SENDING vidhop files..." && sendvidhop -exec
+  fetchvidhop -exec
+#  [ "$1" = "-d" ] || [ "$1" = "--dry" ] && # dry run
+#    echo -e "\n> FETCHING vidhop files DRY RUN..." && dry_fetchvidhop &&
+#    echo -e "\n> SENDING vidhop files DRY RUN..." && dry_sendvidhop &&
+#    syncvidhop && return
+#
+#  echo -e "\n> FETCHING vidhop files..." && fetchvidhop -exec &&
+#    echo -e "\n> SENDING vidhop files..." && sendvidhop -exec
 }
 
 sendvidhopbin() {
