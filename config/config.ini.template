@@ -62,6 +62,7 @@ text_editor="nano"
 #projects_videos_dir="$HOME/Videos/$name_projects_root_dir"
 #projects_images_dir="$HOME/Pictures/$name_projects_root_dir"
 #projects_documents_dir="$HOME/Documents/$name_projects_root_dir"
+#pd="$projects_dir"
 
 ## Tor module.
 # Config when installed from website zip for Linux.
