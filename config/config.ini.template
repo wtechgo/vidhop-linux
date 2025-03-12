@@ -12,6 +12,13 @@
 #vidhop_backup_dir=""
 #vidhop_dir_alt=""
 
+## Default video download resolution.
+## Options: 144p, 240p, 360p, 480p,
+##   720p, 1080p, 1440p, 2160p.
+##   (Note, the p is dropped below.)
+## ----------------------------------
+#res=1080
+
 ## User dirs.
 ## ----------
 #music_dir_ws=""
