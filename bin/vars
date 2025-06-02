@@ -160,6 +160,8 @@ alias cduploads='cd "$uploads_dir"'
 alias cddownloaded='cd "$downloaded_dir"'
 alias cdlogs='cd "$log_dir"'
 alias cdtg='cd "tg_dir"'
+alias cdcamera='cd $shared/DCIM/Camera'
+alias cdxrecorder='cd $shared/Movies/XRecorder0'
 
 alias nanodlv='nano "$bin_dir/dlv"; . vidhop'
 alias nanofvid='nano "$bin_dir/fvid"; . vidhop'

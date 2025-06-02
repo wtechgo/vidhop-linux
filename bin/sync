@@ -108,10 +108,13 @@ sendvidhop() {
 real_fetchvidhop() {
   echo -e ">> FETCHING METADATA (JSON files)..."
   rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
-    --include="*/" \
-    --include="*.json" \
-    --exclude="*" \
     "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE/metadata/" "$VIDHOP_DIR_WS/metadata"
+
+#  rsync -Pauv -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
+#    --include="*/" \
+#    --include="*.json" \
+#    --exclude="*" \
+#    "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE/metadata/" "$VIDHOP_DIR_WS/metadata"
 
   echo -e "\n" && echo ">> FETCHING MEDIA files and delete from phone..."
   rsync -Pauv --remove-source-files -e "ssh -p $SSH_PORT_TERMUX -i $SSH_PRIVATE_KEY_WS" \
@@ -132,8 +135,10 @@ real_fetchvidhop() {
     --exclude="*.json" \
     --include="*.mp4" \
     --include="*.webm" \
+    --include="*.mov" \
     --include="*.mp3" \
     --include="*.m4a" \
+    --include="*.wav" \
     --include="*.txt" \
     --include="*.md" \
     "$USER_PHONE@$IP_PHONE:$VIDHOP_DIR_PHONE/" "$VIDHOP_DIR_WS"
