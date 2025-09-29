@@ -284,6 +284,7 @@ dlv() {
   [ "$#" = 1 ] && url="$1"
   standalone=false
   function=dlv
+  auto-update-ytdlp
 
   [ "$(is_url "$url")" = false ] && echo "not a URL" && return 1
   remove_url_tracking_params
@@ -295,8 +296,9 @@ dlv() {
   bitchute_timeout
   yt-dlp $(insert_cookies_param) \
     --no-mtime -P "$vids_dir/$platform" -o "$name.%(ext)s" \
-    $([ -n "$res" ] && echo " -S res:$res") \
+    $([ -n "$res" ] && echo " -S res:${res}") \
     "$url"
+#  yt-dlp -S res:1080,vcodec:av01,vcodec:vp9.2,vcodec:vp9,vcodec:h265,vcodec:h264 "$url"
 
   cd "$vids_dir/$platform" || return
   mediafile="$(realpath "$title"*)"
