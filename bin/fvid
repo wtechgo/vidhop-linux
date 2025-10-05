@@ -223,7 +223,6 @@ fvidv() {
     [[ "$(echo "$vidjson" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')" == *"$(echo "$text" | tr ' ' '-')"* ]] &&
       videos+=$(jq . "$vidjson") && continue
     # search after matches inside the json file
-#                ( if .webpage_url != null then select(.webpage_url | contains($text)) else empty end ) or # does not work
     videos+=$(
       jq --arg text "$text" '
             select(

@@ -13,6 +13,8 @@ initcap() {
   text="$1"
   text="$(tr '[:upper:]' '[:lower:]' <<< "${text}")"
   echo "$(tr '[:lower:]' '[:upper:]' <<< "${text:0:1}")${text:1}"
+  lc="$text"
+  ic="$text"
 }
 
 extract-missing-lines() {
