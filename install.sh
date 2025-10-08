@@ -73,7 +73,7 @@ if [ -d "$vidhop_app_dir" ]; then
 fi
 
 sudo git clone https://github.com/wtechgo/vidhop-linux.git "$vidhop_app_dir"
-sudo chown -R root:"$USER" "$vidhop_app_dir"
+sudo chown -R "$USER" "$vidhop_app_dir"
 sudo chmod +x "$vidhop_app_dir/install.sh"
 sudo chmod +x "$loader"
 
