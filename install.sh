@@ -69,8 +69,7 @@ loader_bin="/usr/local/bin/vidhop"
 
 if [ -d "$vidhop_app_dir" ]; then
   echo -n "$vidhop_app_dir already existis, remove it? Y/n: " && read answer && answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
-  [ "$answer" = "y" ] || [ -z "$answer" ] && unset answer &&
-    sudo rm -rf "$vidhop_app_dir" &&
+  [ "$answer" = "y" ] || [ -z "$answer" ] && unset answer && sudo rm -rf "$vidhop_app_dir"
 fi
 
 sudo git clone https://github.com/wtechgo/vidhop-linux.git "$vidhop_app_dir"
