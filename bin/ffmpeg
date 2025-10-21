@@ -26,9 +26,9 @@ ffmpeg_help() {
   echo "    to-mp3   => No docs atm. Try command without args to learn more, or which <command>, or type <command>."
   echo "    to-mp3-remove-input   => No docs atm. Try command without args to learn more, or which <command>, or type <command>."
   echo "    to-mp3-mv2music   => No docs atm. Try command without args to learn more, or which <command>, or type <command>."
-  echo "    id3tags   => No docs atm. Try command without args to learn more, or which <command>, or type <command>."
+  echo "    audiofile-extract-metadata-text   => No docs atm. Try command without args to learn more, or which <command>, or type <command>."
   echo "    embed-thumbnail-into-mp3   => No docs atm. Try command without args to learn more, or which <command>, or type <command>."
-  echo "    strip-id3tags   => No docs atm. Try command without args to learn more, or which <command>, or type <command>."
+  echo "    strip-audiofile-extract-metadata-text   => No docs atm. Try command without args to learn more, or which <command>, or type <command>."
   echo "    screenshots-from-video-file   => No docs atm. Try command without args to learn more, or which <command>, or type <command>."
 }
 
@@ -419,17 +419,6 @@ remove-videotrack() {
   [ "$answer" = "y" ] && mv "$output_file" "$input_file"
 }
 
-#mergeaudiotracks() {
-#  ! [ -f "$1" ] && echo "not a file, abort" && return
-#  input_file="$1"
-#  output_file="$(prefix_extension "$input_file" amerge)"
-#
-#  ffmpeg -i "$input_file" -map 0:v:0 \
-#    -map -0:a:0 \
-#    -map 0:a:1 -map 0:a:0 \
-#    -disposition:a:0 default "$output_file"
-#}
-
 # Audio.
 extract-mp3() {
   input_file="$1"
@@ -460,31 +449,121 @@ to-mp3-mv2music() {
   mv "$mp3_file" "$music_dir"
 }
 
-id3tags() { # uses ffprobe
-  [ $# = 0 ] && echo "Usage: id3tags <AUDIO_FILE>" && return
+audiofile-inspect-cover-art(){
+  has_cover_art=false && unset cover_art_path
+  streams_json="$(ffprobe -show_streams -print_format json "$input_file" -v quiet)"
+  codec_name="$(jq '.streams[1].codec_name' <<<"$streams_json" | tr -d '"')"
+  [ "$codec_name" != null ] && has_cover_art=true
+  echo "$has_cover_art"
+}
+
+audiofile-extract-metadata-cover-art(){
+  [ "$codec_name" = mjpeg ] && cover_art_ext=jpg
+  [ "$codec_name" = png ] && cover_art_ext=png
+  cover_art_path="${input_file_dir}/${input_file_name}.${cover_art_ext}"
+  # Extract cover art from input file to a separate image file.
+  ffmpeg -i "$metadata_file" -an -vcodec copy "$cover_art_path"
+}
+
+audiofile-extract-metadata-text() { # uses ffprobe
+  [ $# = 0 ] && echo "Usage: audiofile-extract-metadata-text <AUDIO_FILE>" && return
   input_file="$1"
-  tags_json="$(ffprobe -show_format -print_format json "$input_file")"
-  tags_json="$(jq '.format.tags' <<<"$tags_json")"
-  jq <<<"$tags_json"
+
+  ffprobe_json="$(ffprobe -show_format -print_format json "$input_file" -hide_banner)"
+  tags_json="$(jq '.format.tags' <<<"$ffprobe_json")"
+
+  title_tag="$(jq .title <<<"$tags_json" | tr -d '"')"
+  artist_tag="$(jq .artist <<<"$tags_json" | tr -d '"')"
+  album_tag="$(jq .album <<<"$tags_json" | tr -d '"')"
+  genre_tag="$(jq .genre <<<"$tags_json" | tr -d '"')"
+  date_tag="$(jq .date <<<"$tags_json" | tr -d '"')"
+  comment_tag="$(jq .comment <<<"$tags_json" | tr -d '"')"
+}
+
+audiofile-copy-metadata() {
+  [ $# = 0 ] && echo "Usage: audiofile-copy-metadata <INPUT_FILE> <METADATA_FILE> [<OUTPUT_FILE>]" && return
+  input_file="$1"
+  metadata_file="$2"
+  output_file="$3"
+  [ -z "$metadata_file" ] && metadata_file="$input_file"
+  [ -z "$output_file" ] && output_file="$input_file"
+  # split $input_file into dir, name and extension
+  input_file_dir="$(dirname "$(realpath "$input_file")")"
+  input_file_name="$(get_name "$input_file")"
+  input_file_ext="$(get_extension "$input_file")"
+
+  echo "creating backup of input file at: '$backup_file'..."
+  backup_file="${input_file_dir}/${input_file_name}.BAK.${input_file_ext}"
+  cp "$input_file" "$backup_file"
+
+  audiofile-extract-metadata-text "$metadata_file"
+  echo "Metadata from input file:"
+  echo "-------------------------"
+  echo "title: $title_tag"
+  echo "artist: $artist_tag"
+  echo "album: $album_tag"
+  echo "genre: $genre_tag"
+  echo "date: $date_tag"
+  echo "-------------------------"
+
+  audiofile-inspect-cover-art
+  if [ "$has_cover_art" = "true" ]; then
+    audiofile-extract-metadata-cover-art # populates $cover_art_path
+    echo "copying metadata and cover art to new input file..."
+    ffmpeg -i "$backup_file" -i "$cover_art_path" -map 0:0 -map 1:0 -c copy -id3v2_version 3 -update true \
+      -metadata title="$title_tag" \
+      -metadata artist="$artist_tag" \
+      -metadata album="$album_tag" \
+      -metadata genre="$genre_tag" \
+      -metadata date="$date_tag" \
+      -metadata comment="$comment_tag" \
+      -metadata:s:v title="Album cover" \
+      -metadata:s:v comment="Cover (front)" \
+      "$output_file"
+    /bin/rm "$cover_art_path"
+  else
+    echo "copying metadata without cover art to new input file..."
+    ffmpeg -i "$backup_file" -map 0:0 -c copy -id3v2_version 3 \
+      -metadata title="$title_tag" \
+      -metadata artist="$artist_tag" \
+      -metadata album="$album_tag" \
+      -metadata genre="$genre_tag" \
+      -metadata date="$date_tag" \
+      -metadata comment="$comment_tag" \
+      "$output_file"
+  fi
+
+  echo -e "copied metadata from:\n  $metadata_file"
+  echo -e "                  to:\n  $output_file"
 }
 
 embed-thumbnail-into-mp3() {
   [ $# = 0 ] && echo "Usage: embed-thumbnail-into-mp3 <THUMBNAIL_FILE> <AUDIO_FILE>" && return
   thumb_file="$1"
   input_file="$2"
+  input_dir="$(dirname "$(realpath "$input_file")")"
   output_file="$(strip_extension "$input_file")_art.mp3"
 
-  tags_json="$(id3tags "$input_file")"
-  title_tag="$(jq .title <<<"$tags_json" | tr -d '"')"
-  artist_tag="$(jq .artist <<<"$tags_json" | tr -d '"')"
-  album_tag="$(jq .album <<<"$tags_json" | tr -d '"')"
-  year_tag="$(jq .date <<<"$tags_json" | tr -d '"')"
+  tags_json="$(audiofile-extract-metadata-text "$input_file")" # metadata extracted with ffprobe
+  cover_art_path="${input_dir}/cover_art.${cover_art_ext}"
+  ffmpeg -i "$input_file" -an -vcodec copy "$cover_art_path"
+
+  echo ---
+  title_tag="$(jq .title <<<"$tags_json" | tr -d '"')" && echo "title_tag: $title_tag"
+  artist_tag="$(jq .artist <<<"$tags_json" | tr -d '"')" && echo "artist_tag: $artist_tag"
+  album_tag="$(jq .album <<<"$tags_json" | tr -d '"')" && echo "album_tag: $album_tag"
+  date_tag="$(jq .date <<<"$tags_json" | tr -d '"')" && echo "date_tag: $date_tag"
+  echo "Metadata from input file:"
+  [ "$title_tag" = null ] && echo -n "title?: " && read -r title_tag
+  [ "$artist_tag" = null ] && echo -n "artist?: " && read -r artist_tag
+  [ "$album_tag" = null ] && echo -n "album?: " && read -r album_tag
+  [ "$date_tag" = null ] && echo -n "year?: " && read -r date_tag
 
   ffmpeg -i "$input_file" -i "$thumb_file" -map 0:0 -map 1:0 -c copy -id3v2_version 3 \
     -metadata title="$title_tag" \
     -metadata artist="$artist_tag" \
     -metadata album="$album_tag" \
-    -metadata year="$year_tag" \
+    -metadata date="$date_tag" \
     -metadata:s:v title="Album cover" \
     -metadata:s:v comment="Cover (front)" \
     "$output_file"
@@ -493,7 +572,7 @@ embed-thumbnail-into-mp3() {
   echo "embedding thumbnail failed"
 }
 
-strip-id3tags() { # not ffmpeg
+strip-audiofile-extract-metadata-text() { # not ffmpeg
   id3convert --strip "$1" 2>/dev/null # strip all id-tags as some choke the car radio
 }
 
