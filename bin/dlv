@@ -826,10 +826,10 @@ fetch_music_metadata() {
                   asr: .asr
             }'
   )
-  ext=m4a
+  ext=mp3
 }
 
-# Download audio. Save only the m4a audio of a video plus metadata and thumbnail.
+# Download audio. Save only the mp3 audio of a video plus metadata and thumbnail.
 dla() {
   function=dla
   clear_vars_dlv
@@ -839,11 +839,8 @@ dla() {
   fetch_music_metadata "$url" # populates json
   # download media
   yt-dlp $(insert_cookies_param) \
-    -x --audio-format best --no-keep-video --embed-thumbnail --no-mtime --add-metadata --force-overwrites \
+    -x --audio-format best --no-keep-video --embed-thumbnail --no-mtime --add-metadata --force-overwrites --recode mp3 \
     -P "$music_dir" -o "$name.%(ext)s" "$url"
-#  yt-dlp $(insert_cookies_param) \
-#    -f ba --recode m4a --embed-thumbnail --no-mtime --add-metadata --force-overwrites \
-#    -P "$music_dir" -o "$name.%(ext)s" "$url"
 
   # download thumbnail
   yt-dlp $(insert_cookies_param) \
