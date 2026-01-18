@@ -44,6 +44,8 @@ sudo pacman --noconfirm -S moreutils    # for fetching the current IP address
 sudo pacman --noconfirm -S jq           # vidhop dependency: JSON processor
 sudo pacman --noconfirm -S python       # yt-dlp dependency
 sudo pacman --noconfirm -S ffmpeg       # yt-dlp dependency
+sudo pacman --noconfirm -S deno         # install Deno to solve JavaScript challenges presented by YouTube with EJS
+
 
 echo "installing Python packages..."
 # https://peps.python.org/pep-0668/?ref=itsfoss.com
